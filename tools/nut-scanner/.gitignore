@@ -1,7 +1,0 @@
-.deps
-Makefile
-Makefile.in
-nut-scanner
-nutscan-snmp.h
-nutscan-usb.h
-test-nutscan

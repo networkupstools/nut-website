@@ -1,35 +1,39 @@
 #! /bin/sh
 #
-# Autoreconf wrapper script to ensure that the source tree is
-# in a buildable state
+# Autoreconf wrapper script to ensure that the source tree is in a buildable state
 
-# re-generate files needed by configure, and created otherwise at 'dist' time
-if [ ! -f scripts/augeas/nutupsconf.aug.in ]
-then
-	if python -c "import re,glob,codecs"; then
-		echo "Regenerating Augeas ups.conf lens..."
-		cd scripts/augeas && ./gen-nutupsconf-aug.py && cd ../..
-	else
-		echo "----------------------------------------------------------------------"
-		echo "Warning: Python is not available."
-		echo "Skipping Augeas ups.conf lens regeneration."
-		echo "----------------------------------------------------------------------"
-	fi
-fi
+spacer="----------------------------------------------------------------------"
 
-if [ ! -f scripts/hal/ups-nut-device.fdi.in ] || [ ! -f scripts/udev/nut-usbups.rules.in ]
-then
-	if perl -e 1; then
-		echo "Regenerating the USB helper files..."
-		cd tools && ./nut-usbinfo.pl && cd ..
-	else 
-		echo "----------------------------------------------------------------------"
-		echo "Error: Perl is not available."
-		echo "Skipping the USB helper files regeneration."
-		echo "----------------------------------------------------------------------"
-	fi
-fi
+function quit () {
+	echo "$spacer"
+	echo "Unable to build website"
+	exit
+}
 
-# now we can safely call autoreconf
+# Initialize submodules and get NUT
+echo "Getting NUT"
+echo "$spacer"
+echo "Initializing the submodules..."
+git submodule init || quit
+echo "Updating the submodules..."
+git submodule update || quit
+echo "$spacer"
+
+# Call NUT's autogen.sh to regenerate files needed by NUT's configure:
+# - scripts/augeas/nutupsconf.aug.in
+# - scripts/hal/ups-nut-device.fdi.in
+# - scripts/udev/nut-usbups.rules.in
+echo "Readying NUT"
+echo "$spacer"
+cd nut && ./autogen.sh || quit
+cd ..
+echo "$spacer"
+
+# Call autoreconf
+echo "Readying NUT Website"
+echo "$spacer"
 echo "Calling autoreconf..."
-autoreconf -i
+autoreconf -i || quit
+echo "$spacer"
+
+echo "You can now safely configure and build website!"

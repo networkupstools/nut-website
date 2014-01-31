@@ -32,11 +32,11 @@ import sys
 import os, errno
 
 # HCL file location and name
-rawHCL="../data/driver.list";
+rawHCL="../nut/data/driver.list";
 
 # Website output
-webJsonHCL = "../docs/website/scripts/ups_data.js";
-webStaticHCL = "../docs/ups-html.txt";
+webJsonHCL = "../scripts/ups_data.js";
+webStaticHCL = "../ups-html.txt";
 
 # from http://wiki.python.org/moin/EscapingHtml
 

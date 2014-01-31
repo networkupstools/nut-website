@@ -1,137 +1,192 @@
-# top-level Makefile for NUT
+SUBDIRS = protocols
 
-# include directory for aclocal
-ACLOCAL_AMFLAGS = -I m4
+IMAGE_FILES =	\
+	images/advanced.png	\
+	images/asciidoc.png	\
+	images/bigbox.png	\
+	images/bizarre.png	\
+	images/blue-arrow.png	\
+	images/hostedby.png	\
+	images/note.png	\
+	images/nut-logo.png	\
+	images/simple.png	\
+	images/warning.png
 
-# subdirectories to build and distribute. The order matters, as
-# several subdirectories depend on stuff in "common" or tools being built first
-SUBDIRS = include common clients conf data tools docs drivers \
-  lib scripts server tests
+CABLE_IMAGE_FILES =	\
+	images/cables/73-0724.png	\
+	images/cables/940-0024C.jpg	\
+	images/cables/belkin-f6cx-rkm-xu-cable.jpg	\
+	images/cables/Lansafecable.jpg	\
+	images/cables/mac-940-0024C.png	\
+	images/cables/mge-66049.png	\
+	images/cables/mge-db9-rj12.jpg	\
+	images/cables/mge-db9-rj45.jpg	\
+	images/cables/SOLA-330.png
 
-# COPYING is included automatically.
-EXTRA_DIST = INSTALL.nut LICENSE-GPL2 LICENSE-GPL3 MAINTAINERS UPGRADING
+FAVICON_FILES =	\
+	faviconut.ico	\
+	faviconut.png
 
-# ----------------------------------------------------------------------
-# flags to pass to ./configure when calling "make distcheck" and "make
-# distcheck-light". Try to check as many features as possible! Also
-# need to give hotplug-dir and udev-dir, so that staged install does
-# not fail.
+LAYOUT_FILES =	\
+	css/ie-overrides.css	\
+	css/web-layout.css	\
+	css/xhtml11-quirks.css	\
+	css/xhtml11.css
 
-DISTCHECK_FLAGS = --with-all --with-ssl --with-doc=auto
-DISTCHECK_LIGHT_FLAGS = --with-all=auto --with-ssl=auto --with-doc=auto
+SCRIPT_FILES =	\
+	scripts/asciidoc.js	\
+	scripts/filter_png.js	\
+	scripts/jquery.js	\
+	scripts/nut_jquery.js
 
-DISTCHECK_CONFIGURE_FLAGS = ${DISTCHECK_FLAGS}		\
- --with-hotplug-dir='$${prefix}/etc/hotplug'		\
- --with-udev-dir='$${prefix}/etc/udev'
+WEBSITE_FILES =	\
+	acknowledgements.html	\
+	cables.html	\
+	documentation.html	\
+	download.html	\
+	features.html	\
+	index.html	\
+	nut-qa.html	\
+	old-news.html	\
+	projects.html	\
+	stable-hcl.html	\
+	support.html	\
+	ups-protocols.html
 
-distcheck-light:
-	$(MAKE) $(AM_MAKEFLAGS) DISTCHECK_FLAGS="$(DISTCHECK_LIGHT_FLAGS)" distcheck
+WEBSITE_DEPS =	\
+	nut/docs/developer-guide.chunked	\
+	nut/docs/developer-guide.pdf	\
+	nut/docs/FAQ.html	\
+	nut/docs/FAQ.pdf	\
+	nut/docs/packager-guide.chunked	\
+	nut/docs/packager-guide.pdf	\
+	nut/docs/user-manual.chunked	\
+	nut/docs/user-manual.pdf
 
-# workaround the dist generated files that are also part of the distribution
-# Note that distcleancheck is disabled for now, while waiting for a proper
-# solution, that do not break older unix systems
-#distcleancheck_listfiles = \
-#	find . -type f -exec sh -c 'test -f $(srcdir)/{} || echo {}' ';'
-distcleancheck:
-	@:
+# CSS based simulated frames layout.
+LAYOUT = web-layout
 
-# Automatically generate the ChangeLog from Git logs:
-MAINTAINERCLEAN_FILES = ChangeLog
-# Force ChangeLog regeneration upon make dist (due to nonexistant 'dummy-stamp'),
-# in case it has already been generated previously
-dummy-stamp:
-ChangeLog: tools/gitlog2changelog.py dummy-stamp
-	$(top_srcdir)/tools/gitlog2changelog.py v2.6.0 || \
-		echo "gitlog2changelog.py failed to generate the ChangeLog. See https://github.com/networkupstools/nut/commits/master" > $@
+ASCIIDOC_PARAMS =	\
+	--backend=xhtml11	\
+	--conf-file=$(srcdir)/$(LAYOUT).conf	\
+	--attribute icons	\
+	--attribute iconsdir=$(srcdir)/images	\
+	--attribute linkcss	\
+	--attribute scriptsdir=$(srcdir)/scripts	\
+	--attribute=badges	\
+	--attribute=website	\
+	--attribute=quirks	\
+	--attribute=revision=$(PACKAGE_VERSION)	\
+	--attribute tree_version=@TREE_VERSION@	\
+	--attribute localdate=`TZ=UTC date +%Y-%m-%d`	\
+	--attribute localtime=`TZ=UTC date +%H:%M:%S`	\
+	--attribute=date="`TZ=UTC date`"
 
-if HAVE_ASCIIDOC
-website:
-	cd docs;  $(MAKE) $(AM_MAKEFLAGS) website
-	cd docs/man;  $(MAKE) $(AM_MAKEFLAGS) html-man
-	cd tools;  $(MAKE) $(AM_MAKEFLAGS) website
-	cd docs/website/protocols;  $(MAKE) $(AM_MAKEFLAGS) website
-	cd docs/website;  $(MAKE) $(AM_MAKEFLAGS) website
-else !HAVE_ASCIIDOC
-website:
-	@echo "Not building website since 'asciidoc' was not found."
-endif !HAVE_ASCIIDOC
+OUTDIR = output
 
-# Maintainers targets: distribution signature and hashes
-dist-sig:
-	gpg --detach-sign nut-@PACKAGE_VERSION@.tar.gz
+all:	\
+	prerequisites	\
+	$(WEBSITE_FILES)	\
+	$(FAVICON_FILES)	\
+	$(IMAGE_FILES)	\
+	$(CABLE_IMAGE_FILES)	\
+	$(LAYOUT_FILES)	\
+	$(SCRIPT_FILES)	\
+	scripts/ups_data.js	\
+	ups-html.txt	\
+	$(OUTDIR)
 
-dist-hash:
-	md5sum nut-@PACKAGE_VERSION@.tar.gz > nut-@PACKAGE_VERSION@.tar.gz.md5
-	sha256sum nut-@PACKAGE_VERSION@.tar.gz > nut-@PACKAGE_VERSION@.tar.gz.sha256
+# Generate WEBSITE_DEPS & man pages
+prerequisites:
+	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
+	cd nut/docs/man; $(MAKE) $(AM_MAKEFLAGS) html-man
 
-# ----------------------------------------------------------------------
-# targets from old build system (pre-automake).
-# supported for a period of time for backward "compatibility".
+$(WEBSITE_FILES): $(LAYOUT).conf
 
-WARN="----------------------------------------------------------------------"
+images/:
+	$(MKDIR_P) images
 
-build:
-	@echo $(WARN)
-	@echo "Warning: 'make build' is deprecated. Use 'make all' instead."
-	@echo $(WARN)
-	$(MAKE) $(AM_MAKEFLAGS) all
-install-bin:
-	@echo $(WARN)
-	@echo "Warning: 'make install-bin' is deprecated." 
-	@echo "Use 'make install-exec' instead for a similar effect."
-	@echo $(WARN)
-	cd common;  $(MAKE) $(AM_MAKEFLAGS) install
-	cd drivers; $(MAKE) $(AM_MAKEFLAGS) install
-	cd server;  $(MAKE) $(AM_MAKEFLAGS) install
-	cd clients; $(MAKE) $(AM_MAKEFLAGS) install
-install-man: install-data-recursive
-	@echo $(WARN)
-	@echo "Warning: 'make install-man' is deprecated."
-	@echo "Use 'cd man; make install' instead."
-	@echo $(WARN)
-	cd man; $(MAKE) $(AM_MAKEFLAGS) install
-install-conf:
-	@echo $(WARN)
-	@echo "Warning: 'make install-conf' is deprecated."
-	@echo "Use 'cd conf; make install' instead."
-	@echo $(WARN)
-	cd conf; $(MAKE) $(AM_MAKEFLAGS) install
-# The target install-data already has a standardized meaning under automake
-install-dirs:
-	@echo $(WARN)
-	@echo "Warning: 'make install-dirs' is deprecated."
-	@echo "Use 'make installdirs' instead."
-	@echo $(WARN)
-	make installdirs
-cgi build-cgi install-cgi install-cgi-dir install-cgi-bin \
-install-cgi-man install-cgi-conf install-cgi-html: 
-	@echo "Error: 'make $@' no longer exists."
-	@echo "Use './configure --with-cgi' instead."
-install-lib:
-	@echo "Error: 'make $@' no longer exists."
-	@echo "Use './configure --with-lib' instead."
-usb build-usb install-usb:
-	@echo "Error: 'make $@' no longer exists."
-	@echo "Use './configure --with-usb' instead."
-snmp build-snmp install-snmp install-snmp-mgr install-snmp-man: 
-	@echo "Error: 'make $@' no longer exists."
-	@echo "Use './configure --with-snmp' instead."
-setver:
-	@echo "Error: 'make setver' no longer exists."
-	@echo "Edit configure.in to set version number."
-package:
-	if test `uname -s` = "HP-UX"; then \
-		cd scripts/HP-UX; \
-		make package; \
-		mv NUT_HPUX_package.depot NUT_HPUX_package@PACKAGE_VERSION@.depot; \
-	else \
-		if test `uname -s` = "SunOS"; then \
-			make; \
-			rm -rf @prefix@; \
-			make install; \
-			cd scripts/Solaris; \
-			make package; \
-			make uninstall; \
-			rm -rf @prefix@; \
-		fi; \
-	fi;
+$(IMAGE_FILES): images/
+	cp -f nut/docs/$@ images/
+
+images/cables/:
+	$(MKDIR_P) images/cables
+
+$(CABLE_IMAGE_FILES): images/cables/
+	cp -f nut/docs/$@ images/cables/
+
+$(OUTDIR):
+	$(RM) -r $(OUTDIR)
+	$(MKDIR_P) $(OUTDIR)
+	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
+	$(MKDIR_P) $(OUTDIR)/css
+	cp -f $(LAYOUT_FILES) $(OUTDIR)/css/
+	$(MKDIR_P) $(OUTDIR)/docs/man
+	cp -fR $(WEBSITE_DEPS) $(OUTDIR)/docs/
+	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
+	$(MKDIR_P) $(OUTDIR)/scripts
+	cp -f $(SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
+	$(MKDIR_P) $(OUTDIR)/protocols
+	cp -f protocols/*.html $(OUTDIR)/protocols/
+	cp -fR protocols/images $(OUTDIR)/protocols
+
+clean-local:
+	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
+	rm -rf	\
+		$(WEBSITE_FILES)	\
+		$(OUTDIR)	\
+		images/	\
+		ups-html.txt	\
+		scripts/ups_data.js
+
+ups-html.txt scripts/ups_data.js: nut/data/driver.list.in
+	cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list
+	@if python -c "import json,simplejson,lxml"; then	\
+		echo "Regenerating the HTML and JSON formated HCL tables.";	\
+		cd tools/ && ./nut-hclinfo.py;	\
+	else	\
+		echo "----------------------------------------------------------------------";	\
+		echo "Warning: either Python, or a required module (json, simplejson, lxml) ";	\
+		echo "is not available.";	\
+		echo "Skipping the HTML and JSON formated HCL tables regeneration.";	\
+		echo "----------------------------------------------------------------------";	\
+	fi
+
+index.html: website.txt news.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+
+acknowledgements.html: nut/docs/acknowledgements.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+cables.html: nut/docs/cables.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+
+download.html: nut/docs/download.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+
+documentation.html: nut/docs/documentation.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+features.html: nut/docs/features.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+nut-qa.html: nut/docs/nut-qa.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+projects.html: projects.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+
+stable-hcl.html: stable-hcl.txt ups-html.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
+
+support.html: nut/docs/support.txt
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+SUFFIXES = .txt .html
+
+.txt.html:
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+.PHONY:	\
+	prerequisites	\
+	$(OUTDIR)

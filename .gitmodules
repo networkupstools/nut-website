@@ -1,0 +1,3 @@
+[submodule "nut"]
+	path = nut
+	url = https://github.com/zykh/nut.git
