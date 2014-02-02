@@ -28,14 +28,14 @@ Eaton
 
 Documents in this section are provided courtesy of Eaton.
 
- - link:ups-protocols/eaton/UC2concept-1002889j.odt[UPScode II Concept Description] (ODT, 50 KB)
+ - link:protocols/eaton/UC2concept-1002889j.odt[UPScode II Concept Description] (ODT, 50 KB)
  - <<mge,MGE Office Protection Systems protocol library>> (serial SHUT, USB and SNMP protocols)
  - EATON (prev. Powerware) XCP protocol:
-  * link:ups-protocols/eaton/XCP_Rev_C1_Public_021309.pdf[X-format Communications Protocol (XCP) Specification] (PDF, 996 KB)
-  * link:ups-protocols/eaton/XCP_Alarm_Map_021309.pdf[XCP Alarm Map] (PDF, 54 KB)
-  * link:ups-protocols/eaton/XCP_Meter_Map_021309.pdf[XCP Meter Map] (PDF, 21 KB)
+  * link:protocols/eaton/XCP_Rev_C1_Public_021309.pdf[X-format Communications Protocol (XCP) Specification] (PDF, 996 KB)
+  * link:protocols/eaton/XCP_Alarm_Map_021309.pdf[XCP Alarm Map] (PDF, 54 KB)
+  * link:protocols/eaton/XCP_Meter_Map_021309.pdf[XCP Meter Map] (PDF, 21 KB)
  - EATON (prev. Powerware) SNMP information:
-  * link:ups-protocols/snmp/Xups.mib[Powerware PowerMIB (XUPS-MIB)] (TXT, 71 KB)
+  * link:protocols/snmp/Xups.mib[Powerware PowerMIB (XUPS-MIB)] (TXT, 71 KB)
 
 - link:protocols/fortress.html[Best Fortress protocol] - for LI 520, 720, 1020, and 1420 models
 - link:protocols/sola.html[SOLA/Best Power protocol (Phoenixtec)] - courtesy of Invensys Energy Systems
@@ -44,7 +44,7 @@ Documents in this section are provided courtesy of Eaton.
 MicroDowell
 -----------
 
-- link:ups-protocols/MicroDowell_UPS_serial_protocol_v3.3.1.pdf[MicroDowell UPS Serial Protocol v3.3.1] (PDF, 225KB)
+- link:protocols/microdowell/MicroDowell_UPS_serial_protocol_v3.3.1.pdf[MicroDowell UPS Serial Protocol v3.3.1] (PDF, 225KB)
 
 
 [[mge]]
@@ -57,12 +57,12 @@ These have been mirrored from their their web server.
 
 The Utalk (legacy ASCII protocol) documents only applies to MGE UPS SYSTEMS.
 
-- link:ups-protocols/mge/MGE-mibs.pdf[MGE UPS SYSTEMS SNMP MIBS descriptions] (PDF, 78 KB)
-- link:ups-protocols/mge/NUT_MGE_USB_Devices_Draft_AA.pdf[MGE USB Devices Draft AA] - official MGE HID UPS data (PDF, 310 KB)
-- link:ups-protocols/mge/51029473zaac.pdf[Simplified SHUT protocol] (PDF, 63 KB)
-- link:ups-protocols/mge/9260zw_g.pdf[U-Talk protocol general specifications] (PDF, 104 KB)
-- link:ups-protocols/mge/9261zwfa.pdf[U-Talk command set specifications] (PDF, 288 KB)
-- link:ups-protocols/mge/minutalk.pdf[U-Talk basic command set for UPS single monitoring communication] (PDF, 7 KB)
+- link:protocols/mge/MGE-mibs.pdf[MGE UPS SYSTEMS SNMP MIBS descriptions] (PDF, 78 KB)
+- link:protocols/mge/NUT_MGE_USB_Devices_Draft_AA.pdf[MGE USB Devices Draft AA] - official MGE HID UPS data (PDF, 310 KB)
+- link:protocols/mge/51029473zaac.pdf[Simplified SHUT protocol] (PDF, 63 KB)
+- link:protocols/mge/9260zw_g.pdf[U-Talk protocol general specifications] (PDF, 104 KB)
+- link:protocols/mge/9261zwfa.pdf[U-Talk command set specifications] (PDF, 288 KB)
+- link:protocols/mge/minutalk.pdf[U-Talk basic command set for UPS single monitoring communication] (PDF, 7 KB)
 
 
 ONEAC
@@ -82,10 +82,10 @@ Powercom
 
 All these document are officially provided by Powercom
 
-- link:ups-protocols/powercom/Software_USB_communication_controller_BNT_series.doc[USB information for BNT series]
-- link:ups-protocols/powercom/Software_USB_communication_controller_IMPERIAL_series_R21.doc[USB information for IMPERIAL series]
-- link:ups-protocols/powercom/Software_USB_communication_controller_SKP_series.doc[USB information for SKP series]
-- link:ups-protocols/powercom/Software_USB_communication_controller_WOW_series.doc[USB information for WOW series]
+- link:protocols/powercom/Software_USB_communication_controller_BNT_series.doc[USB information for BNT series]
+- link:protocols/powercom/Software_USB_communication_controller_IMPERIAL_series_R21.doc[USB information for IMPERIAL series]
+- link:protocols/powercom/Software_USB_communication_controller_SKP_series.doc[USB information for SKP series]
+- link:protocols/powercom/Software_USB_communication_controller_WOW_series.doc[USB information for WOW series]
 
 
 PowerKinetics
@@ -99,9 +99,9 @@ Riello
 
 All these document are officially provided by Riello
 
-- link:ups-protocols/riello/PSGPSER-0104.pdf[GPSER protocol]
-- link:ups-protocols/riello/PSSENTR-0100.pdf[Sentry HPS / HTS protocol]
-- link:ups-protocols/riello/Riello_UPS_protocol_list.pdf[UPS protocol list]
+- link:protocols/riello/PSGPSER-0104.pdf[GPSER protocol]
+- link:protocols/riello/PSSENTR-0100.pdf[Sentry HPS / HTS protocol]
+- link:protocols/riello/Riello_UPS_protocol_list.pdf[UPS protocol list]
 
 
 Standard protocols
@@ -123,19 +123,19 @@ SNMP
 Documents in this section are provided courtesy of various manufacturers.
 
 - IETF Management Information Base:
- * link:ups-protocols/snmp/rfc1628.mib[UPS MIB (RFC 1628)] (TXT, 64 KB)
- * link:ups-protocols/snmp/stdupsv1.mib[fixed UPS MIB (RFC 1628)] (TXT, 45 KB)
+ * link:protocols/snmp/rfc1628.mib[UPS MIB (RFC 1628)] (TXT, 64 KB)
+ * link:protocols/snmp/stdupsv1.mib[fixed UPS MIB (RFC 1628)] (TXT, 45 KB)
 
 - APC Management Information Base:
- * link:ups-protocols/snmp/powernet344.mib[UPS MIB (PowerNet)] (TXT, 484 KB)
- * link:ups-protocols/snmp/APC-Powernet.pdf[MIB description] (PDF, 998 KB)
+ * link:protocols/snmp/powernet344.mib[UPS MIB (PowerNet)] (TXT, 484 KB)
+ * link:protocols/snmp/APC-Powernet.pdf[MIB description] (PDF, 998 KB)
 
 - MGE Management Information Base:
- * link:ups-protocols/snmp/mgeups.mib[UPS MIB (MGE-MIB)] (TXT, 76 KB)
- * link:ups-protocols/mge/MGE-mibs.pdf[MIB description] (PDF, 78 KB)
+ * link:protocols/snmp/mgeups.mib[UPS MIB (MGE-MIB)] (TXT, 76 KB)
+ * link:protocols/mge/MGE-mibs.pdf[MIB description] (PDF, 78 KB)
 
 - EATON (prev. Powerware) Management Information Base:
- * link:ups-protocols/snmp/Xups.mib[EATON (prev. Powerware) PowerMIB (XUPS-MIB)] (TXT, 71 KB)
+ * link:protocols/snmp/Xups.mib[EATON (prev. Powerware) PowerMIB (XUPS-MIB)] (TXT, 71 KB)
 
 - Offsite links
  * http://www.liebert.com/downloads/[Liebert MIBs]

@@ -129,6 +129,7 @@ $(OUTDIR):
 	$(MKDIR_P) $(OUTDIR)/protocols
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols
+	cp -fRT protocols/static/ $(OUTDIR)/protocols/
 
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
