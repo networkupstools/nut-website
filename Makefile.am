@@ -54,6 +54,7 @@ WEBSITE_FILES =	\
 	ups-protocols.html
 
 WEBSITE_DEPS =	\
+	nut/docs/cables.pdf	\
 	nut/docs/developer-guide.chunked	\
 	nut/docs/developer-guide.pdf	\
 	nut/docs/FAQ.html	\
