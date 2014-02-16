@@ -14,7 +14,7 @@ Makefile.in
 missing
 
 # NUT Website-specific
-/images
-output
 ups-html.txt
-*.html
+/images/
+/output/
+/*.html
