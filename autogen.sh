@@ -4,7 +4,7 @@
 
 spacer="----------------------------------------------------------------------"
 
-function quit () {
+quit () {
 	echo "$spacer"
 	echo "Unable to build website"
 	exit
