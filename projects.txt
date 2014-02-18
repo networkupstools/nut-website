@@ -109,6 +109,12 @@ KNutSetting is a visual KDE tool for configuring NUT - Network UPS Tools.
 Other software projects
 -----------------------
 
+[[nut-snmpagent]]
+link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+nut-snmpagent is an SNMP wrapper to expose the upsc output into Net-SNMP
+
 [[PyNUT]]
 link:http://www.lestat.st/en/informatique/projets/pynut[PyNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
