@@ -1,3 +1,6 @@
+# Tell aclocal in what directory it should look for macros
+ACLOCAL_AMFLAGS = -I nut/m4
+
 SUBDIRS = protocols
 
 IMAGE_FILES =	\
