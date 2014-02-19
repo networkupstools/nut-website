@@ -117,10 +117,8 @@ ca. 1999
 The following information was provided by Dean Gibson about the "Home Office" models:
 
 [quote]
---
 From my testing with Belkin's software, the F6C units and F6H units appear to NOT be software compatible.
 Belkin's Bulldog Plus software (Windows or UNIX, either from the included CD or from the web site) refuses to talk to the F6H units, but the basic Bulldog software (Windows or UNIX) on the CD that comes with the F6H units works just fine (although appears to be extremely limited in capability) with those units.
---
 
 Only the "Universal UPS" is described in this document.
 
