@@ -38,6 +38,11 @@ rawHCL="../nut/data/driver.list";
 webJsonHCL = "../scripts/ups_data.js";
 webStaticHCL = "../ups-html.txt";
 
+# Relative path to NUT's manpages directory
+manDir = "../nut/docs/man/"
+# Path to manpages from HCL *in* website
+webManDir = "docs/man/"
+
 # from http://wiki.python.org/moin/EscapingHtml
 
 html_escape_table = {
@@ -147,7 +152,7 @@ def buildHTMLTable(deviceData):
         "3": "yellow", "4": "blue", "5": "green"
     }
     hiddenClass = "hidden"
-    
+
     # Build table header
     table = E.table(id="ups_list", border="1")
     header = E.tr()
@@ -191,8 +196,19 @@ def buildHTMLTable(deviceData):
             cellContent = []
             for field in column["fields"]:
                 fieldIndex = dataFields.index(field)
-                fieldContent = device[fieldIndex]
-                cellContent.append(html_escape(fieldContent))
+                # Link driver => manpage
+                if field == "driver":
+                    words = device[fieldIndex].split()
+                    linkedWords = []
+                    for word in words:
+                        if word in manPages:
+                            linkedWords.append("<a href=\"%s.html\">%s</a>" % (webManDir + word, word))
+                        else:
+                            linkedWords.append(html_escape(word))
+                    cellContent.append(" ".join(linkedWords))
+                else:
+                    fieldContent = device[fieldIndex]
+                    cellContent.append(html_escape(fieldContent))
             cellContent = "<br />".join(cellContent)
             
             try:
@@ -244,8 +260,17 @@ def buildHTMLTable(deviceData):
 # main program
 deviceData = buildData(rawHCL)
 
-# Dump device data as JSON
-jsonData = "var UPSData = %s" % json.dumps(deviceData, encoding="utf-8")
+# List of manpages
+manPages = []
+try:
+    for name in os.listdir(manDir):
+        if os.path.isfile(os.path.join(manDir, name)) and name.endswith(".html") and name != "index.html":
+            manPages.append(name[:-5])
+except OSError:
+    print "Unable to get manpage list from '%s'" % manDir
+
+# Dump device data and manpage names as JSON
+jsonData = "var UPSData = %s, NUTManPages = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"))
 
 # First, check if target directory exists (which is not the case for 'dist')
 dir = os.path.dirname(webJsonHCL)

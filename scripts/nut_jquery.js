@@ -4,6 +4,9 @@ var NUT = {
 	listID: "#ups_list",
 	listBodyID: "#ups_list_body",
 
+	// Path to manpages from HCL *in* website
+	webManDir: "docs/man/",
+
 	// Field names
 	fields: [
 		"manufacturer",
@@ -316,6 +319,22 @@ var NUT = {
 				}, this);
 
 				cellContent = cellContent.join("<br />");
+
+				// Link driver => manpage
+				if (column.indexOf("driver") != -1) {
+
+					var words = cellContent.split(" ");
+
+					words.forEach(function(word, index) {
+
+						if (NUTManPages.indexOf(word) != -1)
+							words[index] = "<a href=\"" + NUT.webManDir + word + ".html\">" + word + "</a>";
+
+					});
+
+					cellContent = words.join(" ");
+
+				}
 
 				// Inspect the last cell on this column and increase row span if the current cell has the same content
 				var cH = cellHistory[colIndex];
