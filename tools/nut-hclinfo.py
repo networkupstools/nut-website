@@ -215,8 +215,18 @@ def buildHTMLTable(deviceData):
                 cH = cellHistory[colIndex]
             except:
                 cH = False
-                
-            if not column["name"] == "driver" and cH and cH.get("text") == cellContent:
+
+            # Find last seen support-level (to merge driver rows)
+            if column["name"] == "driver":
+                for slI, slC in enumerate(columns):
+                    if slC["name"] == "support-level":
+                        break
+                try:
+                    slcH = cellHistory[slI]
+                except:
+                    slcH = False
+
+            if cH and cH.get("text") == cellContent and (column["name"] != "driver" or (slcH and slcH.get("text") == device[dataFields.index("support-level")])):
                 cH["rowspan"] = cH.get("rowspan", 1) + 1
             else:
                 cell = { "text": cellContent, "rowspan": 1 }
