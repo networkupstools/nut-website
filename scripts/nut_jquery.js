@@ -4,6 +4,9 @@ var NUT = {
 	listID: "#ups_list",
 	listBodyID: "#ups_list_body",
 
+	// Path to manpages from HCL *in* website
+	webManDir: "docs/man/",
+
 	// Field names
 	fields: [
 		"manufacturer",
@@ -317,12 +320,49 @@ var NUT = {
 
 				cellContent = cellContent.join("<br />");
 
-				// Inspect the last cell on this column and increase row span if the current cell has the same content
+				// Last cell on this column
 				var cH = cellHistory[colIndex];
 
-				if (column.indexOf("driver") == -1 && cH && cH.html == cellContent)
-					cH.rowSpan += 1;
-				else {
+				// Last seen support-level
+				var slcH;
+
+				if (column.indexOf("driver") != -1) {
+
+					// Link driver => manpage
+					var words = cellContent.split(" ");
+
+					words.forEach(function(word, index) {
+
+						if (NUTManPages.indexOf(word) != -1)
+							words[index] = "<a href=\"" + NUT.webManDir + word + ".html\">" + word + "</a>";
+
+					});
+
+					cellContent = words.join(" ");
+
+					// Find last seen support-level (to merge driver rows)
+					for (var i = 0; i < this.columns.length; i++) {
+
+						if (this.columns[i].indexOf("support-level") == -1)
+							continue;
+
+						slcH = cellHistory[i];
+						break;
+
+					}
+
+				}
+
+				// Inspect the last cell on this column and increase row span if the current cell has the same content (and support-level, for drivers only)
+				if (cH && cH.html == cellContent &&
+					(column.indexOf("driver") == -1 ||
+						(slcH && slcH.html == upsRow[this.fields.indexOf("support-level") || ""])
+					)
+				) {
+
+						cH.rowSpan += 1;
+
+				} else {
 
 					var cell = "";
 
