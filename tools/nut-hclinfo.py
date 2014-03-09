@@ -43,6 +43,11 @@ manDir = "../nut/docs/man/"
 # Path to manpages from HCL *in* website
 webManDir = "docs/man/"
 
+# Relative path to NUT's DDL directory
+ddlDir = "../ddl/"
+# Path to DDL directory *in* website
+webDdlDir = "ddl/"
+
 # from http://wiki.python.org/moin/EscapingHtml
 
 html_escape_table = {
@@ -206,6 +211,12 @@ def buildHTMLTable(deviceData):
                         else:
                             linkedWords.append(html_escape(word))
                     cellContent.append(" ".join(linkedWords))
+                elif field == "manufacturer" and ddl.get(device[fieldIndex].replace(" ", "_")):
+                    linkedMfr = "<a href=\"%s/\">%s</a>" % (webDdlDir + device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
+                    cellContent.append(linkedMfr)
+                elif field == "model" and ddl.get(device[dataFields.index("manufacturer")].replace(" ", "_")) and device[fieldIndex].replace(" ", "_") in ddl[device[dataFields.index("manufacturer")].replace(" ", "_")]:
+                    linkedModel = "<a href=\"%s/%s.html\">%s</a>" % (webDdlDir + device[dataFields.index("manufacturer")].replace(" ", "_"), device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
+                    cellContent.append(linkedModel)
                 else:
                     fieldContent = device[fieldIndex]
                     cellContent.append(html_escape(fieldContent))
@@ -279,8 +290,22 @@ try:
 except OSError:
     print "Unable to get manpage list from '%s'" % manDir
 
+# List of DDL manufacturers and devices dumps
+ddl = {}
+try:
+    for name in os.listdir(ddlDir):
+        path = os.path.join(ddlDir, name)
+        if not os.path.isdir(path) or not os.path.isfile(os.path.join(path, "index.html")):
+            continue
+        ddl[name] = []
+        for child in os.listdir(path):
+            if os.path.isfile(os.path.join(path, child)) and child.endswith(".html") and child != "index.html":
+                ddl[name].append(child[:-5])
+except OSError:
+    print "Unable to get DDL manufacturers/devices from '%s'" % ddlDir
+
 # Dump device data and manpage names as JSON
-jsonData = "var UPSData = %s, NUTManPages = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"))
+jsonData = "var UPSData = %s, NUTManPages = %s, NUTddl = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"), json.dumps(ddl, encoding="utf-8"))
 
 # First, check if target directory exists (which is not the case for 'dist')
 dir = os.path.dirname(webJsonHCL)

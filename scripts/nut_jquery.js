@@ -7,6 +7,9 @@ var NUT = {
 	// Path to manpages from HCL *in* website
 	webManDir: "docs/man/",
 
+	// Path to DDL directory *in* website
+	webDdlDir: "ddl/",
+
 	// Field names
 	fields: [
 		"manufacturer",
@@ -315,7 +318,50 @@ var NUT = {
 				var cellContent = [];
 
 				column.forEach(function(field) {
-					cellContent.push(upsRow[this.fields.indexOf(field)])
+
+					if (field == "driver") {
+
+						// Link driver => manpage
+						var words = upsRow[this.fields.indexOf(field)].split(" ");
+
+						words.forEach(function(word, index) {
+
+							if (NUTManPages.indexOf(word) != -1)
+								words[index] = "<a href=\"" + NUT.webManDir + word + ".html\">" + word + "</a>";
+
+						});
+
+						cellContent.push(words.join(" "));
+
+					} else if (field == "manufacturer") {
+
+						var mfr = upsRow[this.fields.indexOf(field)];
+						var mfrUnderscored = mfr.replace(/ /g, "_");
+
+						// Link manufacturer => DDL/manufacturer
+						if (NUTddl[mfrUnderscored])
+							cellContent.push("<a href=\"" + NUT.webDdlDir + mfrUnderscored + "/\">" + mfr + "</a>");
+						else
+							cellContent.push(mfr);
+
+					} else if (field == "model") {
+
+						var model = upsRow[this.fields.indexOf(field)];
+						var modelUnderscored = model.replace(/ /g, "_");
+						var mfr = upsRow[this.fields.indexOf("manufacturer")].replace(/ /g, "_");
+
+						// Link model => DDL/manufacturer/model.html
+						if (NUTddl[mfr] && NUTddl[mfr].indexOf(modelUnderscored) != -1)
+							cellContent.push("<a href=\"" + NUT.webDdlDir + mfr + "/" + modelUnderscored + ".html\">" + model + "</a>");
+						else
+							cellContent.push(model);
+
+					} else {
+
+						cellContent.push(upsRow[this.fields.indexOf(field)])
+
+					}
+
 				}, this);
 
 				cellContent = cellContent.join("<br />");
@@ -327,18 +373,6 @@ var NUT = {
 				var slcH;
 
 				if (column.indexOf("driver") != -1) {
-
-					// Link driver => manpage
-					var words = cellContent.split(" ");
-
-					words.forEach(function(word, index) {
-
-						if (NUTManPages.indexOf(word) != -1)
-							words[index] = "<a href=\"" + NUT.webManDir + word + ".html\">" + word + "</a>";
-
-					});
-
-					cellContent = words.join(" ");
 
 					// Find last seen support-level (to merge driver rows)
 					for (var i = 0; i < this.columns.length; i++) {
