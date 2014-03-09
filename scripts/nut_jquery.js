@@ -297,10 +297,14 @@ var NUT = {
 		// Build rows
 		var cellHistory = [], rows = [];
 
+		// Last seen support-level
+		var lastSeenSupportLevel;
+
 		var rowHistory = data[0][0];
 
 		var	classes = [ "even", "odd" ],
 			manufIndex = this.fields.indexOf("manufacturer"),
+			supportLevelIndex = this.fields.indexOf("support-level"),
 			currentClass = 0;
 
 		data.forEach(function(upsRow, rowIndex) {
@@ -369,30 +373,8 @@ var NUT = {
 				// Last cell on this column
 				var cH = cellHistory[colIndex];
 
-				// Last seen support-level
-				var slcH;
-
-				if (column.indexOf("driver") != -1) {
-
-					// Find last seen support-level (to merge driver rows)
-					for (var i = 0; i < this.columns.length; i++) {
-
-						if (this.columns[i].indexOf("support-level") == -1)
-							continue;
-
-						slcH = cellHistory[i];
-						break;
-
-					}
-
-				}
-
 				// Inspect the last cell on this column and increase row span if the current cell has the same content (and support-level, for drivers only)
-				if (cH && cH.html == cellContent &&
-					(column.indexOf("driver") == -1 ||
-						(slcH && slcH.html == upsRow[this.fields.indexOf("support-level") || ""])
-					)
-				) {
+				if (cH && cH.html == cellContent && (column.indexOf("driver") == -1 || (lastSeenSupportLevel == upsRow[supportLevelIndex]))) {
 
 						cH.rowSpan += 1;
 
@@ -428,6 +410,8 @@ var NUT = {
 				}
 
 			}, this);
+
+			lastSeenSupportLevel = upsRow[supportLevelIndex];
 
 			rows.push(cells);
 
