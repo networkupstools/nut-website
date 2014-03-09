@@ -1,3 +1,6 @@
 [submodule "nut"]
 	path = nut
 	url = https://github.com/networkupstools/nut.git
+[submodule "ddl"]
+	path = ddl
+	url = https://github.com/networkupstools/nut-ddl.git

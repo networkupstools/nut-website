@@ -71,13 +71,11 @@ WEBSITE_DEPS =	\
 # CSS based simulated frames layout.
 LAYOUT = web-layout
 
-ASCIIDOC_PARAMS =	\
+ADOC_PARAMS_COMMON =	\
 	--backend=xhtml11	\
 	--conf-file=$(srcdir)/$(LAYOUT).conf	\
 	--attribute icons	\
-	--attribute iconsdir=$(srcdir)/images	\
 	--attribute linkcss	\
-	--attribute scriptsdir=$(srcdir)/scripts	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
@@ -86,6 +84,11 @@ ASCIIDOC_PARAMS =	\
 	--attribute localdate=`TZ=UTC date +%Y-%m-%d`	\
 	--attribute localtime=`TZ=UTC date +%H:%M:%S`	\
 	--attribute=date="`TZ=UTC date`"
+
+ASCIIDOC_PARAMS =	\
+	$(ADOC_PARAMS_COMMON)	\
+	--attribute iconsdir=$(srcdir)/images	\
+	--attribute scriptsdir=$(srcdir)/scripts
 
 OUTDIR = output
 
@@ -97,6 +100,7 @@ all:	\
 	$(CABLE_IMAGE_FILES)	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
+	$(DDL_DIR)/index.html	\
 	scripts/ups_data.js	\
 	ups-html.txt	\
 	$(OUTDIR)
@@ -135,10 +139,25 @@ $(OUTDIR):
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols
 	cp -fR protocols/static/* $(OUTDIR)/protocols/
+	$(MKDIR_P) $(OUTDIR)/$(DDL_DIR)
+	cp -f $(DDL_DIR)/index.html $(OUTDIR)/$(DDL_DIR)
+	$(MKDIR_P) $(patsubst %,$(OUTDIR)/%raw,$(MANUFACTURERS))
+	for mfr in $(patsubst $(DDL_DIR)/%/,%,$(MANUFACTURERS)); do	\
+		cp -f $(DDL_DIR)/$${mfr}/*.html $(OUTDIR)/$(DDL_DIR)/$${mfr}/;	\
+	done
+	for rawfile in $(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.seq $(DDL_DIR)/*/*.nds); do	\
+		cp -f $${rawfile} $(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/};	\
+	done
+
 
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
 	rm -rf	\
+		$(MFR_TARGETS)	\
+		$(MODELS_TARGETS)	\
+		$(MODELS_TARGETS_RAW)	\
+		$(REPORTS_TARGETS)	\
+		$(DDL_DIR)/index.{txt,html}	\
 		$(WEBSITE_FILES)	\
 		$(OUTDIR)	\
 		images/	\
@@ -196,3 +215,117 @@ SUFFIXES = .txt .html
 .PHONY:	\
 	prerequisites	\
 	$(OUTDIR)
+
+### Devices Dumps Library
+
+## AsciiDoc params for DDL
+# Docs in DDL dir
+ADOC_PARAMS_DDL_L1 =	\
+	$(ADOC_PARAMS_COMMON)	\
+	--attribute iconsdir=../images	\
+	--attribute scriptsdir=../scripts	\
+	--attribute stylesdir=../css	\
+	--attribute root=../
+
+# Docs in children directories of DDL dir
+ADOC_PARAMS_DDL_L2 =	\
+	$(ADOC_PARAMS_COMMON)	\
+	--attribute iconsdir=../../images	\
+	--attribute scriptsdir=../../scripts	\
+	--attribute stylesdir=../../css	\
+	--attribute root=../../
+
+## Handy things..
+# Empty string
+EMPTY :=
+# A space..
+SP := $(EMPTY) $(EMPTY)
+
+# For DDL generation, we need secondary expansion; enable it from now on:
+.SECONDEXPANSION:
+
+## DLL settings
+# Device Dumps Library directory
+DDL_DIR := ddl
+# Directories to ignore in DDL
+IGNORE_DDL_DIR := .git
+
+## Manufacturers
+# -> DDL_DIR/mfr_1/ DDL_DIR/mfr_2/ ... DDL_DIR/mfr_n/
+MANUFACTURERS := $(shell echo -e "$(subst $(SP),\n,$(filter-out $(patsubst %,%/,$(DDL_DIR) $(IGNORE_DDL_DIR)),$(sort $(dir $(wildcard $(DDL_DIR)/*/)))))" | sort -)
+
+## Reports
+# .{nds,dev} files (DDL_DIR/mfr_n/<manufacturer>__<model>__<driver-name>__<nut-version>__<report-number>.{dev,nds})
+# -> DDL_DIR/mfr_n/<manufacturer>__<model>__<driver-name>__<driver-name>__<nut-version>__<report-numver>.{dev,nds}.txt ...
+REPORTS_TARGETS := $(addsuffix .txt,$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.nds))
+
+# For .dev files, take in consideration also .seq files with the same name, if available
+# For both .dev and .nds files, also consider manpages ('prerequisites')
+$(REPORTS_TARGETS): $$(patsubst %.txt,%,$$@) $$(wildcard $$(patsubst %.dev.txt,%.seq,$$(filter %.dev.txt,$$@))) $(srcdir)/tools/nut-ddl.py | prerequisites
+	$(srcdir)/tools/nut-ddl.py $< $@
+
+## Pages to build for each model
+# DDL_DIR/mfr_n/<model>.txt ...
+MODELS_TARGETS_RAW := $(addsuffix .txt,$(foreach MFR,$(MANUFACTURERS),$(addprefix $(MFR),\
+$(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds))),$(word 2,$(subst __,$(SP),$(RAWFILE)))))\
+)))
+
+# Raw asciidoc pages (.txt):
+# DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
+# note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
+$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell echo -e "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -k 4.1,4.5rV -k 5n -t @ -)))
+	$(file > $@,= $(subst _,$(SP),$(basename $(notdir $@))))
+	$(file >> $@,)
+	$(file >> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
+	$(file >> $@,)
+	$(foreach REPORT,$^,$(file >> $@,) $(file >> $@,include::$(notdir $(REPORT))[]) $(file >> $@,))
+
+# DDL_DIR/mfr_n/<model>.html ...
+MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
+
+# Compiled asciidoc pages (.html):
+$(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o $@ $<
+
+## Pages to build for each manufacturer
+# -> DDL_DIR/mfr_1/index.html ... DDL_DIR/mfr_n/index.html
+MFR_TARGETS := $(addsuffix index.html,$(MANUFACTURERS))
+
+# Raw asciidoc pages (.txt)
+$(DDL_DIR)/%/index.txt: $$(shell echo -e "$$(subst $$(SP),\n,$$(addsuffix .html,$$(addprefix $$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))))" | sort -)
+	$(file > $@,= $(subst _,$(SP),$*))
+	$(file >> $@,)
+	$(file >> $@,link:../#_supported_devices[Click here] to see a list of other manufacturers for which reports are available.)
+	$(file >> $@,)
+	$(file >> $@,)
+	$(file >> $@,== Supported models)
+	$(file >> $@,)
+	$(foreach MODEL,$^,$(file >> $@,- link:$(basename $(notdir $(MODEL))).html[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
+
+# Compiled asciidoc pages (.html)
+$(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) -o $@ $<
+
+## DDL home
+# Raw asciidoc page (.txt)
+$(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
+	$(file > $@,= Devices Dumps Library)
+	$(file >> $@,:nut-website-root: ../)
+	$(file >> $@,)
+	$(file >> $@,:preamble-only:)
+	$(file >> $@,include::$(notdir $<)[])
+	$(file >> $@,)
+	$(file >> $@,)
+	$(file >> $@,== Supported devices)
+	$(file >> $@,)
+	$(foreach MFR,$(MFR_TARGETS),$(file >> $@,- link:$(patsubst $(DDL_DIR)/%,%,$(MFR))[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
+	$(file >> $@,)
+	$(file >> $@,)
+	$(file >> $@,:preamble-only!:)
+	$(file >> $@,include::$(notdir $<)[])
+
+# Compiled asciidoc page (.html)
+$(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
+
+###

@@ -9,6 +9,8 @@ for information about which drivers are developed with the support of the manufa
 
 Be sure to also read the <<footnotes,footnotes>>.
 
+For a list of user-reported dumps of NUT-supported devices, go visit the link:ddl/['Devices Dumps Library'].
+
 ================================================================================
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
