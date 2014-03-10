@@ -51,6 +51,16 @@ ddlDir = "../ddl/"
 # Path to DDL directory *in* website
 webDdlDir = "ddl/"
 
+# Device data fields definition
+dataFields = [
+    "manufacturer",
+    "device-type",
+    "support-level",
+    "model",
+    "comment",
+    "driver"
+]
+
 ###
 
 # HTML escaping
@@ -77,7 +87,6 @@ def buildData(deviceDataFile):
     """
 
     deviceData = []
-    numFields = 6 # Manufacturer, type, support level, model comment, driver
 
     try:
         file = open(deviceDataFile, "r")
@@ -103,7 +112,7 @@ def buildData(deviceDataFile):
         # We suppose there are no double-quotes in fields
         row = re.findall(r'"([^"]*)",?', line)
 
-        if len(row) != numFields:
+        if len(row) != len(dataFields):
             print "Warning: Unexpected number of fields in line: %s" % row
             print "\tLine will be skipped."
         else:
@@ -157,16 +166,6 @@ def buildHTMLTable(deviceData):
             "text": "Support Level",
             "fields": ["support-level"]
         },
-    ]
-
-    # Device data fields definition
-    dataFields = [
-        "manufacturer",
-        "device-type",
-        "support-level",
-        "model",
-        "comment",
-        "driver"
     ]
 
     # FIXME: CSS classes should be defined in script global settings
