@@ -28,8 +28,7 @@ except ImportError:
     import simplejson as json # Required for Python < 2.6
 
 import re
-import sys
-import os, errno
+import os
 
 ###
 
@@ -68,11 +67,6 @@ html_escape_table = {
 def html_escape(text):
     """Produce entities within text."""
     return "".join(html_escape_table.get(c,c) for c in text)
-
-###
-
-class WrongFieldNumberException(Exception):
-    pass
 
 ###
 
