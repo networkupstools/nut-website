@@ -200,6 +200,8 @@ def buildHTMLTable(deviceData):
     classes = ("even", "odd")
     currentClass = 0
     manufIndex = dataFields.index("manufacturer")
+    lastSeenSupportLevel = "-1"
+    supportLevelIndex = dataFields.index("support-level")
 
     # Build table rows
     for device in deviceData:
@@ -250,17 +252,7 @@ def buildHTMLTable(deviceData):
             except:
                 cH = False
 
-            # Find last seen support-level (to merge driver rows)
-            if column["name"] == "driver":
-                for slI, slC in enumerate(columns):
-                    if slC["name"] == "support-level":
-                        break
-                try:
-                    slcH = cellHistory[slI]
-                except:
-                    slcH = False
-
-            if cH and cH.get("text") == cellContent and (column["name"] != "driver" or (slcH and slcH.get("text") == device[dataFields.index("support-level")])):
+            if cH and cH.get("text") == cellContent and (column["name"] != "driver" or (lastSeenSupportLevel == device[supportLevelIndex])):
                 cH["rowspan"] = cH.get("rowspan", 1) + 1
             else:
                 cell = {
@@ -281,6 +273,8 @@ def buildHTMLTable(deviceData):
                     cellHistory.append(cell)
 
             colIndex += 1
+
+        lastSeenSupportLevel = device[supportLevelIndex]
 
         rows.append(cells)
 
