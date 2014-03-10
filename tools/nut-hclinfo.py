@@ -26,10 +26,14 @@ try:
     import json
 except ImportError:
     import simplejson as json # Required for Python < 2.6
-  
+
 import re
 import sys
 import os, errno
+
+###
+
+# Global settings
 
 # HCL file location and name
 rawHCL="../nut/data/driver.list";
@@ -48,6 +52,9 @@ ddlDir = "../ddl/"
 # Path to DDL directory *in* website
 webDdlDir = "ddl/"
 
+###
+
+# HTML escaping
 # from http://wiki.python.org/moin/EscapingHtml
 
 html_escape_table = {
@@ -56,16 +63,18 @@ html_escape_table = {
     "'": "&apos;",
     ">": "&gt;",
     "<": "&lt;",
-    }
+}
 
 def html_escape(text):
     """Produce entities within text."""
     return "".join(html_escape_table.get(c,c) for c in text)
 
-# # #
+###
 
 class WrongFieldNumberException(Exception):
     pass
+
+###
 
 def buildData(deviceDataFile):
     """
@@ -75,127 +84,146 @@ def buildData(deviceDataFile):
 
     deviceData = []
     numFields = 6 # Manufacturer, type, support level, model comment, driver
-    
+
     try:
         file = open(deviceDataFile, "r")
     except IOError:
         print "Cannot open", deviceDataFile
         exit(1)
-           
-    for line in file:     
+
+    for line in file:
         # Ignore empty lines or comments
         if re.match(r"^$|^\s*#", line):
             continue
-        
+
         # Strip all trailing whitespace chars
         line = re.sub(r"\s+$", "", line)
-        
+
         # Replace all tabs by commas
         line = re.sub(r"\t", ",", line)
 
         # Remove trailing comma
         line = re.sub(r",$", "", line)
-        
+
         # Split fields and append result to device data list
         # We suppose there are no double-quotes in fields
         row = re.findall(r'"([^"]*)",?', line)
-        
+
         if len(row) != numFields:
             print "Warning: Unexpected number of fields in line: %s" % row
             print "\tLine will be skipped."
         else:
             deviceData.append(re.findall(r'"([^"]*)",?', line))
-    
+
     return deviceData
+
+###
 
 def buildHTMLTable(deviceData):
     """
     Convert provided device data into an HTML table.
     Return string representation of the HTML table.
-    
+
     Identical cells are merged vertically with rowspan attribute.
     The driver column is color-coded on support level.
-    
+
     A support level column is also provided. It should be hidden in a graphic
     browser but should be visible from a console based browser (w3m).
     """
-    
+
     from lxml import etree, html
     from lxml.builder import E
-    
+
     if not type(deviceData).__name__ == "list" or len(deviceData) == 0:
         raise Exception("Incorrect data was provided")
-    
+
     # HTML table columns definition
     columns = [
         {
-            "name": "manufacturer", "id": "manufacturer-col",
-            "text": "Manufacturer", "fields": ["manufacturer"]
+            "name": "manufacturer",
+            "id": "manufacturer-col",
+            "text": "Manufacturer",
+            "fields": ["manufacturer"]
         },
         {
-            "name": "model", "id": "model-col",
-            "text": "Model", "fields": ["model", "comment"]
+            "name": "model",
+            "id": "model-col",
+            "text": "Model",
+            "fields": ["model", "comment"]
         },
         {
-            "name": "driver", "id": "driver-col",
-            "text": "Driver", "fields": ["driver"]
+            "name": "driver",
+            "id": "driver-col",
+            "text": "Driver",
+            "fields": ["driver"]
         },
         {
-            "name": "support-level", "id": "support-level-col",
-            "text": "Support Level", "fields": ["support-level"]
+            "name": "support-level",
+            "id": "support-level-col",
+            "text": "Support Level",
+            "fields": ["support-level"]
         },
     ]
+
     # Device data fields definition
     dataFields = [
-        "manufacturer", "device-type", "support-level",
-        "model", "comment", "driver"
+        "manufacturer",
+        "device-type",
+        "support-level",
+        "model",
+        "comment",
+        "driver"
     ]
-    
+
     # FIXME: CSS classes should be defined in script global settings
     supportLevelClasses = {
-        "0": "", "1": "red", "2": "orange",
-        "3": "yellow", "4": "blue", "5": "green"
+        "0": "",
+        "1": "red",
+        "2": "orange",
+        "3": "yellow",
+        "4": "blue",
+        "5": "green"
     }
     hiddenClass = "hidden"
 
     # Build table header
     table = E.table(id="ups_list", border="1")
     header = E.tr()
-    
+
     for column in columns:
         td = E.td(column.get("text"), id=column.get("id"))
         if column["id"] == "support-level-col":
             td.set("class", hiddenClass)
         header.append(td)
-    
+
     table.append(E.thead(header))
-    
+
     # Build table body
     tbody = E.tbody(id="ups_list_body")
-    
+
     cellHistory = []
     rowHistory = deviceData[0][0]
     rows = []
     classes = ("even", "odd")
     currentClass = 0
     manufIndex = dataFields.index("manufacturer")
-    
+
     # Build table rows
     for device in deviceData:
-        
+
         # Devices are expected to have a specified number of fields
         if len(device) < len(dataFields):
             print "Unexpected number of fields in device: %s" % device
             print "Device will not be included in result set."
             continue
-        
+
         # Alternate CSS class if current manufacturer is different from the last
         if device[manufIndex] != rowHistory :
             currentClass = (currentClass + 1) % 2
             rowHistory = device[manufIndex]
-        
+
         cells = []
-        
+
         colIndex = 0
         for column in columns:
             cellContent = []
@@ -211,9 +239,11 @@ def buildHTMLTable(deviceData):
                         else:
                             linkedWords.append(html_escape(word))
                     cellContent.append(" ".join(linkedWords))
+                # Link manufacturer => DDL
                 elif field == "manufacturer" and ddl.get(device[fieldIndex].replace(" ", "_")):
                     linkedMfr = "<a href=\"%s/\">%s</a>" % (webDdlDir + device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
                     cellContent.append(linkedMfr)
+                # Link model => DDL
                 elif field == "model" and ddl.get(device[dataFields.index("manufacturer")].replace(" ", "_")) and device[fieldIndex].replace(" ", "_") in ddl[device[dataFields.index("manufacturer")].replace(" ", "_")]:
                     linkedModel = "<a href=\"%s/%s.html\">%s</a>" % (webDdlDir + device[dataFields.index("manufacturer")].replace(" ", "_"), device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
                     cellContent.append(linkedModel)
@@ -221,7 +251,7 @@ def buildHTMLTable(deviceData):
                     fieldContent = device[fieldIndex]
                     cellContent.append(html_escape(fieldContent))
             cellContent = "<br />".join(cellContent)
-            
+
             try:
                 cH = cellHistory[colIndex]
             except:
@@ -240,24 +270,27 @@ def buildHTMLTable(deviceData):
             if cH and cH.get("text") == cellContent and (column["name"] != "driver" or (slcH and slcH.get("text") == device[dataFields.index("support-level")])):
                 cH["rowspan"] = cH.get("rowspan", 1) + 1
             else:
-                cell = { "text": cellContent, "rowspan": 1 }
+                cell = {
+                    "text": cellContent,
+                    "rowspan": 1
+                }
                 if column["name"] == "driver":
                     cell["class"] = supportLevelClasses[device[dataFields.index("support-level")]]
                 else:
                     cell["class"] = classes[currentClass]
                 if column["name"] == "support-level":
                     cell["class"] = hiddenClass
-                    
+
                 cells.append(cell)
                 try:
                     cellHistory[colIndex] = cell
                 except:
                     cellHistory.append(cell)
-                
+
             colIndex += 1
-        
+
         rows.append(cells)
-    
+
     for row in rows:
         r = E.tr()
         for cell in row:
@@ -269,16 +302,20 @@ def buildHTMLTable(deviceData):
                     attr += " %s='%s'" % (key, val)
                 else:
                     innerHTML = val
-            
+
             r.append(html.fromstring("<td%s>%s</td>" % (attr, innerHTML)))
-            
+
         tbody.append(r)
-            
+
     table.append(tbody)
-    
+
     return etree.tostring(table, pretty_print=True)
 
-# main program
+###
+
+# Main program
+
+# Build data
 deviceData = buildData(rawHCL)
 
 # List of manpages
@@ -307,13 +344,14 @@ except OSError:
 # Dump device data and manpage names as JSON
 jsonData = "var UPSData = %s, NUTManPages = %s, NUTddl = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"), json.dumps(ddl, encoding="utf-8"))
 
-# First, check if target directory exists (which is not the case for 'dist')
+# First, check if target directory exists
 dir = os.path.dirname(webJsonHCL)
 try:
     os.makedirs(dir)
 except OSError:
     pass
 
+# Write JSON HCL
 try:
     file = open(webJsonHCL, "w")
     file.write(jsonData)
