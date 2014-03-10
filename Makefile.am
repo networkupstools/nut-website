@@ -249,6 +249,11 @@ SP := $(EMPTY) $(EMPTY)
 # For DDL generation, we need secondary expansion; enable it from now on:
 .SECONDEXPANSION:
 
+# File function for backward compatibility (before make 3.82.90); new versions of make won't use this variable since a built-in function with the same name is already defined
+# - $(1): operand (> or >>) + file name
+# - $(2): text
+file = $(shell echo "$(2)" $(1))
+
 ## DLL settings
 # Device Dumps Library directory
 DDL_DIR := ddl
@@ -279,11 +284,11 @@ $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds)
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
 # note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
 $(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell echo -e "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -k 4.1,4.5rV -k 5n -t @ -)))
-	$(file > $@,= $(subst _,$(SP),$(basename $(notdir $@))))
-	$(file >> $@,)
-	$(file >> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
-	$(file >> $@,)
-	$(foreach REPORT,$^,$(file >> $@,) $(file >> $@,include::$(notdir $(REPORT))[]) $(file >> $@,))
+	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
+	$(call file,>> $@,)
+	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
+	$(call file,>> $@,)
+	$(foreach REPORT,$^,$(call file,>> $@,) $(call file,>> $@,include::$(notdir $(REPORT))[]) $(call file,>> $@,))
 
 # DDL_DIR/mfr_n/<model>.html ...
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
@@ -298,14 +303,14 @@ MFR_TARGETS := $(addsuffix index.html,$(MANUFACTURERS))
 
 # Raw asciidoc pages (.txt)
 $(DDL_DIR)/%/index.txt: $$(shell echo -e "$$(subst $$(SP),\n,$$(addsuffix .html,$$(addprefix $$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))))" | sort -)
-	$(file > $@,= $(subst _,$(SP),$*))
-	$(file >> $@,)
-	$(file >> $@,link:../#_supported_devices[Click here] to see a list of other manufacturers for which reports are available.)
-	$(file >> $@,)
-	$(file >> $@,)
-	$(file >> $@,== Supported models)
-	$(file >> $@,)
-	$(foreach MODEL,$^,$(file >> $@,- link:$(basename $(notdir $(MODEL))).html[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
+	$(call file,> $@,= $(subst _,$(SP),$*))
+	$(call file,>> $@,)
+	$(call file,>> $@,link:../#_supported_devices[Click here] to see a list of other manufacturers for which reports are available.)
+	$(call file,>> $@,)
+	$(call file,>> $@,)
+	$(call file,>> $@,== Supported models)
+	$(call file,>> $@,)
+	$(foreach MODEL,$^,$(call file,>> $@,- link:$(basename $(notdir $(MODEL))).html[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
 
 # Compiled asciidoc pages (.html)
 $(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
@@ -314,20 +319,20 @@ $(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
 ## DDL home
 # Raw asciidoc page (.txt)
 $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
-	$(file > $@,= Devices Dumps Library)
-	$(file >> $@,:nut-website-root: ../)
-	$(file >> $@,)
-	$(file >> $@,:preamble-only:)
-	$(file >> $@,include::$(notdir $<)[])
-	$(file >> $@,)
-	$(file >> $@,)
-	$(file >> $@,== Supported devices)
-	$(file >> $@,)
-	$(foreach MFR,$(MFR_TARGETS),$(file >> $@,- link:$(patsubst $(DDL_DIR)/%,%,$(MFR))[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
-	$(file >> $@,)
-	$(file >> $@,)
-	$(file >> $@,:preamble-only!:)
-	$(file >> $@,include::$(notdir $<)[])
+	$(call file,> $@,= Devices Dumps Library)
+	$(call file,>> $@,:nut-website-root: ../)
+	$(call file,>> $@,)
+	$(call file,>> $@,:preamble-only:)
+	$(call file,>> $@,include::$(notdir $<)[])
+	$(call file,>> $@,)
+	$(call file,>> $@,)
+	$(call file,>> $@,== Supported devices)
+	$(call file,>> $@,)
+	$(foreach MFR,$(MFR_TARGETS),$(call file,>> $@,- link:$(patsubst $(DDL_DIR)/%,%,$(MFR))[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
+	$(call file,>> $@,)
+	$(call file,>> $@,)
+	$(call file,>> $@,:preamble-only!:)
+	$(call file,>> $@,include::$(notdir $<)[])
 
 # Compiled asciidoc page (.html)
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf
