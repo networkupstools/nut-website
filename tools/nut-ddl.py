@@ -672,7 +672,8 @@ try:
     file = open(outputFile, "w")
     file.write("\n".join(page))
     file.close()
-    print "'%s' written" % outputFile
+    if verbose:
+        print "'%s' written" % outputFile
 except IOError:
     print "Unable to write parsed file to '%s'" % outputFile
     exit(1)
