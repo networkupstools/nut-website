@@ -41,6 +41,8 @@ nutRWs = {}
 nutCommands = []
 manPages = []
 fromFileName = {}
+commentsMap = {}
+nonCommentsMap = {}
 
 ###
 
@@ -185,11 +187,25 @@ def nds_var_cmd_comments(raw):
         varCmdComments[itemName].append(line[2:])
 
 
-# Comments 'Pattern => parsing function' map
-commentsMap = {
+# Comments 'Pattern => parsing function' map for .nds files
+ndsCommentsMap = {
     # N[UT]D[evice]S[imulation] version
     #  '# NDS:VERSION:<value>\n'
     "^# NDS:VERSION:\S+$": nds_version,
+    # Vars/commands - Start of comment:
+    #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT:\n'
+    "^# ([\w\-]+\.)+[\w\-]+:COMMENT:$": nds_var_cmd_comments,
+    # Device - Start of comment
+    #  '# DEVICE:COMMENT:\n'
+    "^# DEVICE:COMMENT:$": nds_dev_comment,
+    # Support level
+    #  '# DEVICE:SUPPORT-LEVEL:<value>\n'
+    "^# DEVICE:SUPPORT-LEVEL:\d\d?$": nds_sl
+}
+
+
+# Comments 'Pattern => parsing function' map for .dev files
+devCommentsMap = {
     # Vars/commands - Start of comment:
     #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT:\n'
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:$": nds_var_cmd_comments,
@@ -239,7 +255,11 @@ def nds_rw_vars(raw):
     Parse NUT's RW vars.
     """
 
+    # For .nds files:
     # 'RW:var.name[.suffix[. ...]]:<type>:<options>\n'
+    # For .dev files:
+    # '#RW:var.name[.suffix[. ...]]:<type>:<options>\n'
+    # '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
 
     buf = raw.split(":", 4)
 
@@ -256,6 +276,15 @@ def nds_rw_vars(raw):
 
     if varType == "STRING":
         # 'RW:var.name[.suffix[. ...]]:STRING:<len>\n'
+        # '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
+        if fromFileName["fileType"] == "dev":
+            if len(buf) < 4:
+                buf.append("0")
+        elif len(buf) < 4:
+            if verbose:
+                print "Declaration of RW variable '%s' of type 'STRING' without a length" % varName
+            if not nutRWs[varName].get("opts"):
+                del nutRWs[varName]
         if not buf[3].isdigit():
             if verbose:
                 print "Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3])
@@ -324,9 +353,12 @@ def nds_commands(raw):
     Parse NUT's instant commands.
     """
 
+    # For .nds files:
     # 'CMD:command.name[.suffix[. ...]]\n'
+    # For .dev files:
+    # '#CMD:command.name[.suffix[. ...]]\n'
 
-    command = raw[4:]
+    command = re.sub("^#?CMD:", "", raw)
 
     if command in nutCommands:
         if verbose:
@@ -336,8 +368,8 @@ def nds_commands(raw):
     nutCommands.append(command)
 
 
-# Non-comments 'Pattern => parsing function' map
-nonCommentsMap = {
+# Non-comments 'Pattern => parsing function' map for .nds files
+ndsNonCommentsMap = {
     # Vars
     #  'var.name[.suffix[. ...]]: <value>\n'
     "^([\w\-]+\.)+[\w\-]+: ": nds_vars,
@@ -350,6 +382,24 @@ nonCommentsMap = {
     # Commands
     #  'CMD:command.name[.suffix[. ...]]\n'
     "^CMD:(\w+\.)+\w+$": nds_commands
+}
+
+
+# Non-comments 'Pattern => parsing function' map for .dev files
+devNonCommentsMap = {
+    # Vars
+    #  'var.name[.suffix[. ...]]: <value>\n'
+    "^([\w\-]+\.)+[\w\-]+: ": nds_vars,
+    # Empty vars
+    #  'var.name[.suffix[. ...]]:\n'
+    "^([\w\-]+\.)+[\w\-]+:$": nds_vars,
+    # RW Vars
+    #  '#RW:var.name[.suffix[. ...]]:<type>:<options>\n'
+    #  '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
+    "^#RW:([\w\-]+\.)+[\w\-]+:(STRING$|\w+:\S)": nds_rw_vars,
+    # Commands
+    #  '#CMD:command.name[.suffix[. ...]]\n'
+    "^#CMD:(\w+\.)+\w+$": nds_commands
 }
 
 ###
@@ -392,6 +442,17 @@ def parseFile(inputFile):
         # Whether to bail out
         bailout = False
 
+        # Check for known non-comments
+        for pattern in nonCommentsMap:
+            if re.match(pattern, line):
+                bailout = True
+                break
+        if bailout:
+            if not ignoreNonComments:
+                nonComments.append(line[:-1])
+            commentContinuation = False
+            continue
+
         # Check whether this line should be considered as the End Of File (such as recorded events' 'TIMER') and therefore we have to ignore all non-comments lines from now on
         for pattern in EOFPatterns:
             if re.match(pattern, line):
@@ -413,18 +474,16 @@ def parseFile(inputFile):
 
         # Comments
         if re.match("^#", line):
-            newEntity = False
             # New entity
             for pattern in commentsMap:
                 if re.match(pattern, line):
-                    i += 1
-                    comments.append([])
-                    comments[i].append(line[:-1])
-                    commentContinuation = True
-                    newEntity = True
+                    bailout = True
                     break
-
-            if newEntity:
+            if bailout:
+                i += 1
+                comments.append([])
+                comments[i].append(line[:-1])
+                commentContinuation = True
                 continue
 
             # Entity continuation
@@ -438,22 +497,9 @@ def parseFile(inputFile):
 
             continue
 
-        # Check for known non-comments
-        bailout = True
-        for pattern in nonCommentsMap:
-            if re.match(pattern, line):
-                bailout = False
-                break
-
         # Something unexepected
-        if bailout:
-            print "Unexepected line '%s'" % line[:-1]
-            exit(1)
-
-        if not ignoreNonComments:
-            nonComments.append(line[:-1])
-
-        commentContinuation = False
+        print "Unexepected line '%s'" % line[:-1]
+        exit(1)
 
     return comments, nonComments
 
@@ -528,7 +574,10 @@ def buildPage():
                 incipit += "%s" % rwProgName
 
             if nutRWs[nutVar]["type"] == "STRING":
-                page.append("%s to a string value upto the length of `%d` characters." % (incipit, nutRWs[nutVar]["opts"]))
+                if nutRWs[nutVar]["opts"] != 0:
+                    page.append("%s to a string value upto the length of `%d` characters." % (incipit, nutRWs[nutVar]["opts"]))
+                else:
+                    page.append("%s to a string value." % incipit)
             elif nutRWs[nutVar]["type"] == "RANGE":
                 page.append("%s within the following ranges:\n" % incipit)
                 for rwRange in nutRWs[nutVar]["opts"]:
@@ -619,6 +668,17 @@ def getInfoFFN():
         exit(1)
 
     fromFileName["reportNumber"] = int(infos[4])
+
+    # Set maps for parsing input file
+    global commentsMap, nonCommentsMap
+    # .dev files
+    if fromFileName["fileType"] == "dev":
+        commentsMap = devCommentsMap
+        nonCommentsMap = devNonCommentsMap
+    # .nds files
+    else:
+        commentsMap = ndsCommentsMap
+        nonCommentsMap = ndsNonCommentsMap
 
 ###
 
