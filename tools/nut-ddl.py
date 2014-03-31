@@ -40,6 +40,7 @@ nutVars = {}
 nutRWs = {}
 nutCommands = []
 manPages = []
+fromFileName = {}
 
 ###
 
@@ -463,39 +464,8 @@ def buildPage():
     Build raw AsciiDoc page from data get from the input file.
     """
 
-    # [/path/to/]<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}
-    [ filePath, fileNameExt ] = os.path.split(inputFile)
-
-    [ fileName, fileExt ] = os.path.splitext(fileNameExt)
-
-    fileType = fileExt[1:]
-
-    if fileType not in [ "dev", "nds" ]:
-        print "%s: unexpected type of file" % inputFile
-        print "\texpected: .dev/.nds"
-        exit(1)
-
-    # <manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>
-    infos = fileName.split("__")
-
-    if len(infos) < 5:
-        print "%s: unsuitable name; expected:" % inputFile
-        print "\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}"
-        exit(1)
-
-    # Info From File Name:
-    manufacturerFFN = infos[0].replace("_", " ")
-    driverNameFFN = infos[2]
-    nutVersionFFN = infos[3]
-
-    if not infos[4].isdigit() or int(infos[4]) < 1:
-        print "%s: unsuitable report number '%s'; expected 1+" % (inputFile, infos[4])
-        exit(1)
-
-    reportNumberFFN = int(infos[4])
-
     # old .dev/.seq
-    if fileType == "dev":
+    if fromFileName["fileType"] == "dev":
         simProgName = "dummy-ups"
         rwProgName = "upsrw"
         cmdProgName = "upscmd"
@@ -508,16 +478,16 @@ def buildPage():
     page = []
 
     # New NUT version in page
-    if reportNumberFFN == 1:
-        page.append("\n\n== %s\n" % nutVersionFFN)
+    if fromFileName["reportNumber"] == 1:
+        page.append("\n\n== %s\n" % fromFileName["nutVersion"])
 
-    page.append("\n=== Report #%d\n" % reportNumberFFN)
+    page.append("\n=== Report #%d\n" % fromFileName["reportNumber"])
 
     buf = "This device is known to work with driver "
-    if driverNameFFN in manPages:
-        buf += "link:%s%s.html[%s].\n" % (webManDir, driverNameFFN, driverNameFFN)
+    if fromFileName["driverName"] in manPages:
+        buf += "link:%s%s.html[%s].\n" % (webManDir, fromFileName["driverName"], fromFileName["driverName"])
     else:
-        buf += "%s.\n" % driverNameFFN
+        buf += "%s.\n" % fromFileName["driverName"]
     page.append(buf)
 
     buf = "You can grab a "
@@ -525,14 +495,14 @@ def buildPage():
         buf += "link:%s%s.html[%s]" % (webManDir, simProgName, simProgName)
     else:
         buf += "%s" % simProgName
-    buf += " compliant +.%s+ file " % fileType
+    buf += " compliant +.%s+ file " % fromFileName["fileType"]
     # .nds files
-    if fileType == "nds" and ndsVersion != "-1":
+    if fromFileName["fileType"] == "nds" and ndsVersion != "-1":
         buf += "(_v%s_) " % ndsVersion
-    buf += "to simulate this device link:$$raw/%s.%s$$[clicking here]" % (fileName, fileType)
+    buf += "to simulate this device link:$$raw/%s.%s$$[clicking here]" % (fromFileName["fileName"], fromFileName["fileType"])
     # Old .dev/.seq files
-    if fileType == "dev" and os.path.isfile(os.path.join(filePath, fileName + ".seq")):
-        buf += " and a +.seq+ file to simulate power events link:$$raw/%s.seq$$[clicking here]" % (fileName)
+    if fromFileName["fileType"] == "dev" and os.path.isfile(os.path.join(fromFileName["filePath"], fromFileName["fileName"] + ".seq")):
+        buf += " and a +.seq+ file to simulate power events link:$$raw/%s.seq$$[clicking here]" % (fromFileName["fileName"])
     buf += ".\n"
     page.append(buf)
 
@@ -614,6 +584,44 @@ def buildPage():
 
 ###
 
+def getInfoFFN():
+    """
+    Get info from file name.
+    """
+
+    # [/path/to/]<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}
+    [ fromFileName["filePath"], fileNameExt ] = os.path.split(inputFile)
+
+    [ fromFileName["fileName"], fileExt ] = os.path.splitext(fileNameExt)
+
+    fromFileName["fileType"] = fileExt[1:]
+
+    if fromFileName["fileType"] not in [ "dev", "nds" ]:
+        print "%s: unexpected type of file" % inputFile
+        print "\texpected: .dev/.nds"
+        exit(1)
+
+    # <manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>
+    infos = fromFileName["fileName"].split("__")
+
+    if len(infos) < 5:
+        print "%s: unsuitable name; expected:" % inputFile
+        print "\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}"
+        exit(1)
+
+    # Info From File Name:
+    fromFileName["manufacturer"] = infos[0].replace("_", " ")
+    fromFileName["driverName"] = infos[2]
+    fromFileName["nutVersion"] = infos[3]
+
+    if not infos[4].isdigit() or int(infos[4]) < 1:
+        print "%s: unsuitable report number '%s'; expected 1+" % (inputFile, infos[4])
+        exit(1)
+
+    fromFileName["reportNumber"] = int(infos[4])
+
+###
+
 # Start!
 
 # Check if file exists..
@@ -625,6 +633,9 @@ if not os.path.isfile(inputFile):
 if not os.stat(inputFile).st_size:
     print "Input file '%s' is empty" % inputFile
     exit(1)
+
+# Get info from file name
+getInfoFFN()
 
 # Parse given file
 comments, nonComments = parseFile(inputFile)
