@@ -141,22 +141,25 @@ $(OUTDIR):
 	cp -fR protocols/static/* $(OUTDIR)/protocols/
 	$(MKDIR_P) $(OUTDIR)/$(DDL_DIR)
 	cp -f $(DDL_DIR)/index.html $(OUTDIR)/$(DDL_DIR)
-	$(MKDIR_P) $(patsubst %,$(OUTDIR)/%raw,$(MANUFACTURERS))
-	for mfr in $(patsubst $(DDL_DIR)/%/,%,$(MANUFACTURERS)); do	\
+	manufacturers="$(patsubst $(DDL_DIR)/%/,%,$(MANUFACTURERS))";	\
+	for mfr in $${manufacturers}; do	\
+		$(MKDIR_P) "$(OUTDIR)/$(DDL_DIR)/$${mfr}/raw";	\
 		cp -f $(DDL_DIR)/$${mfr}/*.html $(OUTDIR)/$(DDL_DIR)/$${mfr}/;	\
 	done
-	for rawfile in $(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.seq $(DDL_DIR)/*/*.nds); do	\
-		cp -f $${rawfile} $(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/};	\
+	rawfiles="$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.seq $(DDL_DIR)/*/*.nds)";	\
+	for rawfile in $${rawfiles}; do	\
+		cp -f "$${rawfile}" "$(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/}";	\
 	done
 
 
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
-	rm -rf	\
-		$(MFR_TARGETS)	\
+	ddlfiles="$(MFR_TARGETS)	\
 		$(MODELS_TARGETS)	\
 		$(MODELS_TARGETS_RAW)	\
-		$(REPORTS_TARGETS)	\
+		$(REPORTS_TARGETS)";	\
+	rm -rf	\
+		$${ddlfiles}	\
 		$(DDL_DIR)/index.{txt,html}	\
 		$(WEBSITE_FILES)	\
 		$(OUTDIR)	\
@@ -252,7 +255,7 @@ SP := $(EMPTY) $(EMPTY)
 # File function for backward compatibility (before make 3.82.90); new versions of make won't use this variable since a built-in function with the same name is already defined
 # - $(1): operand (> or >>) + file name
 # - $(2): text
-file = $(shell echo "$(2)" $(1))
+file = $(shell echo "$(2)" $(firstword $(1)) "$(wordlist 2,$(words $(1)),$(1))")
 
 ## DLL settings
 # Device Dumps Library directory
@@ -272,7 +275,7 @@ REPORTS_TARGETS := $(addsuffix .txt,$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*
 # For .dev files, take in consideration also .seq files with the same name, if available
 # For both .dev and .nds files, also consider manpages ('prerequisites')
 $(REPORTS_TARGETS): $$(patsubst %.txt,%,$$@) $$(wildcard $$(patsubst %.dev.txt,%.seq,$$(filter %.dev.txt,$$@))) $(srcdir)/tools/nut-ddl.py | prerequisites
-	$(srcdir)/tools/nut-ddl.py $< $@
+	$(srcdir)/tools/nut-ddl.py "$<" "$@"
 
 ## Pages to build for each model
 # DDL_DIR/mfr_n/<model>.txt ...
@@ -295,7 +298,7 @@ MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
 $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf
-	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o $@ $<
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
 
 ## Pages to build for each manufacturer
 # -> DDL_DIR/mfr_1/index.html ... DDL_DIR/mfr_n/index.html
@@ -314,7 +317,7 @@ $(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,
 
 # Compiled asciidoc pages (.html)
 $(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
-	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) -o $@ $<
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) -o "$@" "$<"
 
 ## DDL home
 # Raw asciidoc page (.txt)
