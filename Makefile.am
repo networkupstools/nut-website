@@ -313,7 +313,7 @@ $(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,
 	$(call file,>> $@,)
 	$(call file,>> $@,== Supported models)
 	$(call file,>> $@,)
-	$(foreach MODEL,$^,$(call file,>> $@,- link:$(basename $(notdir $(MODEL))).html[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
+	$(foreach MODEL,$^,$(call file,>> $@,- link:+++$(basename $(notdir $(MODEL))).html+++[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
 
 # Compiled asciidoc pages (.html)
 $(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
@@ -331,7 +331,7 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,)
 	$(call file,>> $@,== Supported devices)
 	$(call file,>> $@,)
-	$(foreach MFR,$(MFR_TARGETS),$(call file,>> $@,- link:$(patsubst $(DDL_DIR)/%,%,$(MFR))[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
+	$(foreach MFR,$(MFR_TARGETS),$(call file,>> $@,- link:+++$(patsubst $(DDL_DIR)/%,%,$(MFR))+++[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
 	$(call file,>> $@,)
 	$(call file,>> $@,)
 	$(call file,>> $@,:preamble-only!:)
