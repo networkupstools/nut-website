@@ -558,7 +558,7 @@ def buildPage():
 
     for nutVar in sorted(nutVars):
         if len(nutVars[nutVar]):
-            buf = "- _%s_: +pass:specialcharacters[%s]+" % (nutVar, nutVars[nutVar].replace("]", "\]"))
+            buf = "- _%s_: +pass:specialcharacters[%s ]+" % (nutVar, nutVars[nutVar].replace("]", "\]"))
         else:
             buf = "- _%s_:" % nutVar
         page.append(buf)
@@ -585,7 +585,7 @@ def buildPage():
             elif nutRWs[nutVar]["type"] == "ENUM":
                 page.append("%s to one of the following values:\n" % incipit)
                 for enum in nutRWs[nutVar]["opts"]:
-                    page.append("- +pass:specialcharacters[%s]+" % enum.replace("]", "\]"))
+                    page.append("- +pass:specialcharacters[%s ]+" % enum.replace("]", "\]"))
 
             page.append("--")
 
