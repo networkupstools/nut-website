@@ -30,6 +30,37 @@ webManDir = "../../docs/man/"
 
 ###
 
+# Old (no longer available in NUT) -> new (currently available) drivers map
+nutDriversUpdateMap = {
+    # "old": "new",
+    "blazer": "blazer_ser",
+    "cpsups": "powerpanel",
+    "cyberpower": "powerpanel",
+    "esupssmart": "blazer_ser",
+    "fentonups": "blazer_ser",
+    "hidups": "usbhid-ups",
+    "ippon": "blazer_ser",
+    "liebertgxt2": "liebert-esp2",
+    "megatec": "blazer_ser",
+    "megatec_usb": "blazer_usb",
+    "mustek": "blazer_ser",
+    "newhidups": "usbhid-ups",
+    "newmge-shut": "mge-shut",
+    "nitram": "powerpanel",
+    "powermust": "blazer_ser",
+    "sms": "blazer_ser",
+}
+
+# Actually reported (yet available in NUT) -> new suggested drivers map
+nutDriversHintsMap = {
+    # "reported": "suggested",
+    "apcsmart-old": "apcsmart",
+    "blazer_ser": "nutdrv_qx",
+    "blazer_usb": "nutdrv_qx",
+}
+
+###
+
 # Global vars
 
 ndsVersion = "-1"
@@ -531,10 +562,34 @@ def buildPage():
 
     buf = "This device is known to work with driver "
     if fromFileName["driverName"] in manPages:
-        buf += "link:%s%s.html[%s].\n" % (webManDir, fromFileName["driverName"], fromFileName["driverName"])
+        buf += "link:%s%s.html[%s]" % (webManDir, fromFileName["driverName"], fromFileName["driverName"])
     else:
-        buf += "%s.\n" % fromFileName["driverName"]
+        buf += "%s" % fromFileName["driverName"]
+    if nutDriversUpdateMap.get(fromFileName["driverName"]):
+        replacement = nutDriversUpdateMap[fromFileName["driverName"]]
+        buf += ", now replaced by the "
+        if replacement in manPages:
+            buf += "link:%s%s.html[%s]" % (webManDir, replacement, replacement)
+        else:
+            buf += "%s" % replacement
+        buf += " one"
+    buf += "."
     page.append(buf)
+
+    suggested = False
+    if nutDriversHintsMap.get(fromFileName["driverName"]):
+        suggested = nutDriversHintsMap[fromFileName["driverName"]]
+    elif nutDriversUpdateMap.get(fromFileName["driverName"]) and nutDriversHintsMap.get(nutDriversUpdateMap[fromFileName["driverName"]]):
+        suggested = nutDriversHintsMap[nutDriversUpdateMap[fromFileName["driverName"]]]
+    if suggested:
+        buf = "It may also work with driver "
+        if suggested in manPages:
+            buf += "link:%s%s.html[%s]." % (webManDir, suggested, suggested)
+        else:
+            buf += "%s." % suggested
+        page.append(buf)
+
+    page.append("")
 
     buf = "You can grab a "
     if simProgName in manPages:
