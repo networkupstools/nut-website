@@ -610,13 +610,14 @@ def buildPage():
     # NUT vars
     page.append("\n==== Known supported variables\n")
     page.append("This device is known to support the following variables (values are just examples):\n")
+    page.append("[horizontal]")
 
     for nutVar in sorted(nutVars):
+        page.append("*%s*;;" % nutVar)
         if len(nutVars[nutVar]):
-            buf = "- *%s*: +pass:specialcharacters[%s ]+" % (nutVar, nutVars[nutVar].replace("]", "\]"))
+            page.append("+pass:specialcharacters[%s ]+" % nutVars[nutVar].replace("]", "\]"))
         else:
-            buf = "- *%s*:" % nutVar
-        page.append(buf)
+            page.append(" +")
 
         # RW vars
         if nutRWs.get(nutVar):
@@ -651,9 +652,11 @@ def buildPage():
                 page.append(commentLine)
             page.append("--")
 
+        page.append("")
+
     # NUT instant commands
     if len(nutCommands):
-        page.append("\n\n==== Known supported commands\n")
+        page.append("\n==== Known supported commands\n")
 
         buf = "This device is known to support the following "
         if cmdProgName in manPages:
@@ -671,9 +674,11 @@ def buildPage():
                     page.append(commentLine)
                 page.append("--")
 
+        page.append("")
+
     # Device comment/support-level
     if len(devComment) or ndsSL != -1:
-        page.append("\n\n==== About this device\n")
+        page.append("\n==== About this device\n")
         # Support level
         if ndsSL != -1:
             page.append("*Support level*: *%d* (out of 10)\n" % ndsSL)
