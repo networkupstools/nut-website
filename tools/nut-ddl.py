@@ -613,9 +613,9 @@ def buildPage():
 
     for nutVar in sorted(nutVars):
         if len(nutVars[nutVar]):
-            buf = "- _%s_: +pass:specialcharacters[%s ]+" % (nutVar, nutVars[nutVar].replace("]", "\]"))
+            buf = "- *%s*: +pass:specialcharacters[%s ]+" % (nutVar, nutVars[nutVar].replace("]", "\]"))
         else:
-            buf = "- _%s_:" % nutVar
+            buf = "- *%s*:" % nutVar
         page.append(buf)
 
         # RW vars
@@ -663,7 +663,7 @@ def buildPage():
         page.append(buf)
 
         for nutCommand in sorted(nutCommands):
-            page.append("- _%s_" % nutCommand)
+            page.append("- *%s*" % nutCommand)
             # Command comment
             if varCmdComments.get(nutCommand):
                 page.append("+\n--")
