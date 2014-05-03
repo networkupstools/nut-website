@@ -24,6 +24,7 @@ CABLE_IMAGE_FILES =	\
 	images/cables/mge-66049.png	\
 	images/cables/mge-db9-rj12.jpg	\
 	images/cables/mge-db9-rj45.jpg	\
+	images/cables/mge-usb-rj45.jpg	\
 	images/cables/SOLA-330.png
 
 FAVICON_FILES =	\
