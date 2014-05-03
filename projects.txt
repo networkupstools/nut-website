@@ -26,7 +26,7 @@ It will further evolve toward the NUT Control Center.
 link:https://github.com/zykh/walNUT[walNUT] 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A Gnome Shell extension that uses upsc/upscmd to monitor devices and invoke instant commands.
+A Gnome Shell extension to monitor/manage NUT-controlled devices.
 
 link:http://sourceforge.net/projects/winnutclient[Windows NUT client]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
