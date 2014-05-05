@@ -69,7 +69,7 @@ varCmdComments = {}
 devComment = []
 nutVars = {}
 nutRWs = {}
-nutCommands = []
+nutCommands = {}
 manPages = []
 fromFileName = {}
 commentsMap = {}
@@ -271,14 +271,26 @@ def nds_vars(raw):
 
     # 'var.name[.suffix[. ...]]: <value>\n'
 
-    varName = re.sub(":.*$", "", raw)
+    # Check for End Of Line comments
+    bad = None
+    if len(raw["eol"]):
+        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
+            bad = EOLComments["bad"]["function"](raw["eol"])
+            raw["eol"] = ""
+
+    varName = re.sub(":.*$", "", raw["line"])
 
     if nutVars.get(varName):
         if verbose:
             print "Redeclaration of variable '%s'" % varName
         return
 
-    nutVars[varName] = raw.replace("%s:" % varName, "", 1)[1:]
+    nutVars[varName] = {}
+
+    nutVars[varName]["value"] = raw["line"].replace("%s:" % varName, "", 1)[1:]
+
+    if bad is not None:
+        nutVars[varName]["bad"] = bad
 
 
 def nds_rw_vars(raw):
@@ -292,7 +304,14 @@ def nds_rw_vars(raw):
     # '#RW:var.name[.suffix[. ...]]:<type>:<options>\n'
     # '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
 
-    buf = raw.split(":", 4)
+    # Check for End Of Line comments
+    bad = None
+    if len(raw["eol"]):
+        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
+            bad = EOLComments["bad"]["function"](raw["eol"])
+            raw["eol"] = ""
+
+    buf = raw["line"].split(":", 4)
 
     varName = buf[1]
     varType = buf[2]
@@ -330,26 +349,31 @@ def nds_rw_vars(raw):
                 print "Redeclaration of variable '%s' of type 'STRING'" % varName
             return
         nutRWs[varName]["opts"] = length
+        if bad is not None:
+            nutRWs[varName]["bad"] = bad
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match("^\".+\"$", buf[3]):
             if verbose:
                 print "Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName
                 print "\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'"
-                print "\tgot: '%s'" % raw
+                print "\tgot: '%s'" % raw["line"]
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         if not nutRWs[varName].get("opts"):
             nutRWs[varName]["opts"] = []
-        nutRWs[varName]["opts"].append(buf[3][1:-1])
+        opts = { "enum": buf[3][1:-1] }
+        if bad is not None:
+            opts["bad"] = bad
+        nutRWs[varName]["opts"].append(opts)
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match("^\"\d+\" \"\d+\"$", buf[3]):
             if verbose:
                 print "Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName
                 print "\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'"
-                print "\tgot: '%s'" % raw
+                print "\tgot: '%s'" % raw["line"]
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -370,7 +394,13 @@ def nds_rw_vars(raw):
             return
         if not nutRWs[varName].get("opts"):
             nutRWs[varName]["opts"] = []
-        nutRWs[varName]["opts"].append({ "min": rangeMin, "max": rangeMax })
+        opts = {
+            "min": rangeMin,
+            "max": rangeMax
+        }
+        if bad is not None:
+            opts["bad"] = bad
+        nutRWs[varName]["opts"].append(opts)
     else:
         if not nutRWs[varName].get("opts"):
             del nutRWs[varName]
@@ -389,14 +419,24 @@ def nds_commands(raw):
     # For .dev files:
     # '#CMD:command.name[.suffix[. ...]]\n'
 
-    command = re.sub("^#?CMD:", "", raw)
+    # Check for End Of Line comments
+    bad = None
+    if len(raw["eol"]):
+        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
+            bad = EOLComments["bad"]["function"](raw["eol"])
+            raw["eol"] = ""
 
-    if command in nutCommands:
+    command = re.sub("^#?CMD:", "", raw["line"])
+
+    if nutCommands.get(command):
         if verbose:
             print "Redeclaration of command '%s'" % command
         return
 
-    nutCommands.append(command)
+    nutCommands[command] = {};
+
+    if bad is not None:
+        nutCommands[command]["bad"] = bad
 
 
 # Non-comments 'Pattern => parsing function' map for .nds files
@@ -443,6 +483,30 @@ EOFPatterns = [
 
 ###
 
+# End Of Line parsing
+
+def nds_bad(raw):
+    """
+    Parse bad vars/commands comments/flags.
+    """
+
+    #  '#BAD[: <comment>]\n'
+
+    return re.sub("^[ \t]*#BAD:?\s*", "", raw)
+
+
+# End Of Line 'Pattern => parsing function' map
+EOLComments = {
+    # Bad vars/commands
+    #  '#BAD[: <comment>]\n'
+    "bad": {
+        "pattern": "[ \t]*#BAD:?.*$",
+        "function": nds_bad
+    }
+}
+
+###
+
 def parseFile(inputFile):
     """
     Parse inputFile to split it in comments/non-comments:
@@ -473,14 +537,29 @@ def parseFile(inputFile):
         # Whether to bail out
         bailout = False
 
+        # End Of Line comment (defaults to an empty string for non-matching lines)
+        eol = ""
+
         # Check for known non-comments
         for pattern in nonCommentsMap:
+            # Check for End Of Line comments
+            for EOLType in EOLComments.itervalues():
+                if re.match(re.sub("\$", "[ \t]*", pattern) + ".*" + EOLType["pattern"], line):
+                    eol = re.search(EOLType["pattern"], line).group(0)
+                    line = re.sub(EOLType["pattern"], "", line)
+                    bailout = True
+                    break
+            if bailout:
+                break
             if re.match(pattern, line):
                 bailout = True
                 break
         if bailout:
             if not ignoreNonComments:
-                nonComments.append(line[:-1])
+                nonComments.append({
+                    "line": line[:-1],
+                    "eol": eol
+                })
             commentContinuation = False
             continue
 
@@ -613,11 +692,25 @@ def buildPage():
     page.append("[horizontal]")
 
     for nutVar in sorted(nutVars):
-        page.append("*%s*;;" % nutVar)
-        if len(nutVars[nutVar]):
-            page.append("+pass:specialcharacters[%s ]+" % nutVars[nutVar].replace("]", "\]"))
+        bad = nutVars[nutVar].get("bad")
+        if bad is not None:
+            page.append("[nut-ddl-bad-var]*%s*;;" % nutVar)
         else:
-            page.append(" +")
+            page.append("*%s*;;" % nutVar)
+        if len(nutVars[nutVar]["value"]):
+            if bad is not None:
+                page.append("[nut-ddl-bad-var-value]+pass:specialcharacters[%s ]+" % nutVars[nutVar]["value"].replace("]", "\]"))
+            else:
+                page.append("+pass:specialcharacters[%s ]+" % nutVars[nutVar]["value"].replace("]", "\]"))
+        else:
+            if bad is not None:
+                page.append("[nut-ddl-bad-var-value]#{sp}# +")
+            else:
+                page.append(" +")
+
+        # 'BAD' EOL comment
+        if bad is not None and len(bad):
+            page.append("+\n[role=\"nut-ddl-bad-var-text\"]\n--\n{sp} %s\n--" % bad)
 
         # RW vars
         if nutRWs.get(nutVar):
@@ -630,18 +723,35 @@ def buildPage():
                 incipit += "%s" % rwProgName
 
             if nutRWs[nutVar]["type"] == "STRING":
+                bad = nutRWs[nutVar].get("bad")
+                if bad is not None:
+                    page.append("[role=\"nut-ddl-bad-string\"]");
                 if nutRWs[nutVar]["opts"] != 0:
                     page.append("%s to a string value upto the length of `%d` characters." % (incipit, nutRWs[nutVar]["opts"]))
                 else:
                     page.append("%s to a string value." % incipit)
+                if bad is not None and len(bad):
+                    page.append("\n[role=\"nut-ddl-bad-string-text\"]\n{sp} %s" % bad)
             elif nutRWs[nutVar]["type"] == "RANGE":
                 page.append("%s within the following ranges:\n" % incipit)
                 for rwRange in nutRWs[nutVar]["opts"]:
-                    page.append("- `%d`..`%d`" % (rwRange["min"], rwRange["max"]))
+                    bad = rwRange.get("bad")
+                    if bad is not None:
+                        page.append("- [nut-ddl-bad-range]#`%d`..`%d`#" % (rwRange["min"], rwRange["max"]))
+                        if len(bad):
+                            page.append("+\n[role=\"nut-ddl-bad-range-text\"]\n--\n{sp} %s\n--" % bad)
+                    else:
+                        page.append("- `%d`..`%d`" % (rwRange["min"], rwRange["max"]))
             elif nutRWs[nutVar]["type"] == "ENUM":
                 page.append("%s to one of the following values:\n" % incipit)
                 for enum in nutRWs[nutVar]["opts"]:
-                    page.append("- +pass:specialcharacters[%s ]+" % enum.replace("]", "\]"))
+                    bad = enum.get("bad")
+                    if bad is not None:
+                        page.append("- [nut-ddl-bad-enum]+pass:specialcharacters[%s ]+" % enum["enum"].replace("]", "\]"))
+                        if len(bad):
+                            page.append("+\n[role=\"nut-ddl-bad-enum-text\"]\n--\n{sp} %s\n--" % bad)
+                    else:
+                        page.append("- +pass:specialcharacters[%s ]+" % enum["enum"].replace("]", "\]"))
 
             page.append("--")
 
@@ -666,7 +776,14 @@ def buildPage():
         page.append(buf)
 
         for nutCommand in sorted(nutCommands):
-            page.append("- *%s*" % nutCommand)
+            bad = nutCommands[nutCommand].get("bad")
+            if bad is not None:
+                page.append("- [nut-ddl-bad-command]*%s*" % nutCommand)
+            else:
+                page.append("- *%s*" % nutCommand)
+            # 'BAD' EOL comment
+            if bad is not None and len(bad):
+                page.append("+\n[role=\"nut-ddl-bad-command-text\"]\n--\n{sp} %s\n--" % bad)
             # Command comment
             if varCmdComments.get(nutCommand):
                 page.append("+\n--")
@@ -770,8 +887,12 @@ for comment in comments:
 # Parse non-comment lines
 for nonComment in nonComments:
     for pattern in nonCommentsMap:
-        if re.match(pattern, nonComment):
+        if re.match(pattern, nonComment["line"]):
             nonCommentsMap[pattern](nonComment)
+            # The previous function should have cleared the 'eol' comment, if not, the comment was not expected
+            if len(nonComment["eol"]) and verbose:
+                print "Unexpected EOL comment: '%s'" % nonComment["eol"]
+                print "\tin line: '%s'" % nonComment["line"]
             break
 
 # Check if we have some vars

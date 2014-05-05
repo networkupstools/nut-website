@@ -220,3 +220,32 @@ td#driver-col { width: 30%; }
 div#footer-badges a:link, #layout-menu a:visited, #layout-menu a:hover {
   text-decoration: none;
 }
+
+/* DDL */
+span.nut-ddl-bad-command,
+span.nut-ddl-bad-var {
+  border-bottom: .2em solid red;
+}
+
+span.nut-ddl-bad-enum,
+span.nut-ddl-bad-range,
+span.nut-ddl-bad-var-value {
+  outline: .2em dashed red;
+  padding-left: .1em;
+  padding-right: .1em;
+  margin-left: -.1em;
+}
+
+div.nut-ddl-bad-string {
+  border-left: .2em solid red;
+  padding-left: .2em;
+}
+
+div.nut-ddl-bad-command-text,
+div.nut-ddl-bad-enum-text,
+div.nut-ddl-bad-range-text,
+div.nut-ddl-bad-string-text,
+div.nut-ddl-bad-var-text {
+  border-left: .2em dotted red;
+  padding-left: .2em;
+}
