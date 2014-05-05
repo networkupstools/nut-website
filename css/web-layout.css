@@ -229,14 +229,20 @@ span.nut-ddl-bad-var {
 
 span.nut-ddl-bad-enum,
 span.nut-ddl-bad-range,
-span.nut-ddl-bad-var-value {
+span.nut-ddl-bad-var-value,
+span.nut-ddl-bad-var-value-example {
   outline: .2em dashed red;
   padding-left: .1em;
   padding-right: .1em;
   margin-left: -.1em;
 }
 
-div.nut-ddl-bad-string {
+span.nut-ddl-bad-var-value-example {
+  margin-left: 0;
+}
+
+div.nut-ddl-bad-string,
+span.nut-ddl-bad-string-example {
   border-left: .2em solid red;
   padding-left: .2em;
 }
@@ -245,7 +251,8 @@ div.nut-ddl-bad-command-text,
 div.nut-ddl-bad-enum-text,
 div.nut-ddl-bad-range-text,
 div.nut-ddl-bad-string-text,
-div.nut-ddl-bad-var-text {
+div.nut-ddl-bad-var-text,
+span.nut-ddl-bad-var-text-example {
   border-left: .2em dotted red;
   padding-left: .2em;
 }

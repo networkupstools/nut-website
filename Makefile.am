@@ -291,6 +291,15 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell exp
 	$(call file,>> $@,)
 	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
 	$(call file,>> $@,)
+	$(call file,>> $@,[NOTE])
+	$(call file,>> $@,====)
+	$(call file,>> $@,When a user reports that a variable/command is not right then it will be highlighted by a [nut-ddl-bad-var]#red underline#.)
+	$(call file,>> $@,)
+	$(call file,>> $@,Bad values/ranges/etc... will get a [nut-ddl-bad-var-value-example]#red dashed outline# or [nut-ddl-bad-string-example]#red solid left border#.)
+	$(call file,>> $@,)
+	$(call file,>> $@,The accompanying explaining comment - if provided - will be emphasized through a [nut-ddl-bad-var-text-example]#red dotted border# on the left.)
+	$(call file,>> $@,====)
+	$(call file,>> $@,)
 	$(foreach REPORT,$^,$(call file,>> $@,) $(call file,>> $@,include::$(notdir $(REPORT))[]) $(call file,>> $@,))
 
 # DDL_DIR/mfr_n/<model>.html ...
