@@ -272,11 +272,16 @@ def nds_vars(raw):
     # 'var.name[.suffix[. ...]]: <value>\n'
 
     # Check for End Of Line comments
-    bad = None
+    eol = None
     if len(raw["eol"]):
-        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
-            bad = EOLComments["bad"]["function"](raw["eol"])
-            raw["eol"] = ""
+        for EOLType in EOLComments:
+            if re.match(EOLComments[EOLType]["pattern"], raw["eol"]):
+                eol = {
+                    "type": EOLType,
+                    "comment": EOLComments[EOLType]["function"](raw["eol"])
+                }
+                raw["eol"] = ""
+                break
 
     varName = re.sub(":.*$", "", raw["line"])
 
@@ -289,8 +294,8 @@ def nds_vars(raw):
 
     nutVars[varName]["value"] = raw["line"].replace("%s:" % varName, "", 1)[1:]
 
-    if bad is not None:
-        nutVars[varName]["bad"] = bad
+    if eol is not None:
+        nutVars[varName][eol["type"]] = eol["comment"]
 
 
 def nds_rw_vars(raw):
@@ -305,11 +310,16 @@ def nds_rw_vars(raw):
     # '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
 
     # Check for End Of Line comments
-    bad = None
+    eol = None
     if len(raw["eol"]):
-        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
-            bad = EOLComments["bad"]["function"](raw["eol"])
-            raw["eol"] = ""
+        for EOLType in EOLComments:
+            if re.match(EOLComments[EOLType]["pattern"], raw["eol"]):
+                eol = {
+                    "type": EOLType,
+                    "comment": EOLComments[EOLType]["function"](raw["eol"])
+                }
+                raw["eol"] = ""
+                break
 
     buf = raw["line"].split(":", 4)
 
@@ -349,8 +359,8 @@ def nds_rw_vars(raw):
                 print "Redeclaration of variable '%s' of type 'STRING'" % varName
             return
         nutRWs[varName]["opts"] = length
-        if bad is not None:
-            nutRWs[varName]["bad"] = bad
+        if eol is not None:
+            nutRWs[varName][eol["type"]] = eol["comment"]
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match("^\".+\"$", buf[3]):
@@ -364,8 +374,8 @@ def nds_rw_vars(raw):
         if not nutRWs[varName].get("opts"):
             nutRWs[varName]["opts"] = []
         opts = { "enum": buf[3][1:-1] }
-        if bad is not None:
-            opts["bad"] = bad
+        if eol is not None:
+            opts[eol["type"]] = eol["comment"]
         nutRWs[varName]["opts"].append(opts)
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
@@ -398,8 +408,8 @@ def nds_rw_vars(raw):
             "min": rangeMin,
             "max": rangeMax
         }
-        if bad is not None:
-            opts["bad"] = bad
+        if eol is not None:
+            opts[eol["type"]] = eol["comment"]
         nutRWs[varName]["opts"].append(opts)
     else:
         if not nutRWs[varName].get("opts"):
@@ -420,11 +430,16 @@ def nds_commands(raw):
     # '#CMD:command.name[.suffix[. ...]]\n'
 
     # Check for End Of Line comments
-    bad = None
+    eol = None
     if len(raw["eol"]):
-        if re.match(EOLComments["bad"]["pattern"], raw["eol"]):
-            bad = EOLComments["bad"]["function"](raw["eol"])
-            raw["eol"] = ""
+        for EOLType in EOLComments:
+            if re.match(EOLComments[EOLType]["pattern"], raw["eol"]):
+                eol = {
+                    "type": EOLType,
+                    "comment": EOLComments[EOLType]["function"](raw["eol"])
+                }
+                raw["eol"] = ""
+                break
 
     command = re.sub("^#?CMD:", "", raw["line"])
 
@@ -435,8 +450,8 @@ def nds_commands(raw):
 
     nutCommands[command] = {};
 
-    if bad is not None:
-        nutCommands[command]["bad"] = bad
+    if eol is not None:
+        nutCommands[command][eol["type"]] = eol["comment"]
 
 
 # Non-comments 'Pattern => parsing function' map for .nds files
@@ -495,6 +510,16 @@ def nds_bad(raw):
     return re.sub("^[ \t]*#BAD:?\s*", "", raw)
 
 
+def nds_comment(raw):
+    """
+    Parse End Of Line vars/commands comments.
+    """
+
+    #  '#COMMENT[: <comment>]\n'
+
+    return re.sub("^[ \t]*#COMMENT:?\s*", "", raw)
+
+
 # End Of Line 'Pattern => parsing function' map
 EOLComments = {
     # Bad vars/commands
@@ -502,6 +527,10 @@ EOLComments = {
     "bad": {
         "pattern": "[ \t]*#BAD:?.*$",
         "function": nds_bad
+    },
+    "comment": {
+        "pattern": "[ \t]*#COMMENT:?.*$",
+        "function": nds_comment
     }
 }
 
@@ -545,9 +574,19 @@ def parseFile(inputFile):
             # Check for End Of Line comments
             for EOLType in EOLComments.itervalues():
                 if re.match(re.sub("\$", "[ \t]*", pattern) + ".*" + EOLType["pattern"], line):
-                    eol = re.search(EOLType["pattern"], line).group(0)
-                    line = re.sub(EOLType["pattern"], "", line)
+                    tempLine = re.sub(EOLType["pattern"], "", line)
                     bailout = True
+                    # Just in case this is not the leftmost comment..
+                    for innerEOLType in EOLComments.itervalues():
+                        if innerEOLType is EOLType:
+                            continue
+                        if re.search(innerEOLType["pattern"], tempLine):
+                            bailout = False
+                            break
+                    if not bailout:
+                        continue
+                    eol = re.search(EOLType["pattern"], line).group(0)
+                    line = tempLine
                     break
             if bailout:
                 break
@@ -732,6 +771,8 @@ def buildPage():
                     page.append("%s to a string value." % incipit)
                 if bad is not None and len(bad):
                     page.append("\n[role=\"nut-ddl-bad-string-text\"]\n{sp} %s" % bad)
+                elif nutRWs[nutVar].get("comment") and len(nutRWs[nutVar]["comment"]):
+                    page.append("\n{sp} %s" % nutRWs[nutVar]["comment"])
             elif nutRWs[nutVar]["type"] == "RANGE":
                 page.append("%s within the following ranges:\n" % incipit)
                 for rwRange in nutRWs[nutVar]["opts"]:
@@ -742,6 +783,9 @@ def buildPage():
                             page.append("+\n[role=\"nut-ddl-bad-range-text\"]\n--\n{sp} %s\n--" % bad)
                     else:
                         page.append("- `%d`..`%d`" % (rwRange["min"], rwRange["max"]))
+                    comment = rwRange.get("comment")
+                    if comment is not None and len(comment):
+                        page.append("+\n--\n{sp} %s\n--" % comment)
             elif nutRWs[nutVar]["type"] == "ENUM":
                 page.append("%s to one of the following values:\n" % incipit)
                 for enum in nutRWs[nutVar]["opts"]:
@@ -752,8 +796,16 @@ def buildPage():
                             page.append("+\n[role=\"nut-ddl-bad-enum-text\"]\n--\n{sp} %s\n--" % bad)
                     else:
                         page.append("- +pass:specialcharacters[%s ]+" % enum["enum"].replace("]", "\]"))
+                    comment = enum.get("comment")
+                    if comment is not None and len(comment):
+                        page.append("+\n--\n{sp} %s\n--" % comment)
 
             page.append("--")
+
+        # End Of Line var comment
+        comment = nutVars[nutVar].get("comment")
+        if comment is not None and len(comment):
+            page.append("+\n--\n{sp} %s\n--" % comment)
 
         # Var comment
         if varCmdComments.get(nutVar):
@@ -784,6 +836,10 @@ def buildPage():
             # 'BAD' EOL comment
             if bad is not None and len(bad):
                 page.append("+\n[role=\"nut-ddl-bad-command-text\"]\n--\n{sp} %s\n--" % bad)
+            # End Of Line command comment
+            comment = nutCommands[nutCommand].get("comment")
+            if comment is not None and len(comment):
+                page.append("+\n--\n{sp} %s\n--" % comment)
             # Command comment
             if varCmdComments.get(nutCommand):
                 page.append("+\n--")
