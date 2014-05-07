@@ -458,13 +458,13 @@ def nds_commands(raw):
 ndsNonCommentsMap = {
     # Vars
     #  'var.name[.suffix[. ...]]: <value>\n'
-    "^([\w\-]+\.)+[\w\-]+: ": nds_vars,
+    "^([\w\-]+\.)+[\w\-]+: .*$": nds_vars,
     # Empty vars
     #  'var.name[.suffix[. ...]]:\n'
     "^([\w\-]+\.)+[\w\-]+:$": nds_vars,
     # RW Vars
     #  'RW:var.name[.suffix[. ...]]:<type>:<options>\n'
-    "^RW:([\w\-]+\.)+[\w\-]+:\w+:\S": nds_rw_vars,
+    "^RW:([\w\-]+\.)+[\w\-]+:\w+:\S.*$": nds_rw_vars,
     # Commands
     #  'CMD:command.name[.suffix[. ...]]\n'
     "^CMD:(\w+\.)+\w+$": nds_commands
@@ -475,14 +475,14 @@ ndsNonCommentsMap = {
 devNonCommentsMap = {
     # Vars
     #  'var.name[.suffix[. ...]]: <value>\n'
-    "^([\w\-]+\.)+[\w\-]+: ": nds_vars,
+    "^([\w\-]+\.)+[\w\-]+: .*$": nds_vars,
     # Empty vars
     #  'var.name[.suffix[. ...]]:\n'
     "^([\w\-]+\.)+[\w\-]+:$": nds_vars,
     # RW Vars
     #  '#RW:var.name[.suffix[. ...]]:<type>:<options>\n'
     #  '#RW:var.name[.suffix[. ...]]:STRING[:<len>]\n'
-    "^#RW:([\w\-]+\.)+[\w\-]+:(STRING$|\w+:\S)": nds_rw_vars,
+    "^#RW:([\w\-]+\.)+[\w\-]+:(STRING|\w+:\S.*)$": nds_rw_vars,
     # Commands
     #  '#CMD:command.name[.suffix[. ...]]\n'
     "^#CMD:(\w+\.)+\w+$": nds_commands
@@ -573,7 +573,7 @@ def parseFile(inputFile):
         for pattern in nonCommentsMap:
             # Check for End Of Line comments
             for EOLType in EOLComments.itervalues():
-                if re.match(re.sub("\$", "[ \t]*", pattern) + ".*" + EOLType["pattern"], line):
+                if re.match(re.sub("\$", "[ \t]*", pattern) + EOLType["pattern"], line):
                     tempLine = re.sub(EOLType["pattern"], "", line)
                     bailout = True
                     # Just in case this is not the leftmost comment..
