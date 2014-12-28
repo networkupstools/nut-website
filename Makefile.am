@@ -160,7 +160,8 @@ clean-local:
 		$(REPORTS_TARGETS)";	\
 	rm -rf	\
 		$${ddlfiles}	\
-		$(DDL_DIR)/index.{txt,html}	\
+		$(DDL_DIR)/index.txt	\
+		$(DDL_DIR)/index.html	\
 		$(WEBSITE_FILES)	\
 		$(OUTDIR)	\
 		images/	\
