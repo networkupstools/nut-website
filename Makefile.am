@@ -287,7 +287,7 @@ $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds)
 # Raw asciidoc pages (.txt):
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
 # note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
-$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -f -k 4.1,4.5rV -k 5n -t @ -)))
+$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -f -k 4.1,4.5r -k 5n -t @ -)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
