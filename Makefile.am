@@ -266,7 +266,7 @@ IGNORE_DDL_DIR := .git
 
 ## Manufacturers
 # -> DDL_DIR/mfr_1/ DDL_DIR/mfr_2/ ... DDL_DIR/mfr_n/
-MANUFACTURERS := $(shell export LC_ALL=C && echo -e "$(subst $(SP),\n,$(filter-out $(patsubst %,%/,$(DDL_DIR) $(IGNORE_DDL_DIR)),$(sort $(dir $(wildcard $(DDL_DIR)/*/)))))" | sort -f -)
+MANUFACTURERS := $(shell export LC_ALL=C && printf "$(subst $(SP),\n,$(filter-out $(patsubst %,%/,$(DDL_DIR) $(IGNORE_DDL_DIR)),$(sort $(dir $(wildcard $(DDL_DIR)/*/)))))" | sort -f -)
 
 ## Reports
 # .{nds,dev} files (DDL_DIR/mfr_n/<manufacturer>__<model>__<driver-name>__<nut-version>__<report-number>.{dev,nds})
@@ -287,7 +287,7 @@ $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds)
 # Raw asciidoc pages (.txt):
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
 # note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
-$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -f -k 4.1,4.5r -k 5n -t @ -)))
+$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell export LC_ALL=C && printf "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -f -k 4.1,4.5r -k 5n -t @ -)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
@@ -315,7 +315,7 @@ $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf
 MFR_TARGETS := $(addsuffix index.html,$(MANUFACTURERS))
 
 # Raw asciidoc pages (.txt)
-$(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && echo -e "$$(subst $$(SP),\n,$$(addsuffix .html,$$(addprefix $$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))))" | sort -f -)
+$(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && printf "$$(subst $$(SP),\n,$$(addsuffix .html,$$(addprefix $$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))))" | sort -f -)
 	$(call file,> $@,= $(subst _,$(SP),$*))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:../#_supported_devices[Click here] to see a list of other manufacturers for which reports are available.)
