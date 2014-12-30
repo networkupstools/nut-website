@@ -155,9 +155,9 @@ $(OUTDIR):
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
 	ddlfiles="$(MFR_TARGETS)	\
-		$(MODELS_TARGETS)	\
-		$(MODELS_TARGETS_RAW)	\
-		$(REPORTS_TARGETS)";	\
+		$(subst \%,%,$(MODELS_TARGETS))	\
+		$(subst \%,%,$(MODELS_TARGETS_RAW))	\
+		$(subst \%,%,$(REPORTS_TARGETS))";	\
 	rm -rf	\
 		$${ddlfiles}	\
 		$(DDL_DIR)/index.txt	\
@@ -249,6 +249,8 @@ ADOC_PARAMS_DDL_L2 =	\
 EMPTY :=
 # A space..
 SP := $(EMPTY) $(EMPTY)
+# Percent sign
+PCT := %
 
 # For DDL generation, we need secondary expansion; enable it from now on:
 .SECONDEXPANSION:
@@ -266,12 +268,13 @@ IGNORE_DDL_DIR := .git
 
 ## Manufacturers
 # -> DDL_DIR/mfr_1/ DDL_DIR/mfr_2/ ... DDL_DIR/mfr_n/
-MANUFACTURERS := $(shell export LC_ALL=C && printf "$(subst $(SP),\n,$(filter-out $(patsubst %,%/,$(DDL_DIR) $(IGNORE_DDL_DIR)),$(sort $(dir $(wildcard $(DDL_DIR)/*/)))))" | sort -f -)
+MANUFACTURERS := $(shell export LC_ALL=C && printf "%s\n" $(patsubst %,"%",$(filter-out $(patsubst %,%/,$(DDL_DIR) $(IGNORE_DDL_DIR)),$(sort $(dir $(wildcard $(DDL_DIR)/*/))))) | sort -f -)
 
 ## Reports
 # .{nds,dev} files (DDL_DIR/mfr_n/<manufacturer>__<model>__<driver-name>__<nut-version>__<report-number>.{dev,nds})
 # -> DDL_DIR/mfr_n/<manufacturer>__<model>__<driver-name>__<driver-name>__<nut-version>__<report-numver>.{dev,nds}.txt ...
-REPORTS_TARGETS := $(addsuffix .txt,$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.nds))
+# note: '%'s are backslash-escaped ('\%')
+REPORTS_TARGETS := $(subst %,\%,$(addsuffix .txt,$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.nds)))
 
 # For .dev files, take in consideration also .seq files with the same name, if available
 # For both .dev and .nds files, also consider manpages ('prerequisites')
@@ -280,14 +283,15 @@ $(REPORTS_TARGETS): $$(patsubst %.txt,%,$$@) $$(wildcard $$(patsubst %.dev.txt,%
 
 ## Pages to build for each model
 # DDL_DIR/mfr_n/<model>.txt ...
-MODELS_TARGETS_RAW := $(addsuffix .txt,$(foreach MFR,$(MANUFACTURERS),$(addprefix $(MFR),\
+# note: '%'s are backslash-escaped ('\%')
+MODELS_TARGETS_RAW := $(subst %,\%,$(addsuffix .txt,$(foreach MFR,$(MANUFACTURERS),$(addprefix $(MFR),\
 $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds))),$(word 2,$(subst __,$(SP),$(RAWFILE)))))\
-)))
+))))
 
 # Raw asciidoc pages (.txt):
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
 # note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
-$(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell export LC_ALL=C && printf "$$(subst $$(SP),\n,$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds))))" | sort -f -k 4.1,4.5r -k 5n -t @ -)))
+$(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,__,$$(shell export LC_ALL=C && printf "%s\n" $$(patsubst %,"%",$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds)))) | sort -f -k 4.1,4.5r -k 5n -t @ -)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
@@ -304,6 +308,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(dir $$@)%.txt,$$(subst @,__,$$(shell exp
 	$(foreach REPORT,$^,$(call file,>> $@,) $(call file,>> $@,include::$(notdir $(REPORT))[]) $(call file,>> $@,))
 
 # DDL_DIR/mfr_n/<model>.html ...
+# note: '%'s are backslash-escaped ('\%')
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
@@ -315,7 +320,7 @@ $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf
 MFR_TARGETS := $(addsuffix index.html,$(MANUFACTURERS))
 
 # Raw asciidoc pages (.txt)
-$(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && printf "$$(subst $$(SP),\n,$$(addsuffix .html,$$(addprefix $$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))))" | sort -f -)
+$(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(addsuffix .html",$$(addprefix "$$(DDL_DIR)/$$*/,$$(sort $$(foreach RAWFILE,$$(notdir $$(wildcard $$(DDL_DIR)/$$*/*.dev $$(DDL_DIR)/$$*/*.nds)),$$(word 2,$$(subst __,$$(SP),$$(RAWFILE))))))) | sort -f -)
 	$(call file,> $@,= $(subst _,$(SP),$*))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:../#_supported_devices[Click here] to see a list of other manufacturers for which reports are available.)
@@ -323,7 +328,7 @@ $(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && printf "$$(subst $$(SP),\n,$
 	$(call file,>> $@,)
 	$(call file,>> $@,== Supported models)
 	$(call file,>> $@,)
-	$(foreach MODEL,$^,$(call file,>> $@,- link:+++$(basename $(notdir $(MODEL))).html+++[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
+	$(foreach MODEL,$^,$(call file,>> $@,- link:+++$(subst %,%25,$(basename $(notdir $(MODEL)))).html+++[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
 
 # Compiled asciidoc pages (.html)
 $(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
@@ -341,7 +346,7 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,)
 	$(call file,>> $@,== Supported devices)
 	$(call file,>> $@,)
-	$(foreach MFR,$(MFR_TARGETS),$(call file,>> $@,- link:+++$(patsubst $(DDL_DIR)/%,%,$(MFR))+++[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
+	$(foreach MFR,$(MFR_TARGETS),$(call file,>> $@,- link:+++$(subst %,%25,$(patsubst $(DDL_DIR)/%,%,$(MFR)))+++[$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $(MFR))))]))
 	$(call file,>> $@,)
 	$(call file,>> $@,)
 	$(call file,>> $@,:preamble-only!:)

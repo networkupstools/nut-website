@@ -718,10 +718,10 @@ def buildPage():
     # .nds files
     if fromFileName["fileType"] == "nds" and ndsVersion != "-1":
         buf += "(_v%s_) " % ndsVersion
-    buf += "to simulate this device link:$$raw/%s.%s$$[clicking here]" % (fromFileName["fileName"], fromFileName["fileType"])
+    buf += "to simulate this device link:$$raw/%s.%s$$[clicking here]" % (fromFileName["fileName"].replace("%", "%25"), fromFileName["fileType"])
     # Old .dev/.seq files
     if fromFileName["fileType"] == "dev" and os.path.isfile(os.path.join(fromFileName["filePath"], fromFileName["fileName"] + ".seq")):
-        buf += " and a +.seq+ file to simulate power events link:$$raw/%s.seq$$[clicking here]" % (fromFileName["fileName"])
+        buf += " and a +.seq+ file to simulate power events link:$$raw/%s.seq$$[clicking here]" % (fromFileName["fileName"].replace("%", "%25"))
     buf += ".\n"
     page.append(buf)
 

@@ -236,11 +236,11 @@ def buildHTMLTable(deviceData):
                     cellContent.append(" ".join(linkedWords))
                 # Link manufacturer => DDL
                 elif field == "manufacturer" and ddl.get(device[fieldIndex].replace(" ", "_")):
-                    linkedMfr = "<a href=\"%s/\">%s</a>" % (webDdlDir + device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
+                    linkedMfr = "<a href=\"%s/\">%s</a>" % (webDdlDir + device[fieldIndex].replace(" ", "_").replace("%", "%25"), html_escape(device[fieldIndex]))
                     cellContent.append(linkedMfr)
                 # Link model => DDL
                 elif field == "model" and ddl.get(device[dataFields.index("manufacturer")].replace(" ", "_")) and device[fieldIndex].replace(" ", "_") in ddl[device[dataFields.index("manufacturer")].replace(" ", "_")]:
-                    linkedModel = "<a href=\"%s/%s.html\">%s</a>" % (webDdlDir + device[dataFields.index("manufacturer")].replace(" ", "_"), device[fieldIndex].replace(" ", "_"), html_escape(device[fieldIndex]))
+                    linkedModel = "<a href=\"%s/%s.html\">%s</a>" % (webDdlDir + device[dataFields.index("manufacturer")].replace(" ", "_").replace("%", "%25"), device[fieldIndex].replace(" ", "_").replace("%", "%25"), html_escape(device[fieldIndex]))
                     cellContent.append(linkedModel)
                 else:
                     fieldContent = device[fieldIndex]
