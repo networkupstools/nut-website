@@ -140,7 +140,7 @@ def nds_dev_comment(raw):
     Parse device comment.
     """
 
-    # '# DEVICE:COMMENT:\n'
+    # '# DEVICE:COMMENT[:]\n'
     # '# <comment>\n'
     # '# <comment>\n'
     #	...
@@ -151,7 +151,7 @@ def nds_dev_comment(raw):
             print "Redeclaration of device comment"
         return
 
-    # Remove leading 'start' line ('# DEVICE:COMMENT:\n')
+    # Remove leading 'start' line ('# DEVICE:COMMENT[:]\n')
     raw = raw[1:]
 
     # Not a valid device comment, don't do anything with it
@@ -179,14 +179,14 @@ def nds_var_cmd_comments(raw):
     Parse comments of variables/commands.
     """
 
-    # '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT:\n'
+    # '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT[:]\n'
     # '# <comment>\n'
     # '# <comment>\n'
     #	...
     # '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:EOC\n'
 
     # Get var/command name
-    itemName = re.sub(":COMMENT:.*$", "", raw[0][2:])
+    itemName = re.sub(":COMMENT:?.*$", "", raw[0][2:])
 
     if varCmdComments.get(itemName):
         if verbose:
@@ -224,11 +224,11 @@ ndsCommentsMap = {
     #  '# NDS:VERSION:<value>\n'
     "^# NDS:VERSION:\S+$": nds_version,
     # Vars/commands - Start of comment:
-    #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT:\n'
-    "^# ([\w\-]+\.)+[\w\-]+:COMMENT:$": nds_var_cmd_comments,
+    #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT[:]\n'
+    "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment
-    #  '# DEVICE:COMMENT:\n'
-    "^# DEVICE:COMMENT:$": nds_dev_comment,
+    #  '# DEVICE:COMMENT[:]\n'
+    "^# DEVICE:COMMENT:?$": nds_dev_comment,
     # Support level
     #  '# DEVICE:SUPPORT-LEVEL:<value>\n'
     "^# DEVICE:SUPPORT-LEVEL:\d\d?$": nds_sl
@@ -238,11 +238,11 @@ ndsCommentsMap = {
 # Comments 'Pattern => parsing function' map for .dev files
 devCommentsMap = {
     # Vars/commands - Start of comment:
-    #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT:\n'
-    "^# ([\w\-]+\.)+[\w\-]+:COMMENT:$": nds_var_cmd_comments,
+    #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT[:]\n'
+    "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment
-    #  '# DEVICE:COMMENT:\n'
-    "^# DEVICE:COMMENT:$": nds_dev_comment,
+    #  '# DEVICE:COMMENT[:]\n'
+    "^# DEVICE:COMMENT:?$": nds_dev_comment,
     # Support level
     #  '# DEVICE:SUPPORT-LEVEL:<value>\n'
     "^# DEVICE:SUPPORT-LEVEL:\d\d?$": nds_sl
