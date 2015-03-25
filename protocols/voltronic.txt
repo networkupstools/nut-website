@@ -1,7 +1,7 @@
 Voltronic Power UPS Protocol
 ============================
 Daniele Pezzini <hyouko@gmail.com>
-v1.2, January 2014
+v1.3, March 2015
 
 
 Communication
@@ -552,6 +552,9 @@ e.g.
 
 +(PI10+::
 3-phase input/output (e.g. Galleon 3-phase in/3-phase out 10KVA/15KVA/20KVA)
+
++(PI13+::
+e.g.
 
 +(PI14+::
 e.g.
@@ -1565,4 +1568,5 @@ Revision History
 |1.0	|04/2013	|Initial release								|Daniele Pezzini
 |1.1	|10/2013	|Add some unused <<capability-options,capability options>> (*+M+*, *+Z+*)	|Daniele Pezzini
 |1.2	|01/2014	|Fix typos, add description of <<not-supported,not supported *+M+* command>>	|Daniele Pezzini
+|1.3	|03/2015	|Add <<qpi-protocol,*P13*>> protocol						|Daniele Pezzini
 |====
