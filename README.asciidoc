@@ -1,0 +1,62 @@
+Network UPS Tools website
+=========================
+
+This repository contains the scripts needed to generate the
+http://www.networkupstools.org[NUT website]. Since it was originally part of
+the https://github.com/networkupstools/nut/[NUT source tree], it shares some
+history, and you can save some bandwidth if you already have a copy of the NUT
+repository downloaded:
+
+----
+$ git clone --reference /path/to/nut https://github.com/networkupstools/nut-website.git
+----
+
+Once you have cloned the nut-website repository, you can initialize the
+submodules, and pull your copy of NUT into the website tree as well:
+
+----
+$ git submodule init
+Submodule 'ddl' (https://github.com/networkupstools/nut-ddl.git) registered for path 'ddl'
+Submodule 'nut' (https://github.com/networkupstools/nut.git) registered for path 'nut'
+$ git submodule update --reference /path/to/nut nut
+...
+----
+
+Required Packages
+-----------------
+
+You will need a copy of `AsciiDoc`, `a2x` (part of AsciiDoc), and its dependencies
+(`dblatex`, `xmllint`, and `xsltproc`). Current version requirements will be
+listed in the output of the `./configure` script. To build the Hardware
+Compatibility List (HCL) page, you will need either the `simplejson` or `json`
+Python module (the json module that comes with Python 2.7 will work) and the
+`lxml` module. You will also need `autoconf` and `automake`, and possibly
+`libtool` since the NUT module uses it.
+
+The `source-highlight` package is optional, but if available, will be used by
+AsciiDoc for syntax highlighting of examples.
+
+GNU `make` and GNU `coreutils` are recommended, but if you see any remaining
+non-portable constructs in the Makefiles, please let us know.
+
+Building
+--------
+
+----
+$ ./autogen.sh && ./configure && make
+----
+
+The root of the website will be in the `output/` directory, if all goes well.
+
+Updates
+-------
+
+If you only have a small patch (fixing a typo or wording), don't feel obliged
+to install all of the dependencies just to test it. Feel free to create a pull
+request on this repository, or send the patch as an attachment to
+the http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list]
+and we will submit it to the
+http://buildbot.networkupstools.org/public/nut/builders/Debian-website[Buildbot]
+queue. Buildbot publishes its results at http://new.networkupstools.org and
+the contents of that site will be copied to http://www.networkupstools.org
+for the next NUT release.
