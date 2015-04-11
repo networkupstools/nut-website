@@ -55,6 +55,7 @@ nutDriversUpdateMap = {
 nutDriversHintsMap = {
     # "reported": "suggested",
     "apcsmart-old": "apcsmart",
+    "bestups": "nutdrv_qx",
     "blazer_ser": "nutdrv_qx",
     "blazer_usb": "nutdrv_qx",
 }
