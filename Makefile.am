@@ -105,10 +105,17 @@ all:	\
 	ups-html.txt	\
 	$(OUTDIR)
 
+release: dist-prerequisites all dist-output
+
 # Generate WEBSITE_DEPS & man pages
 prerequisites:
 	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
 	cd nut/docs/man; $(MAKE) $(AM_MAKEFLAGS) html-man
+
+# Generate distribution files and GPG fingerprint (really needed?)
+dist-prerequisites:
+	cd nut; $(MAKE) $(AM_MAKEFLAGS) dist dist-hash dist-sig
+	cd nut; gpg --export -a 0x55CA5976 > nut-key.gpg
 
 $(WEBSITE_FILES): $(LAYOUT).conf
 
@@ -151,6 +158,15 @@ $(OUTDIR):
 		cp -f "$${rawfile}" "$(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/}";	\
 	done
 
+dist-output:
+	$(MKDIR_P) $(OUTDIR)/source/@TREE_VERSION@
+	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz $(OUTDIR)/source/@TREE_VERSION@/
+	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.md5 $(OUTDIR)/source/@TREE_VERSION@/
+	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sha256 $(OUTDIR)/source/@TREE_VERSION@/
+	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sig $(OUTDIR)/source/@TREE_VERSION@/
+	cp -f nut/NEWS $(OUTDIR)/source/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
+	cp -f nut/ChangeLog $(OUTDIR)/source/@TREE_VERSION@/
+	cp -f nut/nut-key.gpg $(OUTDIR)/source/
 
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
