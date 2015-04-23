@@ -1,4 +1,4 @@
-- April 16, 2014: NUT 2.7.3 released
+- April 16, 2015: NUT 2.7.3 released
 - October 26, 2014: link:download.html#_virtualization_packages[VMware NUT client 2.7.2 for ESXI 5.x]
 - April 17, 2014: NUT 2.7.2 released
 - February 18, 2014: new project link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
