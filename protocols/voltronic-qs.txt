@@ -1,235 +1,467 @@
-Voltronic Power - QS Protocol
-=============================
+Voltronic Power - `QS' UPS communication protocols
+==================================================
 Daniele Pezzini <hyouko@gmail.com>
-v1.0, January 2014
+v2.0, November 2015
+
+// Default options
+// - Labeled lists
+:listdef-labeled.style:		horizontal
+:listdef-labeled3.style:	horizontal
+// - Tables
+:tabledef-default.qs-style:	frame="topbot",grid="rows"
+:tabledef-default.style:	qs
+:tabledef-default.options:	header
+:autowidth-option:
+
+This document describes the RS232 and USB communication protocols used in some UPS manufactured by Voltronic Power.
+It started as an ``unofficial decoding work'' and was later updated with protocol specifications kindly provided by Voltronic Power.
 
 
-Communication
--------------
+Hardware description
+--------------------
 
-*RS232C*::
-9 pins female D-type connector - only 3 wires: TX, RX (crossed) and GND
+RS232
+~~~~~
 
-[horizontal]
-Baud rate:::
-2400 bps
-
-Data length:::
-8 bits
-
-Stop bit:::
-1 bit
-
-Parity:::
-none
-
-*USB*::
-Serial over USB with 'cypress' protocol
-
-
-Accepted queries and commands
------------------------------
-
-All commands, queries and UPS's replies are terminated by +<cr>+
-
-
-UPS replies
-~~~~~~~~~~~
-
-Two implementations are known:
-
-1. {empty}
+Baud rate::	2400 bps
+Data length::	8 bits
+Stop bit::	1 bit
+Parity::	none
+Cabling::	9 pins female D-type connector - only 3 wires: TX, RX (crossed) and GND:
 +
-- Invalid commands or queries will be echoed back
-- Accepted commands will be followed by action without any further reply
+----
+  COMPUTER         UPS
+=======================
+ RX  (pin 2) <---> TX
+ TX  (pin 3) <---> RX
+ GND (pin 5) <---> GND
+----
 
-2. {empty}
+
+USB
+~~~
+
+Communication::	Serial over USB with 'cypress' protocol
+Cabling::	image:images/voltronic-qs_usb-scheme.png["USB scheme"]
+
+
+General
+-------
+
+- All <<queries,inquiry>> and <<commands,control>> commands and UPS's replies are terminated by `<cr>`.
+- Valid <<queries,inquiry commands>> will get a reply terminated by `<cr>`:
+  * In a UPS's reply, unavailable or not supported data is filled with *`-`*.
+  * In a UPS's reply, if some data length is less than the definition, there will be enough *`#`* before the data to reach the expected length.
+- Accepted <<commands,control commands>> are followed by action without any further reply.
+- When invalid <<commands,control>> or <<queries,inquiry>> commands are sent to the UPS:
+  * [[P-protocol-invalid]]<<protocol,P protocol>>:
+  ** if the command/query starts with `T`, the device doesn't reply anything,
+  ** otherwise the device replies `N<cr>`.
+  * [[T-protocol-invalid]]<<protocol,T protocol>>:
+  ** the device replies `N<cr>`.
+  * [[V-protocol-invalid]]<<protocol,V protocol>>:
+  ** the device echoes back the invalid command/query.
+
+
+[[queries]]
+Inquiry commands
+----------------
+
+By sending inquiry commands you can get the information you need from the UPS.
+
+NOTE:	To get a valid reply, all data should be captured at the same time when UPS receives an inquiry command.
+
+[[protocol]]*`M`*::	Query UPS for protocol.
 +
-- *+(ACK+* -> Command accepted
-- *+(NAK+* -> Command/Query rejected or invalid
+--
+.Reply
+----
+X<cr>
+----
 
-In both cases:
+Where `X` can be:
 
-- Valid queries will get a reply terminated by +<cr>+
-- Unavailable or not supported data is filled with *+-+*.
+- `P` -> P protocol:
+  * -> <<P-protocol-queries,inquiry commands>>;
+  * -> <<P-protocol-commands,control commands>>;
+  * -> <<P-protocol-invalid,handling of invalid commands>>.
+- `T` -> T protocol:
+  * -> <<T-protocol-queries,inquiry commands>>;
+  * -> <<T-protocol-invalid,handling of invalid commands>>.
+- `V` -> V protocol:
+  * -> <<V-protocol-queries,inquiry commands>>;
+  * -> <<V-protocol-invalid,handling of invalid commands>>.
+--
 
 
-UPS status
+[[P-protocol-queries]]
+P protocol
 ~~~~~~~~~~
 
-[horizontal]
-*+QS+*::
-Query UPS for status
-+
-.Reply
-----
-(MMM.M NNN.N PPP.P QQQ RR.R SS.S TT.T b7..b0
-----
-+
-.e.g.
-----
-(209.7 209.7 219.7 020 50.0 41.8 23.3 00000001
-----
-+
-.Alternative reply
-----
-(MMM.M NNN.N PPP.P QQQ RR.R S.SS TT.T b7..b0
-----
-+
-.e.g.
-----
-(002.9 000.0 000.0 000 00.0 2.02 21.0 10000001
-----
-+
-Where:
+*`QS`*::	Query UPS for current status and data.
 +
 --
-[horizontal]
-+MMM.M+::
-Input voltage
+.Reply
+----
+#AB C DE F G HI JKL M N O<cr>
+----
 
-+NNN.N+::
-Fault voltage
+NOTE:	One space (Hex: `0x20`) is added between each field for data separation, but no space between multi-byte data.
 
-+PPP.P+::
-Output voltage
+Where:
 
-+QQQ+::
-Load level (%)
-
-+RR.R+::
-Output frequency (Hz)
-
-+SS.S+::
-Battery voltage [or +S.SS+]
-
-+TT.T+::
-UPS temperature (° Celsius)
-
-+b7..b0#+::
--> 8 bit status - *+1+* means:
+`#`::		Start byte
+`AB C`::	MCU-detected input voltage (high, `A`, and low, `B`, bytes, V rms) and input voltage ratio (`C`):
+		- Input voltage (V) is obtained with the formula: `AB * C / 51 / 256`.
+`DE F`::	MCU-detected output voltage (high, `D`, and low, `E`, bytes, V rms) and output voltage ratio (`F`):
+		- Output voltage (V) is obtained with the formula: `DE * F / 51 / 256`.
+`G`::		Output load level (%):
+		- `G` is a percentage of rated load capability, not an absolute value.
+		- If there is no output, the value must be forced to 0 %.
+`HI JKL`::	Output frequency time count (high, `H` and low, `I`, bytes, Hz) and output frequency ratio (high, `J`, medium, `K`, and low, `L`, bytes)
+		- Frequency (Hz) is obtained with the formula: `JKL / HI`.
+		- If the frequency is higher than 99.9 Hz, the value must be forced to 99.9 Hz.
+		- If there is no output, the value must be forced to 0.0 Hz.
+`M N`::		MCU-detected battery voltage (`M`, V rms) and battery voltage ratio (`N`):
+		- Battery voltage (V) is obtained with the formula: `M * N / 510`.
+`O`::		UPS status (8 bits):
+		- `O` is one byte of binary information such as `<b7b6b5b4b3b2b1b0>`, where `bn` is either `0` or `1`:
 +
-[cols="^.^1m,.^9",options="header,autowidth",frame="topbot",grid="rows"]
 |====
-|bit#	|Description
-|7	|Utility Fail (Immediate)
-|6	|Battery Low
-|5	|Bypass/Boost or Buck Active
-|4	|UPS Failed
-|3	|UPS Type is Standby
+|Bit	|Logic `1`				|Logic `0`
+|7	|Utility fail				|Utility OK
+|6	|Battery low				|Battery is not low
+|5	|Boost or buck mode active		|Neither boost nor buck mode active
+|4	|UPS fault				|No UPS fault
+|3	|UPS type is line-interactive		|UPS type is on-line
+|2	|UPS self-test in progress		|No UPS self-test in progress
+|1	|UPS is in shutdown active status	|UPS is not in shutdown active status
+|0	|Beeper is active			|Beeper is mute
+|====
+`<cr>`::	Stop byte
 
-*+0+* is Online
+[[P-note]]
+[NOTE]
+====
+To prevent confusion with control characters, in the following cases the original byte is changed:
 
-|2	|Test in progress
-|1	|Shutdown Active
-|0	|Beeper On
+[cols=".^,^.^m"]
+|====
+^|Original Hex	|Changed to Hex
+|`0x0D`	(CR)	|0x28 0x00
+|`0x11`	(XON)	|0x28 0x01
+|`0x13`	(XOFF)	|0x28 0x02
+|`0x0A`	(LF)	|0x28 0x03
+|`0x20`	(SP)	|0x28 0x04
+|====
+
+Hence, if you find the `(` character (Hex: `0x28`) between start byte and stop byte, then you should consider also the next byte and check if they make up one of the aforementioned sequences: if so you have to use them both to get the original value.
+====
+
+For example, when PC sends the command `QS<cr>`, the data returned by UPS (in battery mode) is as the following hexadecimal:
+
+----
+Reply: 23 06 00 20 68 20 70 01 20 69 20 0C 20 61 A8 20 28 02 12 D0 20 D5 20 1E 20 89 0D
+       -- -- --    --    -- --    --    --    -- --    ----- -- --    --    --    -- --
+Id.:   #  A  B     C     D  E     F     G     H  I       J   K  L     M     N     O  <cr>
+----
+
+And it means:
+
+[cols="m,m,"]
+|====
+|Id.	|Hex value	|Meaning
+|#	|23		|Start byte
+|AB C	|0600 68	|Input voltage and ratio for input voltage
+			-> Input voltage = `0x0600 * 0x68 / 51 / 256` = 12.2 V
+|DE F	|7001 69	|Output voltage and ratio for output voltage
+			-> Output voltage = `0x7001 * 0x69 / 51 / 256` = 230.6 V
+|G	|0C		|Output load percent = 12 %
+|HI JKL	|61A8 280212D0	|Output frequency and ratio for output frequency
+			[`J` = `0x2802` -> `0x13` (<<P-note,see this note>>) -> `JKL` = `0x1312D0`]
+			-> Output frequency = `0x1312D0 / 0x61A8` = 50.0 Hz
+|M N	|D5 1E		|Battery voltage and ratio for battery voltage
+			-> Battery voltage = `0xD5 * 0x1E / 510` = 12.5 V
+|O	|89		a|One byte of UPS status
+
+[cols="^.^,^.^m,.^",frame="topbot",grid="rows",options="autowidth,header"]
+!====
+!Bit	!Value	!Meaning
+!7	!1	!Utility fail
+!6	!0	!Battery is not low
+!5	!0	!Neither boost nor buck mode active
+!4	!0	!No UPS fault
+!3	!1	!UPS type is line-interactive
+!2	!0	!No UPS self-test in progress
+!1	!0	!UPS is not in shutdown active status
+!0	!1	!Beeper is active
+!====
+|<cr>	|0D		|Stop byte
 |====
 --
 
 
-Rated informations
-~~~~~~~~~~~~~~~~~~
+[[T-protocol-queries]]
+T protocol
+~~~~~~~~~~
 
-[horizontal]
-*+F+*::
-Query UPS for rated informations
+*`QS`*::	Query UPS for current status and data.
 +
+--
 .Reply
 ----
-#MMM.M NNN PPP.P QQ.Q
+#AB C DE F G HI JKL M N O P<cr>
 ----
+
+Where (<<P-note,this note applies>>):
+
+`#`..`O`, `<cr>`::	Same meaning as in the reply to the *`QS`* query of <<P-protocol-queries,P protocol>>.
+`P`::			UPS ratings (8 bits):
+			- `P` is one byte of binary information such as `<b7b6b5b4b3b2b1b0>`, where `bn` is either `0` or `1`:
 +
-.e.g.
+|====
+|Bit	|Meaning
+|7	a|Nominal output frequency (Hz):
+
+	- `1` -> 60 Hz
+	- `0` -> 50 Hz
+|6:5	a|Nominal battery voltage (V):
+
+	- `00` -> 12 V
+	- `01` -> 24 V
+	- `10` -> 36 V
+	- `11` -> 48 V
+|4	|Reserved
+|3	|Reserved
+|2:1:0	a|Nominal output voltage (V):
+
+	- `000` -> 110 V
+	- `001` -> 120 V
+	- `010` -> 220 V
+	- `011` -> 230 V
+	- `100` -> 240 V
+|====
+
+For example, when PC sends the command `QS<cr>`, the data returned by UPS (in battery mode) is as the following hexadecimal:
+
 ----
-#220.0 004 036.0 50.0
+Reply: 23 01 02 20 65 20 73 01 20 65 20 00 20 60 00 20 12 C0 00 20 CC 20 3C 20 89 20 23 0D
+       -- -- --    --    -- --    --    --    -- --    -- -- --    --    --    --    -- --
+Id.:   #  A  B     C     D  E     F     G     H  I     J  K  L     M     N     O     P  <cr>
 ----
-+
-Where:
+
+And it means:
+
+[cols="m,m,"]
+|====
+|Id.	|Hex value	|Meaning
+|#	|23		|Start byte
+|AB C	|0102 65	|Input voltage and ratio for input voltage
+			-> Input voltage = `0x0102 * 0x65 / 51 / 256` = 1.99 ~ 2.0 V
+|DE F	|7301 65	|Output voltage and ratio for output voltage
+			-> Output voltage = `0x7301 * 0x65 / 51 / 256` = 227.8 V
+|G	|00		|Output load percent = 0 %
+|HI JKL	|6000 12C000	|Output frequency and ratio for output frequency
+			-> Output frequency = `0x12C000 / 0x6000` = 50.0 Hz
+|M N	|CC 3C		|Battery voltage and ratio for battery voltage
+			-> Battery voltage = `0xCC * 0x3C / 510` = 24.0 V
+|O	|89		a|One byte of UPS status
+
+[cols="^.^,^.^m,.^",frame="topbot",grid="rows",options="autowidth,header"]
+!====
+!Bit	!Value	!Meaning
+!7	!1	!Utility fail
+!6	!0	!Battery is not low
+!5	!0	!Neither boost nor buck mode active
+!4	!0	!No UPS fault
+!3	!1	!UPS type is line-interactive
+!2	!0	!No UPS self-test in progress
+!1	!0	!UPS is not in shutdown active status
+!0	!1	!Beeper is active
+!====
+|P	|23		a|One byte of UPS ratings
+
+[cols="^.^,^.^m,.^",frame="topbot",grid="rows",options="autowidth,header"]
+!====
+!Bit	!Value	!Meaning
+!7	!0	!Nominal output frequency: 50 Hz
+!6:5	!01	!Nominal battery voltage: 24 V
+!4	!0	!Reserved
+!3	!0	!Reserved
+!2:1:0	!011	!Nominal output voltage: 230 V
+!====
+|<cr>	|0D		|Stop byte
+|====
+--
+
+
+[[V-protocol-queries]]
+V protocol
+~~~~~~~~~~
+
+*`QS`*::	Query UPS for current status and data.
 +
 --
-[horizontal]
-+MMM.M+::
-Rating voltage
-
-+NNN+::
-Rating current (Ampère)
-
-+PPP.P+::
-Battery voltage [or +PP.PP+]
-
-+QQ.Q+::
-Nominal frequency (Hz)
---
-
-*+M+*::
-Query UPS for manufacturer
-+
 .Reply
 ----
-V
+(MMM.M NNN.N PPP.P QQQ RR.R SS.S TT.T U<cr>
 ----
-+
+
+NOTE:	One space (Hex: `0x20`) is added between each field for data separation.
+
 Where:
+
+`(`::		Start byte
+`MMM.M`::	Input voltage (V rms)
+		- `M` is an integer number ranging from `0` to `9`.
+`NNN.N`::	Input fault voltage (V rms)
+		- `N` is an integer number ranging from `0` to `9`.
+		- Its purpose is to identify a short duration voltage glitch which causes off-line UPS to go to inverter mode. If this occurs, the input voltage will appear normal at query prior to glitch and will still appear normal at next query.
+		- The input fault voltage will hold glitch voltage till next query: after query, the input fault voltage will be the same as input voltage until next glitch occurs.
+`PPP.P`::	Output voltage (V rms)
+		- `P` is an integer number ranging form `0` to `9`.
+		- If there is no output, the value must be forced to `000.0` V.
+`QQQ`::		Output load level (%)
+		- `Q` is an integer number ranging form `0` to `9`.
+		- `QQQ` is a percentage of rated load capability, not an absolute value.
+		- If there is no output, the value must be forced to `000` V.
+`RR.R`::	Output frequency (Hz)
+		- `R` is an integer number ranging from `0` to `9`.
+		- If the output frequency is higher than 99.9 Hz, the value must be forced to `99.9` Hz.
+		- If there is no output, the value must be forced to `00.0` Hz.
+`SS.S`::	Battery voltage (V rms)
+		- `S` is an integer number ranging from `0` to `9`.
+`TT.T`::	Internal temperature (°C)
+		- `T` is an integer number ranging form `0` to `9`.
+		- If the value can't be obtained, the field must be filled with `25.0` °C.
+`U`::		UPS status (8 bits)
+		- `U` is one byte of binary information such as `<b7b6b5b4b3b2b1b0>`, where `bn` is either the ASCII character `0` or `1`:
++
+|====
+|Bit	|Logic `1`				|Logic `0`
+|7	|Utility fail				|Utility OK
+|6	|Battery low				|Battery is not low
+|5	|Boost or buck mode active		|Neither boost nor buck mode active
+|4	|UPS fault				|No UPS fault
+|3	|UPS type is line-interactive		|UPS type is on-line
+|2	|UPS self-test in progress		|No UPS self-test in progress
+|1	|UPS is in shutdown active status	|UPS is not in shutdown active status
+|0	|Beeper is active			|Beeper is mute
+|====
+`<cr>`::	Stop byte
+
+For example, when PC sends the command `QS<cr>`, the data returned by UPS is as follows:
+
+----
+(208.4 140.0 208.4 034 59.9 12.8 35.0 00110000<cr>
+----
+
+And it means:
+
+- Input voltage is 208.4 V,
+- Input fault voltage is 140.0 V,
+- Output voltage is 208.4 V,
+- Output load level is 34 %.
+- Output frequency is 59.9 Hz,
+- Battery voltage is 12.8 V,
+- Temperature is 35.0 °C.
+- UPS type is on-line, UPS failed, AVR active and shutdown is not active.
+--
+
+*`F`*::		Query UPS for ratings.
 +
 --
-[horizontal]
-+V+::
-**'V'**oltronic Power (UPS manufacturer)
+.Reply
+----
+#MMM.M QQQ SS.SS RR.R<cr>
+----
+
+NOTE:	There should be a space character (Hex: `0x20`) between every field for data separation.
+
+The UPS's response contains the following information fields:
+
+`MMM.M`::		Nominal output voltage (V).
+`QQQ`::			Nominal output current (A).
+`SS.SS` or `SSS.S`::	Nominal battery voltage (V):
+			- `SS.SS` when less than 99.99 V;
+			- `SSS.S` for 99.99 V upwards.
+`RR.R`::		Nominal output frequency (Hz).
+
+For example, when PC sends the command `F<cr>`, the data returned by UPS is as follows:
+
+----
+#220.0 003 12.00 50.0<cr>
+----
+
+And it means:
+
+- Nominal output voltage is 220.0 V,
+- Nominal output current is 3 A,
+- Nominal battery voltage is 12.0 V,
+- Nominal output frequency is 50.0 Hz.
 --
 
 
-Shutdown management
-~~~~~~~~~~~~~~~~~~~
+[[commands]]
+Control commands
+----------------
 
-[horizontal]
-[[SnRm]]*+SnRm+*::
-Shutdown in *+n+* (+.2+->++.9++, +01+->++09++) minutes and then turn on after *+m+* (+0001+..+9999+) minutes
+By sending control commands you can control the UPS.
 
-[[SnR0000]]*+SnR0000+*::
-Shutdown in *+n+* (+.2+->++.9++, +01+->++09++) minutes and stay off
+*`T`*::			Invoke a 10 seconds battery self-test and then return to utility.
+			- If battery low occurs during testing, UPS will return to utility immediately.
+			- Only when UPS is in line mode and battery voltage is not less than 13V/pcs, the command is executed.
 
-[[C]]*+C+*::
-Cancel the *+SnRm+*/*+SnR0000+* commands:
-+
-- If executed before *+n+* time has elapsed -> cancel shutdown
-- If executed after *+n+* time has elapsed _and_ mains is present -> the UPS output is turned on
+[[SnRm]]*`S<n>R<m>`*::	Shutdown (and restore): shut UPS output off in *`<n>`* minutes, wait *`<m>`* minutes and then turn on UPS output again.
+			- The UPS output will be off in *`<n>`* minutes, even if utility power is present.
+			- If battery low occurs before *`<n>`* minutes, the output is turned off immediately.
+			- After UPS shutdown, the controller of the UPS monitors utility power: if utility is recovered, the UPS will wait for *`<m>`* minutes and connect the utility to output.
+			- When *`<m>`* minutes expire, if utility has not been restored, the UPS will wait until utility is restored.
+			- If UPS is in shutdown waiting status (while *`<n>`* minutes elapse), the <<C,*`C`* command>> can cancel the shutdown command.
+			- If UPS is in recovery waiting status (while *`<m>`* minutes elapse) _and_ mains is present, the <<C,*`C`* command>> can turn on the UPS output, but UPS must be held off at least 10 seconds.
+			- *`<n>`* is a number ranging from `.2`, `.3`, ..., `01`, `02`, ..., to `09`.
+			- *`<m>`* is a number ranging from `0000` to `9999`. If it is `0000`, output won't be turned on, and, if control power can be shut off, then it is turned off immediately.
+
+[[C]]*`C`*::		Cancel the <<SnRm,*`S<n>R<m>`* shutdown command>>.
+			- UPS only accepts this command when the <<SnRm,*`S<n>R<m>`* command>> has not been completed.
+			- If UPS is in shutdown waiting status (while *`<n>`* minutes of the <<SnRm,*`S<n>R<m>`* command>> elapse), the shutdown command is cancelled.
+			- If UPS is in recovery waiting status (while *`<m>`* minutes of the <<SnRm,*`S<n>R<m>`* command>> elapse) _and_ mains is present, the UPS output is turned on, but UPS must be held off at least 10 seconds.
+
+*`Q`*::			Toggle the UPS beeper.
+			- When AC power fails, UPS will generate a warning beep to inform the manager. The manager can toggle the warning beep by sending this command.
 
 
-Battery test
-~~~~~~~~~~~~
+[[P-protocol-commands]]
+P protocol
+~~~~~~~~~~
 
-[horizontal]
-*+T+*::
-Invoke a quick battery self-test
-
-
-Buzzer control
-~~~~~~~~~~~~~~
-
-[horizontal]
-*+Q+*::
-Toggle the UPS beeper
+*`CT`*::		This command, though supported by devices that implement the <<protocol,P protocol>>, does nothing.
+			As a consequence of that, when this command is sent to the UPS, the device doesn't reply anything (since the command is supported and not invalid, the UPS doesn't return <<P-protocol-invalid,`N<cr>`>>).
 
 
 Known problems
 --------------
 
-<<SnR0000,*+SnR0000+* command>> is known to work as expected (i.e. turn the load off indefinitely) only if mains is present, otherwise, as soon as mains returns the load will be powered.
+The following issues have been reported by some people with `V protocol' devices:
 
-After issuing a <<SnRm,*+SnRm+* command>>, the UPS won't wait *+m+* minutes before powering on the load, provided the following conditions are met:
+- <<SnRm,*`S<n>R0000`* command>> is known to work as expected (i.e. turn the load off indefinitely) only if mains is present, otherwise, as soon as mains returns the load gets powered.
+- After issuing a <<SnRm,*`S<n>R<m>`* command>>, the UPS won't wait *`<m>`* minutes before powering on the load, provided that the following conditions are met:
++
+--
+* if the load has been previously (no matter how long before) powered off through <<SnRm,*`S<n>R0000`* command>> _and_ powered on through <<C,*`C`* command>> _and_
+* if AC wasn't cut after issuing the <<SnRm,*`S<n>R0000`* command>> (i.e. the UPS didn't turn itself off) _and_
+* if there's a power outage after issuing the <<SnRm,*`S<n>R<m>`* command>>.
 
-- if the load has been previously (no matter how long before) powered off through <<SnR0000,*+SnR0000+* command>> _and_ powered on through <<C,*+C+* command>> _and_
-- if AC wasn't cut after issuing the <<SnR0000,*+SnR0000+* command>> (i.e. the UPS didn't turn itself off) _and_
-- if there's a power outage after issuing the <<SnRm,*+SnRm+* command>>
-
-In this case, as soon as mains returns the load will be powered.
+In this case, as soon as mains returns the load gets powered.
+--
 
 
-Revision History
+Revision history
 ----------------
 
-[cols="1^.^,2^.^,5.^,2.^",options="header,autowidth",frame="topbot",grid="rows",align="center"]
+[cols="1^.^,2^.^,5.^,2.^",align="center"]
 |====
-|Rev.	|Date		|Description									|Author
-|1.0	|01/2014	|Initial release								|Daniele Pezzini
+|Rev.	|Date		|Description								|Author
+|1.0	|01/2014	|Initial release							|Daniele Pezzini
+|2.0	|11/2015	|Update the document adding informations provided by Voltronic Power	|Daniele Pezzini
 |====
