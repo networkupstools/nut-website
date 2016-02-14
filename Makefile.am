@@ -101,6 +101,8 @@ all:	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
 	$(DDL_DIR)/index.html	\
+	$(PACKAGE_DIR_TARGETS)	\
+	$(SOURCE_DIR_TARGETS)	\
 	scripts/ups_data.js	\
 	ups-html.txt	\
 	$(OUTDIR)
@@ -157,6 +159,14 @@ $(OUTDIR):
 	for rawfile in $${rawfiles}; do	\
 		cp -f "$${rawfile}" "$(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/}";	\
 	done
+	$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(PACKAGE_DIRS))
+	for item in $(PACKAGE_DIR_TARGETS) $(PACKAGE_DIR_FILES); do	\
+		cp -f "$${item}" "$(OUTDIR)/$${item}";	\
+	done
+	$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(SOURCE_DIRS))
+	for item in $(SOURCE_DIR_TARGETS) $(SOURCE_DIR_FILES); do	\
+		cp -f "$${item}" "$(OUTDIR)/$${item}";	\
+	done
 
 dist-output:
 	$(MKDIR_P) $(OUTDIR)/source/@TREE_VERSION@
@@ -178,6 +188,10 @@ clean-local:
 		$${ddlfiles}	\
 		$(DDL_DIR)/index.txt	\
 		$(DDL_DIR)/index.html	\
+		$(PACKAGE_DIR_TARGETS_RAW)	\
+		$(PACKAGE_DIR_TARGETS)	\
+		$(SOURCE_DIR_TARGETS_RAW)	\
+		$(SOURCE_DIR_TARGETS)	\
 		$(WEBSITE_FILES)	\
 		$(OUTDIR)	\
 		images/	\
@@ -265,6 +279,8 @@ ADOC_PARAMS_DDL_L2 =	\
 EMPTY :=
 # A space..
 SP := $(EMPTY) $(EMPTY)
+# A comma..
+COMMA := ,
 # Percent sign
 PCT := %
 
@@ -371,5 +387,84 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 # Compiled asciidoc page (.html)
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
+
+###
+
+### Package and source directories indexer
+
+## Settings
+# Package and source directories
+PACKAGE_DIR := package
+SOURCE_DIR := source
+# Directories and files to be ignored in package and source directories and in all their subdirectories recursively
+IGNORE_PACKAGESOURCE_DIRS := .git
+IGNORE_PACKAGESOURCE_FILES := .gitignore index.html index.txt README.adoc
+
+## Some functions..
+# Function that lists subdirectories of a given directory, ignoring any defined subdirectories
+# - $(1): directory whose children directories are to be listed
+# - $(2): space-separated list of directories to be ignored among children directories
+# note: both $(1) and items in $(2) shall not end with a '/'
+list_subdirs = $(filter-out $(1)/ $(patsubst %,$(subst %,\%,$(1))/%/,$(2)),$(sort $(dir $(wildcard $(1)/*/))))
+
+# Function that recursively lists all subdirectories (at any nested level) of a given directory, recursively ignoring any defined subdirectories
+# - $(1): directory whose subdirectories are to be listed
+# - $(2): space-separated list of directories to be recursively ignored among subdirectories
+# note: both $(1) and items in $(2) shall not end with a '/'
+list_subdirs_recursively = $(sort $(foreach DIR,$(call list_subdirs,$(1),$(2)),$(DIR) $(call list_subdirs_recursively,$(patsubst %/,%,$(DIR)),$(2))))
+
+# Function that lists children files of a directory, ignoring any defined files
+# - $(1): directory whose children files are to be listed
+# - $(2): space-separated list of file names to be ignored among children files
+# note: $(1) shall not end with a '/'
+list_children_files = $(addprefix $(1)/,$(filter-out $(2),$(notdir $(wildcard $(1)/*/))))
+
+## Source and package directories and all their subdirectories
+# -> PACKAGE_DIR/ PACKAGE_DIR/*/ PACKAGE_DIR/*/*/ ...
+# -> SOURCE_DIR/ SOURCE_DIR/*/ SOURCE_DIR/*/*/ ...
+PACKAGE_DIRS := $(PACKAGE_DIR)/ $(call list_subdirs_recursively,$(PACKAGE_DIR),$(IGNORE_PACKAGESOURCE_DIRS))
+SOURCE_DIRS := $(SOURCE_DIR)/ $(call list_subdirs_recursively,$(SOURCE_DIR),$(IGNORE_PACKAGESOURCE_DIRS))
+
+## All files (NOT directories) that reside under source and package directories and all their subdirectories
+# -> PACKAGE_DIR/* PACKAGE_DIR/*/* PACKAGE_DIR/*/*/* ...
+# -> SOURCE_DIR/* SOURCE_DIR/*/* SOURCE_DIR/*/*/* ...
+PACKAGE_DIR_FILES := $(foreach DIR,$(patsubst %/,%,$(PACKAGE_DIRS)),$(call list_children_files,$(DIR),$(IGNORE_PACKAGESOURCE_FILES)))
+SOURCE_DIR_FILES := $(foreach DIR,$(patsubst %/,%,$(SOURCE_DIRS)),$(call list_children_files,$(DIR),$(IGNORE_PACKAGESOURCE_FILES)))
+
+## Index of each directory
+# Raw asciidoc indices (.txt)
+# -> PACKAGE_DIR/index.txt PACKAGE_DIR/*/index.txt PACKAGE_DIR/*/*/index.txt ...
+# -> SOURCE_DIR/index.txt SOURCE_DIR/*/index.txt SOURCE_DIR/*/*/index.txt ...
+PACKAGE_DIR_TARGETS_RAW := $(addsuffix index.txt,$(PACKAGE_DIRS))
+SOURCE_DIR_TARGETS_RAW := $(addsuffix index.txt,$(SOURCE_DIRS))
+
+# Compiled asciidoc indices (.html)
+# -> PACKAGE_DIR/index.html PACKAGE_DIR/*/index.html PACKAGE_DIR/*/*/index.html ...
+# -> SOURCE_DIR/index.html SOURCE_DIR/*/index.html SOURCE_DIR/*/*/index.html ...
+PACKAGE_DIR_TARGETS := $(addsuffix index.html,$(PACKAGE_DIRS))
+SOURCE_DIR_TARGETS := $(addsuffix index.html,$(SOURCE_DIRS))
+
+# Raw asciidoc indices (.txt)
+# Note: if a file named README{.adoc,.txt,} exists in the same directory (precedence in case there are more than one file with different suffixes: README.adoc -> README.txt -> README), it is included in index.txt
+%/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(patsubst $$(PCT),"$$(PCT)",$$(filter-out $$(sort $$*/ $$(addprefix $$*/,$$(IGNORE_PACKAGESOURCE_FILES) $$(addsuffix /,$$(IGNORE_PACKAGESOURCE_DIRS)))),$$(wildcard $$*/*/))) | sort -f -)
+	$(call file,> $@,= Index of /$*)
+	$(call file,>> $@,:root:		$(subst $(SP),$(EMPTY),$(patsubst %,../,$(subst /,$(SP),$*))))
+	$(call file,>> $@,:iconsdir:	{root}images)
+	$(call file,>> $@,:scriptsdir:	{root}scripts)
+	$(call file,>> $@,:stylesdir:	{root}css)
+	$(call file,>> $@,)
+	$(call file,>> $@,TIP:	An always up-to-date version of this directory can be found following link:$(subst %,%25,https://github.com/networkupstools/nut-$(firstword $(subst /,$(SP),$*))-archive$(patsubst $(subst %,\%,$(firstword $(subst /,$(SP),$*)))%,%,$*))[this link].)
+	$(call file,>> $@,)
+	$(foreach README,$(if $(wildcard $*/README.adoc),README.adoc,$(if $(wildcard $*/README.txt),README.txt,$(if $(wildcard $*/README),README))),$(call file,>> $@,include::$(README)[]))
+	$(call file,>> $@,)
+	$(call file,>> $@,[cols="1^m$(COMMA)99m"$(COMMA)grid="rows"$(COMMA)frame="none"])
+	$(call file,>> $@,|====)
+	$(if $(findstring /,$*),$(call file,>> $@,|..	|link:..[Parent directory]))
+	$(foreach ITEM,$(patsubst $(subst %,\%,$*)/%,%,$^),$(call file,>> $@,|$(if $(notdir $(ITEM)),,+)	|link:+++$(subst %,%25,$(ITEM))+++[$(ITEM)]))
+	$(call file,>> $@,|====)
+
+# Compiled asciidoc indices (.html)
+%/index.html: %/index.txt $$(if $$(wildcard $$*/README.adoc),$$*/README.adoc,$$(if $$(wildcard $$*/README.txt),$$*/README.txt,$$(if $$(wildcard $$*/README),$$*/README))) $(LAYOUT).conf
+	$(ASCIIDOC) $(ADOC_PARAMS_COMMON) -o "$@" "$<"
 
 ###
