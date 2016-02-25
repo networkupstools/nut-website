@@ -34,8 +34,11 @@ Documents in this section are provided courtesy of Eaton.
   * link:protocols/eaton/XCP_Rev_C1_Public_021309.pdf[X-format Communications Protocol (XCP) Specification] (PDF, 996 KB)
   * link:protocols/eaton/XCP_Alarm_Map_021309.pdf[XCP Alarm Map] (PDF, 54 KB)
   * link:protocols/eaton/XCP_Meter_Map_021309.pdf[XCP Meter Map] (PDF, 21 KB)
- - EATON (prev. Powerware) SNMP information:
-  * link:protocols/snmp/Xups.mib[Powerware PowerMIB (XUPS-MIB)] (TXT, 71 KB)
+ - EATON SNMP Management Information Base:
+  * link:protocols/snmp/eaton-oids.mib[EATON general SNMP definitions] (TXT, 6.7 KB)
+  * link:protocols/snmp/Xups.mib[EATON PowerMIB (XUPS-MIB)] (TXT, 71 KB
+  * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 79 KB)
+  * link:protocols/snmp/eaton-ats.mib[EATON ATS (ATS-MIB)] (TXT, 19 KB)
 
 - link:protocols/fortress.html[Best Fortress protocol] - for LI 520, 720, 1020, and 1420 models
 - link:protocols/sola.html[SOLA/Best Power protocol (Phoenixtec)] - courtesy of Invensys Energy Systems
@@ -134,8 +137,11 @@ Documents in this section are provided courtesy of various manufacturers.
  * link:protocols/snmp/mgeups.mib[UPS MIB (MGE-MIB)] (TXT, 76 KB)
  * link:protocols/mge/MGE-mibs.pdf[MIB description] (PDF, 78 KB)
 
-- EATON (prev. Powerware) Management Information Base:
- * link:protocols/snmp/Xups.mib[EATON (prev. Powerware) PowerMIB (XUPS-MIB)] (TXT, 71 KB)
+- EATON Management Information Base:
+ * link:protocols/snmp/eaton-oids.mib[EATON general SNMP definitions] (TXT, 6.7 KB)
+ * link:protocols/snmp/Xups.mib[EATON PowerMIB (XUPS-MIB)] (TXT, 71 KB
+ * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 79 KB)
+ * link:protocols/snmp/eaton-ats.mib[EATON ATS (ATS-MIB)] (TXT, 19 KB)
 
 - Offsite links
  * http://www.liebert.com/downloads/[Liebert MIBs]
