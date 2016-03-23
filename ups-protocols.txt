@@ -23,6 +23,12 @@ Belkin
 - link:protocols/belkin-universal.html[Belkin Universal UPS] - courtesy of Peter Selinger
 
 
+Delta
+-----
+
+- link:protocols/snmp/DeltaUPSv4.mib[Delta UPS v4 SNMP definitions] (TXT, 46 KB)
+
+
 Eaton
 -----
 
@@ -36,7 +42,7 @@ Documents in this section are provided courtesy of Eaton.
   * link:protocols/eaton/XCP_Meter_Map_021309.pdf[XCP Meter Map] (PDF, 21 KB)
  - EATON SNMP Management Information Base:
   * link:protocols/snmp/eaton-oids.mib[EATON general SNMP definitions] (TXT, 6.7 KB)
-  * link:protocols/snmp/Xups.mib[EATON PowerMIB (XUPS-MIB)] (TXT, 71 KB
+  * link:protocols/snmp/Xups.mib[EATON PowerMIB (XUPS-MIB)] (TXT, 71 KB)
   * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 79 KB)
   * link:protocols/snmp/eaton-ats.mib[EATON ATS (ATS-MIB)] (TXT, 19 KB)
 
@@ -132,6 +138,9 @@ Documents in this section are provided courtesy of various manufacturers.
 - APC Management Information Base:
  * link:protocols/snmp/powernet344.mib[UPS MIB (PowerNet)] (TXT, 484 KB)
  * link:protocols/snmp/APC-Powernet.pdf[MIB description] (PDF, 998 KB)
+
+- Delta Management Information Base:
+ * link:protocols/snmp/DeltaUPSv4.mib[Delta UPS v4 SNMP definitions] (TXT, 46 KB)
 
 - MGE Management Information Base:
  * link:protocols/snmp/mgeups.mib[UPS MIB (MGE-MIB)] (TXT, 76 KB)
