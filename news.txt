@@ -1,3 +1,4 @@
+- April 28, 2016: new project link: ntUPSd - Network UPS Tools Services for Windows
 - March 9, 2016: NUT 2.7.4 released
 - May 13, 2015: link:download.html#_binary_packages[Beta NUT 2.6.5-6 package for Windows released]
 - April 16, 2015: NUT 2.7.3 released
