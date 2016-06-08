@@ -20,7 +20,7 @@ NUT-Monitor is a graphical application to monitor and manage UPSes connected to
 a NUT server. This application is written in Python and PyGTK, and uses the
 <<PyNUT,PyNUT>> class.
 
-NOTE: NUT-Monitor is part of NUT since version NUT 2.4.1.
+NOTE: NUT-Monitor is part of NUT since NUT v2.4.1.
 It will further evolve toward the NUT Control Center.
 
 link:https://github.com/zykh/walNUT[walNUT] 
@@ -43,7 +43,7 @@ NOTE: WinNUT is currently being replaced by a full port to Windows, part of the
 official NUT distribution. link:download.html#_binary_packages[MSI packages]
 are available too.
 
-link:http://wmnut.networkupstools.org[WMNUT]
+link:https://github.com/aquette/wmnut/[WMNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
@@ -52,7 +52,7 @@ WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
 Network Management Systems (NMS) integration
 --------------------------------------------
 
-link:http://bigsister.graeff.com/[Big Sister system and network monitor]
+link:http://www.bigsister.ch/bigsister.html[Big Sister system and network monitor]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The "nut" module monitors uninterruptible power supplies under control of the
@@ -63,7 +63,7 @@ graphing may point you to battery aging problems.
 link:http://cacti.net[Cacti monitoring tool]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are three different scripts that add NUT support to Cacti:
+There are at least three different scripts that add NUT support to Cacti:
  
 - link:http://forums.cacti.net/about19250.html[PHP script]
 - link:http://forums.cacti.net/about14475.html[Ruby script]
@@ -114,7 +114,7 @@ link:https://github.com/6XGate/ntUPSd[Network UPS Tools Services for Windows]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Network UPS Tools Services for Windows provides tools and services to run an
-upsd compatible server to report the status of UPS devices connected to a system
+`upsd`-compatible server to report the status of UPS devices connected to a system
 or server in master mode. It allows other Network UPS Tools slave daemons and
 monitoring clients access to UPS information using standard Windows programing
 interfaces for easier setup.
@@ -123,7 +123,7 @@ interfaces for easier setup.
 link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-nut-snmpagent is an SNMP wrapper to expose the upsc output into Net-SNMP
+nut-snmpagent is an SNMP wrapper to expose the `upsc` output into Net-SNMP.
 
 [[PyNUT]]
 link:http://www.lestat.st/en/informatique/projets/pynut[PyNUT]
@@ -133,7 +133,7 @@ PyNUT is an abstraction class written in Python to access NUT (Network UPS
 Tools) server and execute commands without needing to know the communication
 protocol.
 
-NOTE: PyNUT is part of NUT since version NUT 2.4.1.
+NOTE: PyNUT is part of NUT since NUT v2.4.1.
 
 link:http://bugs.debian.org/343530[RRDtool logging support]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,7 +144,7 @@ NUT. (See also <<collectd>>.)
 link:http://elrik75.free.fr/ups_control/[ups_control]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A developing Python wrapper to upsc which can generate mails and shutdown the
+A developing Python wrapper to `upsc` which can generate email and shutdown the
 machine.
 
 link:http://search.cpan.org/search?dist=ups-nut[UPS::Nut]
@@ -152,7 +152,7 @@ link:http://search.cpan.org/search?dist=ups-nut[UPS::Nut]
 
 A Perl module to talk to an UPS via NUT (Network UPS Tools) upsd.
 
-NOTE: UPS::Nut is part of NUT since version NUT 2.6.1.
+NOTE: UPS::Nut is part of NUT since NUT v2.6.1.
 
 link:https://github.com/george2/python-nut2/[python-nut2]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,19 +209,13 @@ link:http://www.thecus.com[Thecus NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Thecus NAS firmware includes NUT for UPS support. The
-link:http://www.thecus.com/Downloads/Compatible_List/UPS_List_v1.0_ALL.pdf[following list of devices] is known to be supported.
+link:http://www.thecus.com/Downloads/DOM/Compatible_List/UPS_List_v1.0_ALL.pdf[following list of devices] is known to be supported.
 
 
 link:http://www.buffalotech.com[Buffalo NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Buffalo TeraStation NAS (Business-class) include NUT for UPS support.
-
-link:http://www.webbastards.com/projects/[lcd-nut]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-A Project to display the status of a UPS on computer through one of the many
-cheap LCD matrix displays available on the market.
 
 
 Legacy and discontinued projects
@@ -232,6 +226,12 @@ link:http://sourceforge.net/projects/gknut/[GKrellM NUT]
 
 Simple UPS monitoring plugin for GKrellM. Uses NUT (Network UPS Tools) for UPS
 connection.
+
+link:http://web.archive.org/web/20040409160326/http://www.webbastards.com/projects/[lcd-nut]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+A project to display the status of a UPS on computer through one of the many
+cheap LCD matrix displays available on the market.
 
 Nut-Graph
 ~~~~~~~~~
