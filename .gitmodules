@@ -4,3 +4,9 @@
 [submodule "ddl"]
 	path = ddl
 	url = https://github.com/networkupstools/nut-ddl.git
+[submodule "package"]
+	path = package
+	url = https://github.com/networkupstools/nut-package-archive.git
+[submodule "source"]
+	path = source
+	url = https://github.com/networkupstools/nut-source-archive.git
