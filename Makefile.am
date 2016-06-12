@@ -287,7 +287,7 @@ PCT := %
 # File function for backward compatibility (before make 3.82.90); new versions of make won't use this variable since a built-in function with the same name is already defined
 # - $(1): operand (> or >>) + file name
 # - $(2): text
-file = $(shell echo "$(2)" $(firstword $(1)) "$(wordlist 2,$(words $(1)),$(1))")
+file = $(shell echo "$(subst ",\",$(2))" $(firstword $(1)) "$(wordlist 2,$(words $(1)),$(1))")
 
 ## DLL settings
 # Device Dumps Library directory
