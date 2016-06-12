@@ -1,4 +1,4 @@
-- April 28, 2016: new project link: ntUPSd - Network UPS Tools Services for Windows
+- April 28, 2016: new project link:https://github.com/6XGate/ntUPSd[ntUPSd - Network UPS Tools Services for Windows]
 - April 17, 2016: link:download.html#_virtualization_packages[VMware NUT client 2.7.4 for ESXi 5.x and 6.0]
 - March 9, 2016: NUT 2.7.4 released
 - May 13, 2015: link:download.html#_binary_packages[Beta NUT 2.6.5-6 package for Windows released]
