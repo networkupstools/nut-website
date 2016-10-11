@@ -152,6 +152,10 @@ Documents in this section are provided courtesy of various manufacturers.
  * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 79 KB)
  * link:protocols/snmp/eaton-ats.mib[EATON ATS (ATS-MIB)] (TXT, 19 KB)
 
+- HP/Compaq Management Information Base:
+ * link:protocols/snmp/CPQPOWER-MIB.mib[HP/Compaq Power MIB] (TXT, 68 KB)
+ * link:protocols/snmp/CPQUPS-MIB.mib[HP/Compaq UPS MIB] (TXT, 24 KB)
+
 - Offsite links
  * http://www.liebert.com/downloads/[Liebert MIBs]
  * link:http://powerquality.eaton.com/Support/Software-Drivers/Downloads/connectivity-firmware/bestpwr2.mib[Best Power MIB]
