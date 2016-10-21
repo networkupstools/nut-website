@@ -165,6 +165,11 @@ link:https://github.com/george2/webNUT/[webNUT]
 
 A simple web interface for Network UPS Tools servers.
 
+link:https://github.com/robbiet480/go.nut/[go.nut]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Golang library for interacting with NUT.
+
 Hardware projects involving NUT
 -------------------------------
 
