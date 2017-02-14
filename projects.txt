@@ -109,6 +109,19 @@ KNutSetting is a visual KDE tool for configuring NUT - Network UPS Tools.
 Other software projects
 -----------------------
 
+link:http://42ity.org[42ITy(TM)]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+link:http://42ity.org[42ITy(TM)] is a next generation platform for data center
+service optimization that aims to bridge the gap between the traditional silos
+of IT and facility management.
+
+link:http://42ity.org[42ITy(TM)] promotes an open, community based approach, to
+ensure broad and vendor agnostic support, while leveraging and giving back to
+leading open source software components including NUT (Network UPS Tools),
+ØMQ/Malamute & MariaDB, among others.
+
+
 [[ntUPSd]]
 link:https://github.com/6XGate/ntUPSd[Network UPS Tools Services for Windows]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,6 +234,14 @@ link:http://www.buffalotech.com[Buffalo NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Buffalo TeraStation NAS (Business-class) include NUT for UPS support.
+
+Eaton - Intelligent Power Controller
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
+provides easy infrastructure monitoring solution, using the link:http://42ity.org[42ITy(TM)]
+Open Source data center monitoring software stack, which relies on NUT for
+power devices monitoring.
 
 
 Legacy and discontinued projects

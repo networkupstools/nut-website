@@ -1,3 +1,5 @@
+- February 8, 2017: new projects link:http://42ity.org[42ITy(TM)] and
+  link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
 - April 28, 2016: new project link:https://github.com/6XGate/ntUPSd[ntUPSd - Network UPS Tools Services for Windows]
 - April 17, 2016: link:download.html#_virtualization_packages[VMware NUT client 2.7.4 for ESXi 5.x and 6.0]
 - March 9, 2016: NUT 2.7.4 released
