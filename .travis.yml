@@ -1,0 +1,64 @@
+# Travis CI script
+################################################################################
+# This file is based on a template used by zproject, but isn't auto-generated. #
+################################################################################
+
+language:
+- c
+- python
+
+python:
+- '2.7'
+
+cache:
+  pip: true
+  directories:
+    - output
+    - nut
+    - ddl
+    - package
+    - source
+
+os:
+- linux
+
+sudo: false
+
+services:
+- docker
+
+addons:
+  apt:
+    packages: &deps_gendocs
+    - asciidoc
+    - xsltproc
+    - dblatex
+    - docbook-xsl
+    - docbook-xsl-ns
+    - source-highlight
+    - libxml2-utils
+    - aspell
+    - aspell-en
+    - python-lxml
+
+# Builds with customized setups
+env:
+  matrix:
+    - BUILD_TYPE=spellcheck
+    - BUILD_TYPE=website
+
+before_install:
+- if [ $TRAVIS_OS_NAME == "osx" ] ; then brew update; brew install binutils asciidoc docbook-xsl ; XML_CATALOG_FILES=/usr/local/etc/xml/catalog ; export XML_CATALOG_FILES ; fi
+
+install:
+- if [ "$BUILD_TYPE" != spellcheck ] ; then pip install pycparser && pip install lxml && pip install simplejson ; fi
+
+# Hand off to generated script for each BUILD_TYPE
+# TODO: Check if we need to remove the output/ dir before website (re)build
+script:
+- case "$BUILD_TYPE" in
+    website) ./autogen.sh && ./configure && make ;;
+    spellcheck) ./autogen.sh && ./configure && ( cd nut && ./configure --without-all --with-docs=man ) && make spellcheck ;;
+    default|'') exit 0 ;;
+    *) echo "Unknown BUILD_TYPE='$BUILD_TYPE'" >&2 ; exit 1;;
+  esac
