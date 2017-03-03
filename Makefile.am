@@ -464,4 +464,37 @@ SOURCE_DIR_TARGETS := $(addsuffix index.html,$(SOURCE_DIRS))
 %/index.html: %/index.txt $$(if $$(wildcard $$*/README.adoc),$$*/README.adoc,$$(if $$(wildcard $$*/README.txt),$$*/README.txt,$$(if $$(wildcard $$*/README),$$*/README))) $(LAYOUT).conf
 	$(ASCIIDOC) $(ADOC_PARAMS_COMMON) -o "$@" "$<"
 
+SPELLCHECK_SRC = \
+	README.asciidoc \
+	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt \
+	protocols/sec.txt \
+	protocols/us9003.txt \
+	protocols/sec-protocol.txt \
+	protocols/megatec.txt \
+	protocols/fortress.txt \
+	protocols/voltronic-qs.txt \
+	protocols/apcsmart.txt \
+	protocols/voltronic.txt \
+	protocols/sec-standard.txt \
+	protocols/belkin-universal.txt \
+	protocols/sola.txt \
+	protocols/optiups.txt \
+	protocols/belkin-protocol.txt \
+	protocols/belkin.txt \
+	protocols/minicol.txt \
+	protocols/oneac.txt
+
+### Note: currently the NUT makefiles' implementation of spellcheck rules
+### assumes use of its own nut.dict. When it becomes possible to split it
+### out, consider adding  NUT_SPELL_DICT="$(NUT_SPELL_DICT)"  to command
+### and uncommenting the line below. If you use spellcheck-interactive and
+### add some more exceptions, be ready to commit a pull request from the
+### "nut" submodule as well (and do revise the changed dictionary so you
+### only add words and roll back anything your aspell might remove) and
+### to promote the submodule reference from nut-website later on.
+#NUT_SPELL_DICT = nut.dict
+
+spellcheck spellcheck-interactive spellcheck-sortdict:
+	$(MAKE) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+
 ###
