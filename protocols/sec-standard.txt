@@ -3,7 +3,7 @@ SEC Standard UPS Communication Interface
 :revnumber: 2.0
 :revdate: July 24, 1995
 
-The following document describes the standard UPS communication interface that Systems Enahancemcnt Corporation has adopted.
+The following document describes the standard UPS communication interface that Systems Enhancement Corporation has adopted.
 
 Connector: *D-Sub-9 Female*
 
@@ -19,7 +19,7 @@ The UPS responds to this signal, after a delay, and only during on-battery opera
 
 |2		|ByPass Active		|UPS relay closes between pins 2 & 4 when the power supply has a failure or is being serviced and power is being provided to the system from the utility power line.
 
-|3		|AC Fail (N.O.)		|UPS relay closes betwen pins 3 & 4 when input power is lost.
+|3		|AC Fail (N.O.)		|UPS relay closes between pins 3 & 4 when input power is lost.
 |4		|Common			|Switch common for pins 2, 3, 5, 6.
 |5		|Low Battery (N.O.)	|UPS relay closes between pins 5 & 4 when UPS battery has less than 2 minutes of life left.
 |6		|UPS On			|The UPS is powered on and is capable of providing power to the system.
