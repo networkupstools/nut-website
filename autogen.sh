@@ -28,8 +28,7 @@ echo_spacer
 # - scripts/udev/nut-usbups.rules.in
 echo "Readying NUT"
 echo_spacer
-cd nut && ./autogen.sh || quit
-cd ..
+( cd nut && ./autogen.sh ) || quit
 echo_spacer
 
 # Call autoreconf
