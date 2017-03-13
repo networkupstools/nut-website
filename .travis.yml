@@ -12,6 +12,7 @@ python:
 
 cache:
   pip: true
+  ccache: true
   directories:
     - output
     - nut
