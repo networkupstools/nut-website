@@ -3,7 +3,7 @@ UPS Protocols
 
 All protocol information on this site is provided in the hope that it will be useful.
 
-Some are officialy provided by the manufacturers, while others are the result of reverse engineering work.
+Some are officially provided by the manufacturers, while others are the result of reverse engineering work.
 
 However, UPS hardware is plentiful and varied.
 Test your software thoroughly, as these documents may not always reflect the reality within your equipment!

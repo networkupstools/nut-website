@@ -14,6 +14,7 @@ dnl Check for AsciiDoc
 
 NUT_CHECK_ASCIIDOC
 
+AS_IF([test -z "${nut_have_asciidoc}"],[
 AC_MSG_CHECKING([if asciidoc version can build website (minimum required 8.6.3)])
 AX_COMPARE_VERSION([${ASCIIDOC_VERSION}], [ge], [8.6.3], [
 	AC_MSG_RESULT(yes)
@@ -36,6 +37,11 @@ AX_COMPARE_VERSION([${DBLATEX_VERSION}], [ge], [0.2.5], [
 ], [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR(["Unable to build website: check dblatex!"])
+])
+], [AC_MSG_NOTICE([Newer NUT sources are in use and suitability of asciidoc and other tools was already tested])
+    AS_IF([test "${nut_have_asciidoc}" = "no"],[
+	AC_MSG_ERROR(["Unable to build website: check asciidoc and other tools versions!"])
+    ])
 ])
 
 dnl ----------------------------------------------------------------------

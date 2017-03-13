@@ -463,5 +463,5 @@ Revision history
 |====
 |Rev.	|Date		|Description								|Author
 |1.0	|01/2014	|Initial release							|Daniele Pezzini
-|2.0	|11/2015	|Update the document adding informations provided by Voltronic Power	|Daniele Pezzini
+|2.0	|11/2015	|Update the document adding information provided by Voltronic Power	|Daniele Pezzini
 |====

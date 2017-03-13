@@ -528,7 +528,7 @@ Individual UPS registers
 
 The UPS has a number of internal registers, which can be read and/or written.
 Some registers are read-only.
-There either hold hard-coded values (such as the UPS model name or nominal voltage rating), or they describe the state of the UPS, such as the current battery voltage or whether certain events have occured.
+There either hold hard-coded values (such as the UPS model name or nominal voltage rating), or they describe the state of the UPS, such as the current battery voltage or whether certain events have occurred.
 Some other registers can be read and written.
 These registers control or configure aspects of the UPS's behavior, such as its voltage sensitivity, or whether the audible alarm is enabled.
 In some cases, setting the value of a writable register triggers an event, such as a battery self-test or a UPS shutdown.
@@ -562,7 +562,7 @@ In North America, this is +60+.
 |03:	|power rating				|2 bytes	|RO HC ST	|800		|The nominal power rating in VA.
 For a 800VA UPS, this is +800+.
 
-|04:	|battery voltage rating			|1 byte		|RO HC ST	|24		|The nomial battery voltage in V.
+|04:	|battery voltage rating			|1 byte		|RO HC ST	|24		|The nominal battery voltage in V.
 For my system, this is +24+.
 
 |05:	|unknown				|1 byte		|RO ST		|100		|I don't know the function of this register.
@@ -638,7 +638,7 @@ NOTE: during a critical event (e.g., low battery), the alarm rings faster and ca
 
 |12:	|unknown				|1 byte		|RW		|0		.3+|I don't know the function of registers +12+-+14+.
 On my system, they all take value +0+.
-Setting these registers has no apparent effect; subsequents reads will still return +0+.
+Setting these registers has no apparent effect; subsequent reads will still return +0+.
 
 |13:	|unknown				|1 byte		|RW		|0
 |14:	|unknown				|1 byte		|RW		|0
@@ -652,7 +652,7 @@ This is idiotic in my opinion, but it is what my Belkin UPS does.
 NOTE: When this counter reaches +0+, the UPS either performs a "final shutdown" or a "timed shutdown", never a "soft shutdown" as far as I can tell (see <<workaround,Soft Shutdown Workaround>> above for more information).
 Which kind of shutdown is performed depends on the state of the restart timer, see register +16+ below.
 
-WARNING: The Bulldog software panics and wants to shut down the operting system immediately if it sees that register +15+ is non-zero.
+WARNING: The Bulldog software panics and wants to shut down the operating system immediately if it sees that register +15+ is non-zero.
 
 |16:	|restart timer				|2 bytes	|RW, ST		|0		a|This register holds the time, in minutes (not seconds!), until the UPS will restart its load, or +0+ if the timer is not set.
 
@@ -664,7 +664,7 @@ If the restart timer is +0+, a "final shutdown" will be performed, otherwise a "
 
 After a "final shutdown", flag +0x0020+ in register +22+ will be set, and the UPS will remain off permanently until the front panel button is pressed.
 It do not currently know a way of re-starting it through the serial port.
-Also, the system remains off irrespectively of what happens to the AC power.
+Also, the system remains off irrespective of what happens to the AC power.
 In the "final shutdown" state, all timers (register +15+ and +16+) are stopped and no longer work; thus there is no way of ending a final shutdown in software.
 If AC power is lost during a final shutdown, the UPS loses communication on its serial port.
 
@@ -680,7 +680,7 @@ The reason we write "+2+" and not "+1+" to register +16+ is that there is no gua
 On my system, it takes value +0+.
 I found that if this register is non-zero, then the Bulldog software initiates an immediate shutdown.
 But it does not specify the reason.
-Setting this register has no apparent effect; subsequents reads will still return +0+.
+Setting this register has no apparent effect; subsequent reads will still return +0+.
 
 |18:	|AC input voltage			|2 bytes	|RO		|1176		|The current AC input voltage in 0.1V, or +0+ on loss of utility power.
 Note that this value is non-zero as long as AC power is present, even during a battery test.
@@ -737,7 +737,7 @@ Also note that my UPS sets +0x0005+ on AC Failure; however, the +0x0004+ bit is 
 
 Finally, if the +0x0008+ flag is set during an AC Failure, then the "UPS Health" status line in the "Main" display will turn orange.
 If +0x0008+ is not set, this is not necessarily the case (unless, strangely, register +1f+ was +0x00+ or +0x20+ during startup).
-It is not clear to what extent this behavior means anything, and to what extent it just reveals idiosyncracies in the Bulldog software.
+It is not clear to what extent this behavior means anything, and to what extent it just reveals idiosyncrasies in the Bulldog software.
 ====
 
 |23:	|battery status				|1 byte		|RO		|0x10		a|This register holds the following flags.
@@ -786,7 +786,7 @@ We therefore use the following method for determining whether the system is "onl
 
 |24:	|unknown				|1 byte		|RW		|0		.4+|I don't know the function of registers +24+-+27+.
 On my system, they all take value +0+.
-Setting these registers has no apparent effect; subsequents reads will still return +0+.
+Setting these registers has no apparent effect; subsequent reads will still return +0+.
 The Bulldog driver does not attempt to read these registers.
 
 |25:	|unknown				|1 byte		|RW		|0
