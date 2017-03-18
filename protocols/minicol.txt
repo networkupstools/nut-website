@@ -114,8 +114,8 @@ Step 4. Command from UPS to PC::
 --
 
 
-Miscelleaneous
-~~~~~~~~~~~~~~
+Miscellaneous
+~~~~~~~~~~~~~
 
 a. Software to poll the UPS at least 6 times in 2 seconds at program startup to determine if there is "NO COMMUNICATION" and advise "Please check cable connection", etc.
 

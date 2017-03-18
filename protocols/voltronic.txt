@@ -32,7 +32,7 @@ Accepted queries and commands
 
 All commands, queries and UPS's replies are terminated by +<cr>+
 
-Command begginning with *+Q+* -> query
+Command beginning with *+Q+* -> query
 
 
 [[ups-replies]]
@@ -204,7 +204,7 @@ UPS temperature (° Celsius)
 --
 
 *+QBV+*::
-Query UPS for battery informations
+Query UPS for battery information
 +
 .Reply
 ----
@@ -299,12 +299,12 @@ Possible replies:
 --
 
 
-Rated informations
-~~~~~~~~~~~~~~~~~~
+Rated information
+~~~~~~~~~~~~~~~~~
 
 [horizontal]
 *+QMD+*::
-Query UPS for rated informations #1
+Query UPS for rated information #1
 +
 .Reply
 ----
@@ -346,7 +346,7 @@ Rated voltage (as *per battery*)
 --
 
 *+QRI+*::
-Query UPS for rated informations #2
+Query UPS for rated information #2
 +
 .Reply
 ----
@@ -376,7 +376,7 @@ Rated output frequency (Hz)
 --
 
 *+I+*::
-Query UPS for rated informations #3 (old)
+Query UPS for rated information #3 (old)
 +
 .Reply
 ----
@@ -403,7 +403,7 @@ UPS firmware version (10 characters fixed length, filled with spaces)
 --
 
 *+F+*::
-Query UPS for rated informations #4 (old)
+Query UPS for rated information #4 (old)
 +
 .Reply
 ----
@@ -1439,7 +1439,7 @@ Fault handler
 
 [cols="5>m,75,15,5^",options="autowidth,header",frame="topbot",grid="rows",align="center"]
 |====
-|#	|Correspondig Fault					|Type			|Level
+|#	|Corresponding Fault					|Type			|Level
 |01	|Bus voltage not within default setting			|UPS internal event	|1
 |02	|Bus voltage over maximum value				|UPS internal event	|1
 |03	|Bus voltage below minimum value			|UPS internal event	|1
@@ -1488,7 +1488,7 @@ P31 UPSes
 
 [cols="5>m,75,15,5^",options="autowidth,header",frame="topbot",grid="rows",align="center"]
 |====
-|#	|Correspondig Fault				|Type			|Level
+|#	|Corresponding Fault				|Type			|Level
 |01	|Fan failure					|UPS internal event	|1
 |02	|Over temperature fault				|UPS internal event	|1
 |03	|Battery voltage is too high			|Battery event		|1
