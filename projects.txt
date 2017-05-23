@@ -119,7 +119,7 @@ of IT and facility management.
 link:http://42ity.org[42ITy(TM)] promotes an open, community based approach, to
 ensure broad and vendor agnostic support, while leveraging and giving back to
 leading open source software components including NUT (Network UPS Tools),
-ØMQ/Malamute & MariaDB, among others.
+0MQ/Malamute & MariaDB, among others.
 
 
 [[ntUPSd]]
@@ -129,7 +129,7 @@ link:https://github.com/6XGate/ntUPSd[Network UPS Tools Services for Windows]
 Network UPS Tools Services for Windows provides tools and services to run an
 `upsd`-compatible server to report the status of UPS devices connected to a system
 or server in master mode. It allows other Network UPS Tools slave daemons and
-monitoring clients access to UPS information using standard Windows programing
+monitoring clients access to UPS information using standard Windows programming
 interfaces for easier setup.
 
 [[nut-snmpagent]]
