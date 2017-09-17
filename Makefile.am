@@ -112,6 +112,7 @@ release: dist-files all
 # Generate WEBSITE_DEPS & man pages
 prerequisites:
 	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
+	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) FAQ.html
 	cd nut/docs/man; $(MAKE) $(AM_MAKEFLAGS) html-man
 
 # Generate distribution files and GPG fingerprint (really needed?) and copy them in source dir
