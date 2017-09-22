@@ -23,7 +23,7 @@ cache:
 os:
 - linux
 
-sudo: false
+sudo: required
 
 services:
 - docker
@@ -52,7 +52,7 @@ before_install:
 - if [ $TRAVIS_OS_NAME == "osx" ] ; then brew update; brew install binutils asciidoc docbook-xsl ; XML_CATALOG_FILES=/usr/local/etc/xml/catalog ; export XML_CATALOG_FILES ; fi
 
 install:
-- if [ "$BUILD_TYPE" != spellcheck ] ; then pip install pycparser && pip install lxml && pip install simplejson ; fi
+- if [ "$BUILD_TYPE" != spellcheck ] ; then sudo pip install pycparser && sudo pip install lxml && sudo pip install simplejson ; fi
 
 # Hand off to generated script for each BUILD_TYPE
 # TODO: Check if we need to remove the output/ dir before website (re)build
