@@ -48,6 +48,22 @@ $ ./autogen.sh && ./configure && make
 
 The root of the website will be in the `output/` directory, if all goes well.
 
+Publishing
+----------
+
+NOTE: These are internal notes for the maintainers.
+
+The build result is published to the
+https://github.com/networkupstools/networkupstools.github.io[NUT github.io repository]
+
+Hence, the publication is as easy as:
+
+----
+$ git clone https://github.com/networkupstools/networkupstools.github.io
+$ cp -R ./output/* /path/to/networkupstools.github.io/
+----
+
+
 Updates
 -------
 
