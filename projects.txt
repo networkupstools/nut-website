@@ -87,7 +87,7 @@ link:http://monami.sourceforge.net[MonAMI NUT plugin]
 
 A plugin to return UPS status to the MonAMI universal sensor framework. 
 
-link:http://munin.projects.linpro.no[Munin NUT plugin]
+link:http://munin-monitoring.org[Munin NUT plugin]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A link:http://muninexchange.projects.linpro.no/?search&cid=0&pid=136&phid=279[NUT plugin] is available.
