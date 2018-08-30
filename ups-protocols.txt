@@ -50,6 +50,15 @@ Documents in this section are provided courtesy of Eaton.
 - link:protocols/sola.html[SOLA/Best Power protocol (Phoenixtec)] - courtesy of Invensys Energy Systems
 
 
+Legrand
+-------
+
+Documents officially provided by Legrand.
+
+- link:protocols/legrand/Legrand_WHAD_DHEA_MEGALINE_PUBLIC_Protocol_1.21.pdf[Legrand (prev. Meta System) UPS protocol v1.21] (PDF, 264 KB) --
+  for MEGALINE, WHAD, DHEA and ALLY HF series
+
+
 MicroDowell
 -----------
 
