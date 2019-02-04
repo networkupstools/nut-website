@@ -44,7 +44,7 @@ official NUT distribution. link:download.html#_binary_packages[MSI packages]
 are available too.
 
 link:https://github.com/aquette/wmnut/[WMNUT]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
 (Network UPS Tools) framework on Linux and other systems. 
@@ -53,7 +53,7 @@ Network Management Systems (NMS) integration
 --------------------------------------------
 
 link:http://www.bigsister.ch/bigsister.html[Big Sister system and network monitor]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The "nut" module monitors uninterruptible power supplies under control of the
 NUT (Network UPS Tools) free software suite.
@@ -88,7 +88,7 @@ link:http://monami.sourceforge.net[MonAMI NUT plugin]
 A plugin to return UPS status to the MonAMI universal sensor framework. 
 
 link:http://munin-monitoring.org[Munin NUT plugin]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A link:http://muninexchange.projects.linpro.no/?search&cid=0&pid=136&phid=279[NUT plugin] is available.
 
@@ -254,7 +254,7 @@ Simple UPS monitoring plugin for GKrellM. Uses NUT (Network UPS Tools) for UPS
 connection.
 
 link:http://web.archive.org/web/20040409160326/http://www.webbastards.com/projects/[lcd-nut]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
 A project to display the status of a UPS on computer through one of the many
 cheap LCD matrix displays available on the market.
@@ -277,7 +277,7 @@ Multi-threaded python/GTK2 graphical monitoring application.
 
 
 Notes
--------
+-----
 
 - Client authors: send updates on your releases to the NUT users mailing list.
 We will also put a link to you in the news section of the top page when things
