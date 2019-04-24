@@ -109,6 +109,7 @@ KNutSetting is a visual KDE tool for configuring NUT - Network UPS Tools.
 Other software projects
 -----------------------
 
+[[42ITy]]
 link:http://42ity.org[42ITy(TM)]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -121,6 +122,11 @@ ensure broad and vendor agnostic support, while leveraging and giving back to
 leading open source software components including NUT (Network UPS Tools),
 0MQ/Malamute & MariaDB, among others.
 
+[[node-red-contrib-nut-ups]]
+link:https://github.com/myfreeweb/node-red-contrib-nut-ups[Node-RED for NUT]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Node-RED node that gets UPS data via NUT (Network UPS Tools)
 
 [[ntUPSd]]
 link:https://github.com/6XGate/ntUPSd[Network UPS Tools Services for Windows]
