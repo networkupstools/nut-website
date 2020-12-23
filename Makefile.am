@@ -493,9 +493,16 @@ SPELLCHECK_SRC = \
 ### "nut" submodule as well (and do revise the changed dictionary so you
 ### only add words and roll back anything your aspell might remove) and
 ### to promote the submodule reference from nut-website later on.
-#NUT_SPELL_DICT = nut.dict
+NUT_SPELL_DICT = nut.dict
+NUT_SPELL_DICT_ABS_SRC = $(abs_top_srcdir)/nut/docs/nut.dict
+NUT_SPELL_DICT_ABS_BLD = $(abs_top_builddir)/nut/docs/nut.dict
 
 spellcheck spellcheck-interactive spellcheck-sortdict:
-	$(MAKE) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+	$(MAKE) -f $(top_builddir)/nut/docs/Makefile \
+	    SPELLCHECK_SRC="$(SPELLCHECK_SRC)" \
+	    NUT_SPELL_DICT="$(NUT_SPELL_DICT)" \
+	    NUT_SPELL_DICT_ABS_SRC="$(NUT_SPELL_DICT_ABS_SRC)" \
+	    NUT_SPELL_DICT_ABS_BLD="$(NUT_SPELL_DICT_ABS_BLD)" \
+	    $@
 
 ###
