@@ -6,9 +6,11 @@ for Power Devices, such as Uninterruptible Power Supplies, Power Distribution
 Units, Automatic Transfer Switch, Power Supply Units and Solar Controllers.
 
 NUT provides many control and monitoring link:features.html[features], with a
-uniform control and management interface.
+uniform control and management interface. If you are just getting acquainted
+with NUT, that page link:features.html[features] also explains the technical
+design and some possible set-ups.
 
-More than 140 different manufacturers, and several thousands models are
+More than 140 different manufacturers, and several thousands of models are
 link:stable-hcl.html[compatible].
 
 This software is the combined effort of many
