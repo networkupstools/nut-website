@@ -7,8 +7,8 @@ Units, Automatic Transfer Switch, Power Supply Units and Solar Controllers.
 
 NUT provides many control and monitoring link:features.html[features], with a
 uniform control and management interface. If you are just getting acquainted
-with NUT, that page link:features.html[features] also explains the technical
-design and some possible set-ups.
+with NUT, link:features.html[that page] also explains the technical design
+and some possible set-ups.
 
 More than 140 different manufacturers, and several thousands of models are
 link:stable-hcl.html[compatible].
