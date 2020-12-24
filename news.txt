@@ -1,3 +1,4 @@
+- November 13, 2020: announced handing of maintainership reins from Arnaud Quette to Evgeny "Jim" Klimov
 - February 8, 2017: new projects link:http://42ity.org[42ITy(TM)] and
   link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
 - April 28, 2016: new project link:https://github.com/6XGate/ntUPSd[ntUPSd - Network UPS Tools Services for Windows]
