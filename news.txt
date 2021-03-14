@@ -1,3 +1,4 @@
+- March 6, 2021: great thanks to link:https://fosshost.org/[Fosshost Org] for providing virtual servers that we can use for diverse build farm!
 - November 13, 2020: announced handing of maintainership reins from Arnaud Quette to Evgeny "Jim" Klimov
 - February 8, 2017: new projects link:http://42ity.org[42ITy(TM)] and
   link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
