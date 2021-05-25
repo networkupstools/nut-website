@@ -1,6 +1,6 @@
 - May 23, 2021: complementary projects led by Roger Price now hosted in
   the NUT organization on GitHub: the famous
-  link:https://github.com/networkupstools/ConfigExamples/[Config Examples book],
+  link:https://github.com/networkupstools/ConfigExamples/releases/latest[Config Examples book],
   as well as link:https://github.com/networkupstools/TLS-Shims/[TLS Shims]
   and link:https://github.com/networkupstools/TLS-UPSmon/[TLS UPSmon] for
   community discussion about secured NUT client-server communications
