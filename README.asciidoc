@@ -54,13 +54,29 @@ Publishing
 NOTE: These are internal notes for the maintainers.
 
 The build result is published to the
-https://github.com/networkupstools/networkupstools.github.io[NUT github.io repository]
+https://github.com/networkupstools/networkupstools-master.github.io[NUT github.io master site repository]
+as well as news maintenance on
+https://github.com/networkupstools/networkupstools.github.io[NUT github.io latest-release site repository]
 
-Hence, the publication is as easy as:
+Hence, the rolling master site publication is as easy as:
+
+----
+$ git clone https://github.com/networkupstools/networkupstools-master.github.io
+$ cp -R ./output/* /path/to/networkupstools-master.github.io/
+----
+
+Release site publication is much less frequent. It follows the master
+site guideline when making a release, but only requires updating the
+`index.html` file when `news.txt` is updated, as noted below.
+
+NOTE: Be careful to use `git mergetool -y` to merge the updates from
+a newly generated `index.html` into the release site, to keep intact
+the title (marked with comments) which specifies the type of site.
 
 ----
 $ git clone https://github.com/networkupstools/networkupstools.github.io
-$ cp -R ./output/* /path/to/networkupstools.github.io/
+$ cp -R ./output/index.html /path/to/networkupstools.github.io/
+$ (cd /path/to/networkupstools.github.io/ && git mergetool -y)
 ----
 
 
