@@ -23,7 +23,7 @@ The link:https://networkupstools.org/[main NUT site]
 is dedicated to the latest release of NUT, to serve as a reference about its
 capabilities for users of newest official packages in different OS distributions.
 
-There is also a link:https://master.networkupstools.org/[master.networkupstools.org]
+There is also a link:http://master.networkupstools.org/[master.networkupstools.org]
 site which should more closely follow current development, for users who build NUT
 from link:https://github.com/networkupstools/nut/[source code].
 ====
