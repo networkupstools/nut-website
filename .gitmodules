@@ -1,12 +1,16 @@
 [submodule "nut"]
 	path = nut
 	url = https://github.com/networkupstools/nut.git
+	branch = master
 [submodule "ddl"]
 	path = ddl
 	url = https://github.com/networkupstools/nut-ddl.git
+	branch = master
 [submodule "package"]
 	path = package
 	url = https://github.com/networkupstools/nut-package-archive.git
+	branch = master
 [submodule "source"]
 	path = source
 	url = https://github.com/networkupstools/nut-source-archive.git
+	branch = master
