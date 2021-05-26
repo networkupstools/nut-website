@@ -65,7 +65,7 @@ Hence, the rolling master site publication is as easy as:
 
 ----
 $ git clone https://github.com/networkupstools/networkupstools-master.github.io
-$ cp -R ./output/* /path/to/networkupstools-master.github.io/
+$ rsync -avPHK ./output/* /path/to/networkupstools-master.github.io/
 ----
 
 Release site publication is much less frequent. It follows the master
