@@ -39,4 +39,12 @@ echo "Calling autoreconf..."
 autoreconf -i || quit
 echo_spacer
 
+if [ -n "`git status -uno -s`" ]; then
+    echo "NOTE: Git sources for this repository have changed:"
+    git status -s -uno
+    echo "If you are a website maintainer, please commit updated submodule"
+    echo "references first, before building the site for publication:"
+    echo ":; git add nut ddl source package && git commit -m 'Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`'"
+fi
+
 echo "You can now safely configure and build website!"
