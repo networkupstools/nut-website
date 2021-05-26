@@ -20,6 +20,7 @@ echo "Initializing the submodules..."
 git submodule init || quit
 echo "Updating the submodules..."
 git submodule update || quit
+git submodule update --remote --recursive || quit
 echo_spacer
 
 # Call NUT's autogen.sh to regenerate files needed by NUT's configure:
