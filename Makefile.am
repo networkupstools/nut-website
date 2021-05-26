@@ -106,6 +106,12 @@ all:	\
 	scripts/ups_data.js	\
 	ups-html.txt	\
 	$(OUTDIR)
+	@echo "SUCCESS: The website content in output directory is now prepared for deployment." >&2
+	@echo "Please see the README for instructions about publishing to master site and" >&2
+	@echo "    occasionally updating the news (index.html) on the main site" >&2
+	@echo "Comment the commits to master site like this:"
+	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'"
+# Regenerate site 2020-12-21 vs nut commit 46c7da76 and nut-website commit f1992f6f
 
 release: dist-files all
 

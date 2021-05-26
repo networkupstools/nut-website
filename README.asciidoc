@@ -46,6 +46,9 @@ Building
 $ ./autogen.sh && ./configure && make
 ----
 
+NOTE: There are currently some issues with parallel builds.
+Please run `make` sequentially for the time being.
+
 The root of the website will be in the `output/` directory, if all goes well.
 
 Publishing
