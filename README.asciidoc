@@ -80,7 +80,7 @@ the title (marked with comments) which specifies the type of site.
 ----
 $ git clone https://github.com/networkupstools/networkupstools.github.io
 $ cp -R ./output/index.html /path/to/networkupstools.github.io/
-$ (cd /path/to/networkupstools.github.io/ && git mergetool -y)
+$ (cd /path/to/networkupstools.github.io/ && git difftool -y)
 ----
 
 
