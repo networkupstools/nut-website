@@ -83,8 +83,9 @@ $ cp -R ./output/index.html /path/to/networkupstools.github.io/
 $ (cd /path/to/networkupstools.github.io/ && git difftool -y)
 ----
 
-NOTE: Maybe also update the `ddl` on master site, as its updates often
-reflect newly confirmed support of devices by existing NUT releases.
+NOTE: Maybe also update the `ddl` and `stable-hcl.html` on master site,
+as its updates often reflect newly confirmed support of devices by
+existing NUT releases.
 
 Updates
 -------
