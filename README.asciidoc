@@ -43,10 +43,11 @@ Building
 --------
 
 ----
-$ ./autogen.sh && ./configure && make
+$ ./autogen.sh && ./configure && { make -k ; make }
 ----
 
-NOTE: There are currently some issues with parallel builds.
+NOTE: There are currently some issues with parallel builds (e.g. `protocols`
+subdir should be built before `OUTDIR` but target dependencies do not say so).
 Please run `make` sequentially for the time being.
 
 The root of the website will be in the `output/` directory, if all goes well.
