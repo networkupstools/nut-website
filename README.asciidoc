@@ -43,7 +43,7 @@ Building
 --------
 
 ----
-$ ./autogen.sh && ./configure && { make -k ; make }
+$ ./autogen.sh && ./configure && { make -k ; make ; }
 ----
 
 NOTE: There are currently some issues with parallel builds (e.g. `protocols`
