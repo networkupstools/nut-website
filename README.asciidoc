@@ -2,13 +2,15 @@ Network UPS Tools website
 =========================
 
 This repository contains the scripts needed to generate the
-http://www.networkupstools.org[NUT website]. Since it was originally part of
-the https://github.com/networkupstools/nut/[NUT source tree], it shares some
-history, and you can save some bandwidth if you already have a copy of the NUT
-repository downloaded:
+link:http://www.networkupstools.org[NUT website].
+Since it was originally part of the
+link:https://github.com/networkupstools/nut/[NUT source tree],
+it shares some history, and you can save some bandwidth if you
+already have a copy of the NUT repository downloaded:
 
 ----
-$ git clone --reference /path/to/nut https://github.com/networkupstools/nut-website.git
+$ git clone --reference /path/to/nut \
+    https://github.com/networkupstools/nut-website.git
 ----
 
 Once you have cloned the nut-website repository, you can initialize the
@@ -25,8 +27,9 @@ $ git submodule update --reference /path/to/nut nut
 Required Packages
 -----------------
 
-You will need a copy of `AsciiDoc`, `a2x` (part of AsciiDoc), and its dependencies
-(`dblatex`, `xmllint`, and `xsltproc`). Current version requirements will be
+You will need a copy of `AsciiDoc` toolkit, `a2x` (part of AsciiDoc), and
+its dependencies for MAN, HTML and PDF document formats generation (including
+`dblatex`, `xmllint`, and `xsltproc`). Current version requirements will be
 listed in the output of the `./configure` script. To build the Hardware
 Compatibility List (HCL) page, you will need either the `simplejson` or `json`
 Python module (the json module that comes with Python 2.7 will work) and the
@@ -58,9 +61,11 @@ Publishing
 NOTE: These are internal notes for the maintainers.
 
 The build result is published to the
-https://github.com/networkupstools/networkupstools-master.github.io[NUT github.io master site repository]
+https://github.com/networkupstools/networkupstools-master.github.io[NUT
+github.io master site repository]
 as well as news maintenance on
-https://github.com/networkupstools/networkupstools.github.io[NUT github.io latest-release site repository]
+https://github.com/networkupstools/networkupstools.github.io[NUT
+github.io latest-release site repository]
 
 Hence, the rolling master site publication is as easy as:
 
@@ -90,12 +95,13 @@ existing NUT releases.
 Updates
 -------
 
-If you only have a small patch (fixing a typo or wording), don't feel obliged
-to install all of the dependencies just to test it. Feel free to create a pull
-request on this repository, or send the patch as an attachment to
-the http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list]
-and we will submit it to the
-http://buildbot.networkupstools.org/public/nut/builders/Debian-website[Buildbot]
+If you only have a small patch (fixing a typo or wording), don't feel
+obliged to install all of the dependencies listed above just to test it.
+Feel free to create a pull request on this repository, or (less preferable
+as slower to process) send the patch as an attachment to the
+link:http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list].
+We will submit the patch to the
+link:http://buildbot.networkupstools.org/public/nut/builders/Debian-website[Buildbot]
 queue. Buildbot publishes its results at http://new.networkupstools.org and
 the contents of that site will be copied to http://www.networkupstools.org
 for the next NUT release.
