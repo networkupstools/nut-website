@@ -19,8 +19,8 @@ link:stable-hcl.html[compatible].
 This software is the combined effort of many
 link:acknowledgements.html[individuals and companies]
 with free and open source code licensed under the terms of GNU Public License
-(GPL), see link:https://github.com/networkupstools/nut/blob/master/COPYING
-for specific details.
+(GPL), see link:https://github.com/networkupstools/nut/blob/master/COPYING[the
+NUT license text] for specific details.
 
 [NOTE]
 .Two NUT websites
