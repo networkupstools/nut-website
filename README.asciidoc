@@ -100,8 +100,17 @@ obliged to install all of the dependencies listed above just to test it.
 Feel free to create a pull request on this repository, or (less preferable
 as slower to process) send the patch as an attachment to the
 link:http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list].
+
+[NOTE]
+.Legacy publishing method
+====
 We will submit the patch to the
 link:http://buildbot.networkupstools.org/public/nut/builders/Debian-website[Buildbot]
 queue. Buildbot publishes its results at http://new.networkupstools.org and
 the contents of that site will be copied to http://www.networkupstools.org
 for the next NUT release.
+====
+
+Maintainer note: Publishing is currently triggered manually, but this
+should eventually become part of NUT CI farm automation whenever master
+branch sources of relevant repositories change.
