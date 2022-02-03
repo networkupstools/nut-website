@@ -21,6 +21,10 @@ eatonEpdu MODULE-IDENTITY
 	DESCRIPTION 
 		"The MIB module for Eaton ePDUs (Enclosure Power Distribution Units)."
 
+	REVISION "201409291200Z"
+	DESCRIPTION 
+		"Added outletControlSwitchable and outletControlShutoffDelay object."
+
 	REVISION "201312181200Z"
 	DESCRIPTION 
 		"Added notifyStrappingStatus and strappingStatus object."
@@ -2326,7 +2330,11 @@ OutletControlEntry ::= SEQUENCE {
 	outletControlSequenceDelay
 		Integer32,
 	outletControlRebootOffTime
-		Integer32
+		Integer32,
+  outletControlSwitchable
+    INTEGER,
+  outletControlShutoffDelay
+    Integer32
 }
 
 outletControlStatus  OBJECT-TYPE
@@ -2430,6 +2438,29 @@ outletControlRebootOffTime  OBJECT-TYPE
 	DESCRIPTION 
 		"Time delay in seconds that the outlet should remain in the Off state when executing a Reboot command."
 	::= { outletControlEntry 8 }
+
+outletControlSwitchable  OBJECT-TYPE
+    	SYNTAX 		    INTEGER {
+		            switchable (1),
+		            notSwitchable (2)
+                            }	
+    	MAX-ACCESS    read-write
+    	STATUS 		    current
+    	DESCRIPTION
+		"Determines the outlet capability to be controlled On/Off from the communication channels.
+		1 : control On/Off enabled
+		2 : control On/Off disabled."
+    	::= { outletControlEntry 9 }
+
+outletControlShutoffDelay  OBJECT-TYPE
+    	SYNTAX 		        Integer32 (-1..99999)		
+    	MAX-ACCESS        read-write
+    	STATUS 		        current
+    	DESCRIPTION
+		"Time delay in seconds that could be taken in account before shutting of the outlet.
+    An application which need to shutoff properly an outlet will read this parameter first
+    then write it to the command outletControlOffCmd."
+    	::= { outletControlEntry 10 }
 
 temperatureTable  OBJECT-TYPE
 	SYNTAX SEQUENCE OF TemperatureEntry
@@ -2880,7 +2911,9 @@ epduOptionalGroup  OBJECT-GROUP
         inputTotalPowerFactor,
         inputTotalVAR,
 		internalStatus, 
-		lcdControl, 
+		lcdControl,
+    outletControlSwitchable,
+    outletControlShutoffDelay,
 		outletControlOffCmd, 
 		outletControlOnCmd, 
 		outletControlPowerOnState, 
