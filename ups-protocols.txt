@@ -43,8 +43,17 @@ Documents in this section are provided courtesy of Eaton.
  - EATON SNMP Management Information Base:
   * link:protocols/snmp/eaton-oids.mib[EATON general SNMP definitions] (TXT, 6.7 KB)
   * link:protocols/snmp/Xups.mib[EATON PowerMIB (XUPS-MIB)] (TXT, 71 KB)
-  * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 79 KB)
+  * link:protocols/snmp/eaton-epdu.mib[EATON ePDU G2/G3 (EPDU-MIB)] (TXT, 83 KB)
   * link:protocols/snmp/eaton-ats.mib[EATON ATS (ATS-MIB)] (TXT, 19 KB)
+  * link:protocols/snmp/EATON-ATS2-MIB.mib[The MIB module for Eaton ATS (Automatic Transfer Switch)] (TXT, 23 KB)
+  * link:protocols/snmp/EATON-EMP-MIB.mib[The MIB module for Eaton Environment Monitoring Probes (EMP)] (TXT, 9.2 KB)
+  * link:protocols/snmp/EATON-EPDU-PU-MI-MIB-ePDU_MIB_Monitored_Blue_Display.mib[The MIB module for "pulizzi" Eaton Monitored ePDUs (Enclosed Power Distribution Units) with blue local display] (TXT, 44 KB)
+  * link:protocols/snmp/EATON-EPDU-PU-SW-MIB_ePDU_MIB_Switched_Blue_Display.mib[The MIB module for "pulizzi" Eaton Switched ePDUs (Enclosed Power Distribution Units)] (TXT, 114 KB)
+  * link:protocols/snmp/EATON-GENESIS-II_ePDU_MIB_Monitored_Red.mib[The MIB module for "genesis2" Eaton Monitored ePDUs (Enclosed Power Distribution Units)] (TXT, 4.5 KB)
+  * link:protocols/snmp/EATON-PXG-MIB.mib[The MIB module for objects and notifications supported by Eaton's Toolkit-enabled Power Xpert Gateways] (TXT, 18 KB)
+  * link:protocols/snmp/EATON_PULSAR_MIB17_AE.mib[MGE Pulsar, version 1.7 AE] (TXT, 91 KB)
+  * link:protocols/snmp/IPC36xx_Pulizzi_ePDU_MIB_Switched_Without_Display.mib[The MIB module for "pulizzi" Eaton Switched ePDUs (Enclosed Power Distribution Units)] (TXT, 14 KB)
+  * link:protocols/snmp/aphel-MA-ePDU_MIB_Managed_Red.mib[The MIB module for Power Distribution Unit by Aphel Ltd.] (TXT, 21 KB)
 
 - link:protocols/fortress.html[Best Fortress protocol] - for LI 520, 720, 1020, and 1420 models
 - link:protocols/sola.html[SOLA/Best Power protocol (Phoenixtec)] - courtesy of Invensys Energy Systems
