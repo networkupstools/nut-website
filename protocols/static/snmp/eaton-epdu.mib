@@ -30,14 +30,15 @@ eatonEpdu MODULE-IDENTITY
 
 	REVISION "201709111200Z"
 	DESCRIPTION 
-		"- Add physical name for outlet and gang.
+		"- Add physical name for input, outlet and gang.
 		- Add friendly name for input.
-		- Add input and phase identification for gang.
-		- Add the nominal power for ePDU input."
+		- Add input identification for gang.
+		- Add the nominal power for ePDU input.
+		- Add a new outlet type sdg300 (31)."
 
 	REVISION "201704201200Z"
 	DESCRIPTION 
-		"Add color codes for each input and group."
+		"Add color codes for each input and group. Color codes are decimal values."
 
 	REVISION "201502231200Z"
 	DESCRIPTION 
@@ -819,6 +820,9 @@ inputFeedName  OBJECT-TYPE
 		"A descriptive name for the input."
 	::= { inputEntry 10 }
 
+
+
+
 inputVoltageTable  OBJECT-TYPE
 	SYNTAX SEQUENCE OF InputVoltageEntry
 	MAX-ACCESS not-accessible
@@ -855,7 +859,9 @@ InputVoltageEntry ::= SEQUENCE {
 	inputVoltageThUpperWarning
 		Integer32,
 	inputVoltageThUpperCritical
-		Integer32
+		Integer32,
+	inputPhaseDesignator
+		DisplayString
 }
 
 inputVoltageIndex  OBJECT-TYPE
@@ -942,6 +948,16 @@ inputVoltageThUpperCritical  OBJECT-TYPE
 		"Upper critical threshold.  Units are millivolts.  A negative value indicates
 		          that this object is not available."
 	::= { inputVoltageEntry 8 }
+
+inputPhaseDesignator  OBJECT-TYPE
+	SYNTAX     DisplayString (SIZE(2..4))
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Alphanumeric physical name for the input."
+	::= { inputVoltageEntry 9 }
+
+
 
 inputCurrentTable  OBJECT-TYPE
 	SYNTAX SEQUENCE OF InputCurrentEntry
@@ -1135,8 +1151,6 @@ InputPowerEntry ::= SEQUENCE {
 	inputPowerFactor
 		Integer32,
 	inputVAR
-		Integer32,
-	inputPowerCapacity
 		Integer32
 }
 
@@ -1218,15 +1232,6 @@ inputVAR  OBJECT-TYPE
 		          that this object is not available."
 	::= { inputPowerEntry 8 }
 
-inputPowerCapacity  OBJECT-TYPE
-	SYNTAX     Integer32
-	MAX-ACCESS read-only
-	STATUS     current
-	DESCRIPTION 
-		"Rated power capacity of the input.  A negative value indicates that
-		the hardware current capacity is unknown."
-	::= { inputPowerEntry 9 }
-
 
 
 
@@ -1261,6 +1266,8 @@ InputTotalPowerEntry ::= SEQUENCE {
 	inputTotalPowerFactor
 		Integer32,
 	inputTotalVAR
+		Integer32,
+	inputPowerCapacity
 		Integer32
 }
 
@@ -1319,6 +1326,14 @@ inputTotalVAR  OBJECT-TYPE
 		          that this object is not available."
 	::= { inputTotalPowerEntry 8 }
 
+inputPowerCapacity  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Typical power capacity of the input.  A negative value indicates that
+		the hardware current capacity is unknown."
+	::= { inputTotalPowerEntry 9 }
 
 
 
@@ -1354,14 +1369,12 @@ GroupEntry ::= SEQUENCE {
 		INTEGER,
 	groupChildCount
 		Integer32,
-	groupBkgColor
+	groupColor
 		Unsigned32,
-	groupPhysicalName
+	groupDesignator
 		DisplayString,
-	groupInputID
-		DisplayString,
-	groupPhaseID
-		DisplayString
+	groupInputIndex
+		Integer32
 }
 
 groupIndex  OBJECT-TYPE
@@ -1425,15 +1438,15 @@ groupChildCount  OBJECT-TYPE
 		"Number of children for this group."
 	::= { groupEntry 6 }
 
-groupBkgColor  OBJECT-TYPE
+groupColor  OBJECT-TYPE
 	SYNTAX     Unsigned32 (0..16777215)
 	MAX-ACCESS read-only
 	STATUS     current
 	DESCRIPTION 
-		"Background color code of the group."
+		"Background color code of the group. Color codes are decimal values."
 	::= { groupEntry 7 }
 
-groupPhysicalName  OBJECT-TYPE
+groupDesignator  OBJECT-TYPE
 	SYNTAX     DisplayString (SIZE(2..4))
 	MAX-ACCESS read-only
 	STATUS     current
@@ -1442,21 +1455,15 @@ groupPhysicalName  OBJECT-TYPE
 		      on the face of the unit."
 	::= { groupEntry 8 }
 
-groupInputID  OBJECT-TYPE
-	SYNTAX     DisplayString (SIZE(2..4))
+groupInputIndex  OBJECT-TYPE
+	SYNTAX     Integer32
 	MAX-ACCESS read-only
 	STATUS     current
 	DESCRIPTION 
 		"Identifies the input on which the group is connected."
 	::= { groupEntry 9 }
 
-groupPhaseID  OBJECT-TYPE
-	SYNTAX     DisplayString (SIZE(2..4))
-	MAX-ACCESS read-only
-	STATUS     current
-	DESCRIPTION 
-		"Identifies the phase on which the group is connected."
-	::= { groupEntry 10 }
+
 
 groupChildTable  OBJECT-TYPE
 	SYNTAX SEQUENCE OF GroupChildEntry
@@ -1866,7 +1873,7 @@ GroupControlEntry ::= SEQUENCE {
 		INTEGER,
 	groupControlOffCmd
 		Integer32,
-	groupControl0nCmd
+	groupControlOnCmd
 		Integer32,
 	groupControlRebootCmd
 		Integer32
@@ -1903,7 +1910,7 @@ groupControlOffCmd  OBJECT-TYPE
 		          commands.  These will respond with an error if a command value of > 0 is written to this object."
 	::= { groupControlEntry 3 }
 
-groupControl0nCmd  OBJECT-TYPE
+groupControlOnCmd  OBJECT-TYPE
 	SYNTAX     Integer32 (-1..99999)
 	MAX-ACCESS read-write
 	STATUS     current
@@ -1969,7 +1976,7 @@ OutletEntry ::= SEQUENCE {
 		Integer32,
 	outletType
 		INTEGER,
-	outletPhysicalName
+	outletDesignator
 		DisplayString
 }
 
@@ -2022,8 +2029,9 @@ outletType  OBJECT-TYPE
 		nema620 (26),
 		nemaL620 (27),
 		nemaL630 (28),
-        nemaL715 (29),
-        rf203p277 (30)
+    nemaL715 (29),
+    rf203p277 (30),
+       sdg300 (31)
 	}
 	MAX-ACCESS read-only
 	STATUS     current
@@ -2031,7 +2039,7 @@ outletType  OBJECT-TYPE
 		"The physical type of outlet."
 	::= { outletEntry 5 }
 
-outletPhysicalName  OBJECT-TYPE
+outletDesignator  OBJECT-TYPE
 	SYNTAX     DisplayString (SIZE(2..4))
 	MAX-ACCESS read-only
 	STATUS     current
@@ -2927,12 +2935,12 @@ epduOptionalGroup  OBJECT-GROUP
 		contactName, 
 		contactProbeStatus, 
 		contactState, 
-		groupBkgColor, 
 		groupBreakerStatus, 
 		groupChildCount,
 		groupChildOID, 
 		groupChildType, 
-		groupControl0nCmd, 
+		groupColor, 
+		groupControlOnCmd, 
 		groupControlOffCmd, 
 		groupControlRebootCmd, 
 		groupControlStatus, 
@@ -2946,12 +2954,11 @@ epduOptionalGroup  OBJECT-GROUP
 		groupCurrentThStatus, 
 		groupCurrentThUpperCritical, 
 		groupCurrentThUpperWarning, 
+		groupDesignator, 
 		groupID, 
 		groupIndex, 
-		groupInputID, 
+		groupInputIndex, 
 		groupName, 
-		groupPhaseID, 
-		groupPhysicalName, 
 		groupPowerFactor, 
 		groupType, 
 		groupVA, 
@@ -2994,6 +3001,7 @@ epduOptionalGroup  OBJECT-GROUP
 		inputFrequency, 
 		inputFrequencyStatus, 
 		inputIndex, 
+		inputPhaseDesignator, 
 		inputPlugType, 
 		inputPowerCapacity, 
 		inputPowerCount, 
@@ -3041,13 +3049,13 @@ epduOptionalGroup  OBJECT-GROUP
 		outletCurrentThStatus, 
 		outletCurrentThUpperCritical, 
 		outletCurrentThUpperWarning, 
+		outletDesignator, 
 		outletID, 
 		outletIndex, 
 		outletName, 
 		outletParentCount, 
 		outletParentOID, 
 		outletParentType, 
-		outletPhysicalName, 
 		outletPowerFactor, 
 		outletType, 
 		outletVA, 
