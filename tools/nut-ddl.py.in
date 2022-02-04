@@ -104,7 +104,7 @@ def nds_version(raw):
 
     if ndsVersion != "-1":
         if verbose:
-            print "Redeclaration of NDS version"
+            print ("Redeclaration of NDS version")
         return
 
     # Remove '# NDS:VERSION:'
@@ -122,7 +122,7 @@ def nds_sl(raw):
 
     if ndsSL != -1:
         if verbose:
-            print "Redeclaration od NDS support-level"
+            print ("Redeclaration od NDS support-level")
         return
 
     # Remove '# DEVICE:SUPPORT-LEVEL:'
@@ -130,7 +130,7 @@ def nds_sl(raw):
 
     if not 1 <= sl <= 10:
         if verbose:
-            print "NDS support-level: '%d' out of range [1..10]" % sl
+            print ("NDS support-level: '%d' out of range [1..10]" % sl)
         return
 
     ndsSL = sl
@@ -149,7 +149,7 @@ def nds_dev_comment(raw):
 
     if len(devComment):
         if verbose:
-            print "Redeclaration of device comment"
+            print ("Redeclaration of device comment")
         return
 
     # Remove leading 'start' line ('# DEVICE:COMMENT[:]\n')
@@ -158,7 +158,7 @@ def nds_dev_comment(raw):
     # Not a valid device comment, don't do anything with it
     if not len(raw) or raw[-1] != "# DEVICE:EOC":
         if verbose:
-            print "Invalid device comment"
+            print ("Invalid device comment")
         return
 
     # Remove the 'close' line
@@ -167,7 +167,7 @@ def nds_dev_comment(raw):
     # Empty comment
     if not len(raw):
         if verbose:
-            print "Empty device comment"
+            print ("Empty device comment")
         return
 
     # Remove hash and leading space
@@ -191,7 +191,7 @@ def nds_var_cmd_comments(raw):
 
     if varCmdComments.get(itemName):
         if verbose:
-            print "Redeclaration of comment for '%s'" % itemName
+            print ("Redeclaration of comment for '%s'" % itemName)
         return
 
     # Remove leading 'start' line
@@ -200,7 +200,7 @@ def nds_var_cmd_comments(raw):
     # Not a valid comment, don't do anything with it
     if not len(raw) or raw[-1] != "# %s:EOC" % itemName:
         if verbose:
-            print "Invalid comment for '%s'" % itemName
+            print ("Invalid comment for '%s'" % itemName)
         return
 
     # Remove the 'close' line
@@ -209,7 +209,7 @@ def nds_var_cmd_comments(raw):
     # Empty comment
     if not len(raw):
         if verbose:
-            print "Empty comment for '%s'" % itemName
+            print ("Empty comment for '%s'" % itemName)
         return
 
     varCmdComments[itemName] = []
@@ -288,7 +288,7 @@ def nds_vars(raw):
 
     if nutVars.get(varName):
         if verbose:
-            print "Redeclaration of variable '%s'" % varName
+            print ("Redeclaration of variable '%s'" % varName)
         return
 
     nutVars[varName] = {}
@@ -332,7 +332,7 @@ def nds_rw_vars(raw):
         nutRWs[varName]["type"] = varType
     elif not nutRWs[varName].get("type") or nutRWs[varName]["type"] != varType:
         if verbose:
-            print "Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"])
+            print ("Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"]))
         return
 
     if varType == "STRING":
@@ -343,21 +343,21 @@ def nds_rw_vars(raw):
                 buf.append("0")
         elif len(buf) < 4:
             if verbose:
-                print "Declaration of RW variable '%s' of type 'STRING' without a length" % varName
+                print ("Declaration of RW variable '%s' of type 'STRING' without a length" % varName)
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
         if not buf[3].isdigit():
             if verbose:
-                print "Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3])
+                print ("Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3]))
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         length = int(buf[3])
         if nutRWs[varName].get("opts"):
             if verbose and length != nutRWs[varName]["opts"]:
-                print "Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"])
+                print ("Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"]))
             elif verbose:
-                print "Redeclaration of variable '%s' of type 'STRING'" % varName
+                print ("Redeclaration of variable '%s' of type 'STRING'" % varName)
             return
         nutRWs[varName]["opts"] = length
         if eol is not None:
@@ -366,9 +366,9 @@ def nds_rw_vars(raw):
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match("^\".+\"$", buf[3]):
             if verbose:
-                print "Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName
-                print "\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'"
-                print "\tgot: '%s'" % raw["line"]
+                print ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName)
+                print ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'")
+                print ("\tgot: '%s'" % raw["line"])
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -382,16 +382,16 @@ def nds_rw_vars(raw):
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match("^\"\d+\" \"\d+\"$", buf[3]):
             if verbose:
-                print "Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName
-                print "\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'"
-                print "\tgot: '%s'" % raw["line"]
+                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName)
+                print ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'")
+                print ("\tgot: '%s'" % raw["line"])
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         rwRange = buf[3].split("\"")
         if not len(rwRange[1]) or not rwRange[1].isdigit() or not len(rwRange[3]) or not rwRange[3].isdigit():
             if verbose:
-                print "Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3])
+                print ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -399,7 +399,7 @@ def nds_rw_vars(raw):
         rangeMax = int(rwRange[3])
         if not rangeMin < rangeMax:
             if verbose:
-                print "Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax)
+                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax))
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -416,7 +416,7 @@ def nds_rw_vars(raw):
         if not nutRWs[varName].get("opts"):
             del nutRWs[varName]
         if verbose:
-            print "Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType)
+            print ("Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType))
         return
 
 
@@ -446,7 +446,7 @@ def nds_commands(raw):
 
     if nutCommands.get(command):
         if verbose:
-            print "Redeclaration of command '%s'" % command
+            print ("Redeclaration of command '%s'" % command)
         return
 
     nutCommands[command] = {};
@@ -548,7 +548,7 @@ def parseFile(inputFile):
     try:
         file = open(inputFile, "r")
     except IOError:
-        print "Cannot open", inputFile
+        print ("Cannot open", inputFile)
         exit(1)
 
     # Whether the last processed line was a comment and we can expect the actually processed one belongs to that comment
@@ -573,12 +573,12 @@ def parseFile(inputFile):
         # Check for known non-comments
         for pattern in nonCommentsMap:
             # Check for End Of Line comments
-            for EOLType in EOLComments.itervalues():
+            for EOLType in EOLComments.values():
                 if re.match(re.sub("\$", "[ \t]*", pattern) + EOLType["pattern"], line):
                     tempLine = re.sub(EOLType["pattern"], "", line)
                     bailout = True
                     # Just in case this is not the leftmost comment..
-                    for innerEOLType in EOLComments.itervalues():
+                    for innerEOLType in EOLComments.values():
                         if innerEOLType is EOLType:
                             continue
                         if re.search(innerEOLType["pattern"], tempLine):
@@ -611,7 +611,7 @@ def parseFile(inputFile):
         if bailout:
             if not ignoreNonComments:
                 if verbose:
-                    print "NUT's 'EOF' found, ignoring remaining non-comment lines"
+                    print ("NUT's 'EOF' found, ignoring remaining non-comment lines")
                 ignoreNonComments = True
             commentContinuation = False
             continue
@@ -648,7 +648,7 @@ def parseFile(inputFile):
             continue
 
         # Something unexepected
-        print "Unexepected line '%s'" % line[:-1]
+        print ("Unexepected line '%s'" % line[:-1])
         exit(1)
 
     return comments, nonComments
@@ -880,16 +880,16 @@ def getInfoFFN():
     fromFileName["fileType"] = fileExt[1:]
 
     if fromFileName["fileType"] not in [ "dev", "nds" ]:
-        print "%s: unexpected type of file" % inputFile
-        print "\texpected: .dev/.nds"
+        print ("%s: unexpected type of file" % inputFile)
+        print ("\texpected: .dev/.nds")
         exit(1)
 
     # <manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>
     infos = fromFileName["fileName"].split("__")
 
     if len(infos) < 5:
-        print "%s: unsuitable name; expected:" % inputFile
-        print "\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}"
+        print ("%s: unsuitable name; expected:" % inputFile)
+        print ("\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}")
         exit(1)
 
     # Info From File Name:
@@ -898,7 +898,7 @@ def getInfoFFN():
     fromFileName["nutVersion"] = infos[3]
 
     if not infos[4].isdigit() or int(infos[4]) < 1:
-        print "%s: unsuitable report number '%s'; expected 1+" % (inputFile, infos[4])
+        print ("%s: unsuitable report number '%s'; expected 1+" % (inputFile, infos[4]))
         exit(1)
 
     fromFileName["reportNumber"] = int(infos[4])
@@ -920,12 +920,12 @@ def getInfoFFN():
 
 # Check if file exists..
 if not os.path.isfile(inputFile):
-    print "Input file '%s' doesn't exist" % inputFile
+    print ("Input file '%s' doesn't exist" % inputFile)
     exit(1)
 
 # ..and it's not empty
 if not os.stat(inputFile).st_size:
-    print "Input file '%s' is empty" % inputFile
+    print ("Input file '%s' is empty" % inputFile)
     exit(1)
 
 # Get info from file name
@@ -948,13 +948,13 @@ for nonComment in nonComments:
             nonCommentsMap[pattern](nonComment)
             # The previous function should have cleared the 'eol' comment, if not, the comment was not expected
             if len(nonComment["eol"]) and verbose:
-                print "Unexpected EOL comment: '%s'" % nonComment["eol"]
-                print "\tin line: '%s'" % nonComment["line"]
+                print ("Unexpected EOL comment: '%s'" % nonComment["eol"])
+                print ("\tin line: '%s'" % nonComment["line"])
             break
 
 # Check if we have some vars
 if not len(nutVars):
-    print "Input file '%s' doesn't appear to be a valid .dev/.nds file" % inputFile
+    print ("Input file '%s' doesn't appear to be a valid .dev/.nds file" % inputFile)
     exit(1)
 
 # List of manpages
@@ -963,7 +963,7 @@ try:
         if os.path.isfile(os.path.join(manDir, name)) and name.endswith(".html") and name != "index.html":
             manPages.append(name[:-5])
 except OSError:
-    print "Unable to get manpage list from '%s'" % manDir
+    print ("Unable to get manpage list from '%s'" % manDir)
 
 # Build page
 page = buildPage()
@@ -973,17 +973,17 @@ try:
     # Already existing page
     if os.path.isfile(outputFile):
         if verbose:
-            print "'%s' already exists; overwriting it" % outputFile
+            print ("'%s' already exists; overwriting it" % outputFile)
     # New page
     else:
         if verbose:
-            print "Creating new file '%s'" % outputFile
+            print ("Creating new file '%s'" % outputFile)
     file = open(outputFile, "w")
     file.write("\n".join(page))
     file.close()
     if verbose:
-        print "'%s' written" % outputFile
+        print ("'%s' written" % outputFile)
 except IOError:
-    print "Unable to write parsed file to '%s'" % outputFile
+    print ("Unable to write parsed file to '%s'" % outputFile)
     exit(1)
 

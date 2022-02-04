@@ -91,7 +91,7 @@ def buildData(deviceDataFile):
     try:
         file = open(deviceDataFile, "r")
     except IOError:
-        print "Cannot open", deviceDataFile
+        print ("Cannot open", deviceDataFile)
         exit(1)
 
     for line in file:
@@ -113,8 +113,8 @@ def buildData(deviceDataFile):
         row = re.findall(r'"([^"]*)",?', line)
 
         if len(row) != len(dataFields):
-            print "Warning: Unexpected number of fields in line: %s" % row
-            print "\tLine will be skipped."
+            print ("Warning: Unexpected number of fields in line: %s" % row)
+            print ("\tLine will be skipped.")
         else:
             deviceData.append(re.findall(r'"([^"]*)",?', line))
 
@@ -208,8 +208,8 @@ def buildHTMLTable(deviceData):
 
         # Devices are expected to have a specified number of fields
         if len(device) < len(dataFields):
-            print "Unexpected number of fields in device: %s" % device
-            print "Device will not be included in result set."
+            print ("Unexpected number of fields in device: %s" % device)
+            print ("Device will not be included in result set.")
             continue
 
         # Alternate CSS class if current manufacturer is different from the last
@@ -312,7 +312,7 @@ try:
         if os.path.isfile(os.path.join(manDir, name)) and name.endswith(".html") and name != "index.html":
             manPages.append(name[:-5])
 except OSError:
-    print "Unable to get manpage list from '%s'" % manDir
+    print ("Unable to get manpage list from '%s'" % manDir)
 
 # List of DDL manufacturers and devices dumps
 ddl = {}
@@ -326,7 +326,7 @@ try:
             if os.path.isfile(os.path.join(path, child)) and child.endswith(".html") and child != "index.html":
                 ddl[name].append(child[:-5])
 except OSError:
-    print "Unable to get DDL manufacturers/devices from '%s'" % ddlDir
+    print ("Unable to get DDL manufacturers/devices from '%s'" % ddlDir)
 
 # Dump device data and manpage names as JSON
 jsonData = "var UPSData = %s, NUTManPages = %s, NUTddl = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"), json.dumps(ddl, encoding="utf-8"))
@@ -343,9 +343,9 @@ try:
     file = open(webJsonHCL, "w")
     file.write(jsonData)
     file.close()
-    print "JSON HCL written"
+    print ("JSON HCL written")
 except IOError:
-    print "Unable to write JSON device data to %s" % webJsonHCL
+    print ("Unable to write JSON device data to %s" % webJsonHCL)
     exit(1)
 
 # Create HTML table from device data
@@ -355,8 +355,8 @@ try:
     file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
     file.write(table)
     file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-    print "HTML HCL written"
+    print ("HTML HCL written")
 except IOError:
-    print "Unable to write HTML device table to %s" % webStaticHCL
+    print ("Unable to write HTML device table to %s" % webStaticHCL)
     exit(1)
 
