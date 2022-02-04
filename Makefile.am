@@ -92,7 +92,7 @@ ASCIIDOC_PARAMS =	\
 	--attribute iconsdir=$(srcdir)/images	\
 	--attribute scriptsdir=$(srcdir)/scripts
 
-OUTDIR = output
+OUTDIR = @OUTDIR@
 
 all:	\
 	prerequisites	\

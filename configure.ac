@@ -18,6 +18,17 @@ AX_SUBDIRS_CONFIGURE([nut],
 
 dnl ----------------------------------------------------------------------
 
+OUTDIR="output"
+AC_ARG_WITH(outdir,
+	[AS_HELP_STRING([--with-outdir=PATH], [location for current website build (e.g. 'output/historic/v1.2.3')])],
+	[AS_CASE(["${withval}"],
+		[''], [OUTDIR="output"],
+		[OUTDIR="${withval}"]
+	)],
+	[]
+)
+AC_SUBST([OUTDIR])
+
 dnl Check for AsciiDoc
 
 NUT_CHECK_ASCIIDOC
