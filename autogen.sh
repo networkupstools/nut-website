@@ -13,6 +13,43 @@ quit() {
 	exit 1
 }
 
+# Some scripts can be used to generate other data, and with python2
+# obsoleted (and in some distros, "python" filename as well) we may
+# need to explicitly point to the interpreter.
+if [ -n "${PYTHON-}" ] ; then
+	# May be a name/path of binary, or one with args - check both
+	(command -v "$PYTHON") \
+	|| $PYTHON -c "import re,glob,codecs" \
+	|| {
+		echo "----------------------------------------------------------------------"
+		echo "WARNING: Caller-specified PYTHON='$PYTHON' is not available."
+		echo "----------------------------------------------------------------------"
+		# Do not die just here, we may not need the interpreter
+	}
+else
+	PYTHON=""
+	for P in python python3 python2 ; do
+		if (command -v "$P" >/dev/null) && $P -c "import re,glob,codecs" ; then
+			PYTHON="$P"
+			break
+		fi
+	done
+fi
+
+case "$PYTHON" in
+	*2|*2.*)	PYTHON_VER=2 ;;
+	*3|*3.*)	PYTHON_VER=3 ;;
+esac
+
+# Empty PYTHON_VER here leaves "python" in place for the files
+( cd tools && \
+	find . -type f -name '*.py.in' | \
+	while read F ; do
+		sed 's,^\(#!/.*pytho\)n$,\1n'"${PYTHON_VER}"',' < "$F" > "`basename "$F" .in`" \
+		&& chmod +x "`basename "$F" .in`" || exit
+	done
+) || exit
+
 # Initialize submodules and get NUT
 echo "Getting NUT"
 echo_spacer
