@@ -1,3 +1,5 @@
+# NOTE: Syntax relies on GNU Make; YMMV with other implementations
+
 # Tell aclocal in what directory it should look for macros
 ACLOCAL_AMFLAGS = -I nut/m4
 
@@ -296,7 +298,7 @@ PCT := %
 # - $(2): text
 file = $(shell echo "$(subst ",\",$(2))" $(firstword $(1)) "$(wordlist 2,$(words $(1)),$(1))")
 
-## DLL settings
+## DDL settings
 # Device Dumps Library directory
 DDL_DIR := ddl
 # Directories to ignore in DDL
