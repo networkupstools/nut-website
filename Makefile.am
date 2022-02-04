@@ -494,6 +494,7 @@ SOURCE_DIR_TARGETS := $(addsuffix index.html,$(SOURCE_DIRS))
 # Raw asciidoc indices (.txt)
 # Note: if a file named README{.adoc,.txt,} exists in the same directory (precedence in case there are more than one file with different suffixes: README.adoc -> README.txt -> README), it is included in index.txt
 %/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(patsubst $$(PCT),"$$(PCT)",$$(filter-out $$(sort $$*/ $$(addprefix $$*/,$$(IGNORE_PACKAGESOURCE_FILES) $$(addsuffix /,$$(IGNORE_PACKAGESOURCE_DIRS)))),$$(wildcard $$*/*/))) | sort -f -)
+	@echo "Generating $@ due to: $^"
 	$(call file,> $@,= Index of /$*)
 	$(call file,>> $@,:root:		$(subst $(SP),$(EMPTY),$(patsubst %,../,$(subst /,$(SP),$*))))
 	$(call file,>> $@,:iconsdir:	{root}images)
@@ -512,6 +513,7 @@ SOURCE_DIR_TARGETS := $(addsuffix index.html,$(SOURCE_DIRS))
 
 # Compiled asciidoc indices (.html)
 %/index.html: %/index.txt $$(if $$(wildcard $$*/README.adoc),$$*/README.adoc,$$(if $$(wildcard $$*/README.txt),$$*/README.txt,$$(if $$(wildcard $$*/README),$$*/README))) $(LAYOUT).conf
+	@echo "Generating $@ due to: $^"
 	$(ASCIIDOC) $(ADOC_PARAMS_COMMON) -o "$@" "$<"
 
 SPELLCHECK_SRC = \
