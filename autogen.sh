@@ -4,13 +4,13 @@
 
 spacer="----------------------------------------------------------------------"
 echo_spacer() {
-        echo "$spacer"
+	echo "$spacer"
 }
 
-quit () {
+quit() {
 	echo_spacer
 	echo "Unable to build website"
-	exit
+	exit 1
 }
 
 # Initialize submodules and get NUT
