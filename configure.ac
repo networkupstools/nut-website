@@ -3,10 +3,18 @@ dnl | Network UPS Tools - Website: configure.in                        |
 dnl +------------------------------------------------------------------+
 
 AC_INIT(nut_website, m4_esyscmd_s(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-.*//'))
-AC_CONFIG_MACRO_DIR([nut/m4])
+dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
+AC_PREREQ([2.70])
+
+AC_CONFIG_MACRO_DIRS([m4 nut/m4])
 echo "Network UPS Tools - Website (NUT version ${PACKAGE_VERSION})"
 AM_INIT_AUTOMAKE([foreign no-dist])
-AC_CONFIG_SUBDIRS([nut])
+
+dnl NOTE: Macro seems to have some issues carrying over whitespace after
+dnl the "--with-doc" entry if pretty whitespace is applied to finish the
+dnl code block (end of line, indentations etc). So we use none here!
+AX_SUBDIRS_CONFIGURE([nut],
+		[[--without-all], [--without-dev], [--without-cgi], [--without-ssl], [--with-doc]])
 
 dnl ----------------------------------------------------------------------
 
