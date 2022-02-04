@@ -55,6 +55,46 @@ Please run `make` sequentially for the time being.
 
 The root of the website will be in the `output/` directory, if all goes well.
 
+Building release-version sites
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Every once in a while NUT has releases :) and those end up packaged in many
+operating system distributions or equivalent bundles of binary code, and are
+used by the majority of NUT users.
+
+While the main nut-website now aims to follow the active development based on
+current "master" or "main" branches of the components involved, we also publish
+reference sub-sites with static data (man pages, configuration, compatibiblity
+information, etc.) for those people to see about setting up their practical
+systems properly. Such pages are marked with a note on top that they represent
+an old and immutable codebase which may differ from modern project state.
+
+This also impacts some but not all pages of the nut-website as well -- e.g.
+the `stable-hcl.txt` file which is a wrapper to include `nut/data/driver.list`
+info, but not all of the main website files currently (just because it is too
+cumbersome to partially check out arbitrary old codebase to build with current
+updated recipes). Likewise, general markup and footers, etc. remain from the
+current nut-website codebase at the time of (re-)generation.
+
+In particular, the NUT DDL pertains to all NUT releases (reports the tested
+release in the filenames) so is not published separately per historic release.
+
+Normally this should be done once per release, with a call like this:
+
+----
+:; export NUT_HISTORIC_RELEASE=v2.7.4
+:; ./autogen.sh && \
+    ./configure --with-NUT_HISTORIC_RELEASE=${NUT_HISTORIC_RELEASE} && \
+    { make -k ; make; }
+----
+
+Which would populate e.g. `output/historic/v2.7.4` subdirectory that would be
+copied and committed into same-named path under `networkupstools.github.io` as
+detailed below. Generation of the main nut-website would also populate an index
+file of the "historic" subdirectory, based on `historic/index.txt` contents,
+to refer to such officially published snapshots.
+
+
 Publishing
 ----------
 

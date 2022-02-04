@@ -1,6 +1,8 @@
 Related projects
 ================
 
+include::historic-release.txt[]
+
 There are many programs and devices that integrate NUT support.
 
 This page tries to track them.

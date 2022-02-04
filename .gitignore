@@ -16,6 +16,7 @@ missing
 
 # NUT Website-specific
 ups-html.txt
+historic-release.txt
 /images/
 /output/
 /*.html

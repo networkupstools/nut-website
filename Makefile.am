@@ -1,5 +1,9 @@
 # NOTE: Syntax relies on GNU Make; YMMV with other implementations
 
+# Also relies on GNU `ln -fsr` options, for historic sub-site publication
+LN = ln
+#LN = gln
+
 # Tell aclocal in what directory it should look for macros
 ACLOCAL_AMFLAGS = -I nut/m4
 
@@ -92,7 +96,27 @@ ASCIIDOC_PARAMS =	\
 	--attribute iconsdir=$(srcdir)/images	\
 	--attribute scriptsdir=$(srcdir)/scripts
 
-OUTDIR = @OUTDIR@
+OUTDIR_BASE = @OUTDIR_BASE@
+NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
+
+if WITH_NUT_HISTORIC_RELEASE
+# Do not build/publish DDL or the HISTORIC_DIR inside historic sub-sites
+HISTORIC_DEPS =
+OUTDIR = $(OUTDIR_BASE)/$(HISTORIC_DIR)/$(NUT_HISTORIC_RELEASE)
+
+# Embedding a leading space as an HTML entity, otherwise asciidoc strips it:
+ADOC_PARAMS_COMMON +=	\
+	--attribute=nuttitlesuffix='&\#32;(as of $(NUT_HISTORIC_RELEASE))'
+else
+HISTORIC_DEPS = \
+	$(PACKAGE_DIR_TARGETS)	\
+	$(SOURCE_DIR_TARGETS)	\
+	$(DDL_DIR)/index.html	\
+	$(HISTORIC_DIR)/index.html
+OUTDIR = $(OUTDIR_BASE)
+ADOC_PARAMS_COMMON +=	\
+	--attribute=nuttitlesuffix=""
+endif
 
 all:	\
 	prerequisites	\
@@ -102,9 +126,7 @@ all:	\
 	$(CABLE_IMAGE_FILES)	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
-	$(DDL_DIR)/index.html	\
-	$(PACKAGE_DIR_TARGETS)	\
-	$(SOURCE_DIR_TARGETS)	\
+	$(HISTORIC_DEPS)	\
 	scripts/ups_data.js	\
 	ups-html.txt	\
 	$(OUTDIR)
@@ -164,25 +186,33 @@ $(OUTDIR):
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols
 	cp -fR protocols/static/* $(OUTDIR)/protocols/
-	$(MKDIR_P) $(OUTDIR)/$(DDL_DIR)
-	cp -f $(DDL_DIR)/index.html $(OUTDIR)/$(DDL_DIR)
-	manufacturers="$(patsubst $(DDL_DIR)/%/,%,$(MANUFACTURERS))";	\
-	for mfr in $${manufacturers}; do	\
-		$(MKDIR_P) "$(OUTDIR)/$(DDL_DIR)/$${mfr}/raw";	\
-		cp -f $(DDL_DIR)/$${mfr}/*.html $(OUTDIR)/$(DDL_DIR)/$${mfr}/;	\
-	done
-	rawfiles="$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.seq $(DDL_DIR)/*/*.nds)";	\
-	for rawfile in $${rawfiles}; do	\
-		cp -f "$${rawfile}" "$(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/}";	\
-	done
-	$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(PACKAGE_DIRS))
-	for item in $(PACKAGE_DIR_TARGETS) $(PACKAGE_DIR_FILES); do	\
-		cp -f "$${item}" "$(OUTDIR)/$${item}";	\
-	done
-	$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(SOURCE_DIRS))
-	for item in $(SOURCE_DIR_TARGETS) $(SOURCE_DIR_FILES); do	\
-		cp -f "$${item}" "$(OUTDIR)/$${item}";	\
-	done
+	if [ x"$(NUT_HISTORIC_RELEASE)" = x ]; then	\
+		$(MKDIR_P) "$(OUTDIR)/$(HISTORIC_DIR)" &&	\
+		cp -f "$(HISTORIC_DIR)/index.html" "$(OUTDIR)/$(HISTORIC_DIR)/index.html" || exit ;	\
+		$(MKDIR_P) $(OUTDIR)/$(DDL_DIR) || exit ;	\
+		cp -f $(DDL_DIR)/index.html $(OUTDIR)/$(DDL_DIR) || exit ;	\
+		manufacturers="$(patsubst $(DDL_DIR)/%/,%,$(MANUFACTURERS))";	\
+		for mfr in $${manufacturers}; do	\
+			$(MKDIR_P) "$(OUTDIR)/$(DDL_DIR)/$${mfr}/raw" || exit;	\
+			cp -f $(DDL_DIR)/$${mfr}/*.html $(OUTDIR)/$(DDL_DIR)/$${mfr}/ || exit;	\
+		done ;	\
+		rawfiles="$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.seq $(DDL_DIR)/*/*.nds)";	\
+		for rawfile in $${rawfiles}; do	\
+			cp -f "$${rawfile}" "$(OUTDIR)/$${rawfile%/*}/raw/$${rawfile##*/}" || exit;	\
+		done || exit ;	\
+		$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(PACKAGE_DIRS)) || exit;	\
+		for item in $(PACKAGE_DIR_TARGETS) $(PACKAGE_DIR_FILES); do	\
+			cp -f "$${item}" "$(OUTDIR)/$${item}";	\
+		done || exit ;	\
+		$(MKDIR_P) $(patsubst %,"$(OUTDIR)/%",$(SOURCE_DIRS)) || exit;	\
+		for item in $(SOURCE_DIR_TARGETS) $(SOURCE_DIR_FILES); do	\
+			cp -f "$${item}" "$(OUTDIR)/$${item}";	\
+		done || exit ;	\
+	else	\
+		( cd $(OUTDIR) && $(LN) -fsr $(abs_top_builddir)/$(OUTDIR_BASE)/$(DDL_DIR)/ . ) || exit ; \
+		( cd $(OUTDIR) && $(LN) -fsr $(abs_top_builddir)/$(OUTDIR_BASE)/package/ . ) || exit ; \
+		( cd $(OUTDIR) && $(LN) -fsr $(abs_top_builddir)/$(OUTDIR_BASE)/source/ . ) || exit ; \
+	fi
 
 clean-local:
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
@@ -304,6 +334,8 @@ PCT := %
 # - $(2): text
 file = $(shell echo "$(subst ",\",$(2))" $(firstword $(1)) "$(wordlist 2,$(words $(1)),$(1))")
 
+HISTORIC_DIR := historic
+
 ## DDL settings
 # Device Dumps Library directory
 DDL_DIR := ddl
@@ -401,6 +433,9 @@ $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ###
+
+$(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ### Package and source directories indexer
 

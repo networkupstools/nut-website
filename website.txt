@@ -25,14 +25,18 @@ NUT license text] for specific details.
 [NOTE]
 .Two NUT websites
 ====
-The link:https://networkupstools.org/[main NUT site]
-is dedicated to the latest release of NUT, to serve as a reference about its
-capabilities for users of newest official packages in different OS distributions.
-
-There is also a link:http://master.networkupstools.org/[master.networkupstools.org]
-site which should more closely follow current development, for users who build NUT
+The link:https://networkupstools.org/[main NUT site] should closely follow
+current development, with documentation most relevant for users who build NUT
 from link:https://github.com/networkupstools/nut/[source code].
+
+link:https://networkupstools.org/historic/[Sub-sites] are available for some
+historic releases for users of NUT packaged with their operating system
+distributions. Such packages are typically based on official releases of
+NUT at the time of distribution, and may lag behind current development
+in terms of features, capabilities, bug-fixes and supported devices.
 ====
+
+include::historic-release.txt[]
 
 News
 ----

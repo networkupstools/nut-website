@@ -1,0 +1,26 @@
+////
+NOTE:
+- 'env-github' attribute is set on GitHub
+- 'nut-website-root' attribute point to the root of the website, either as a relative path (for NUT website generation) or as the URL of the website (for GitHub)
+////
+
+ifdef::env-github[]
+NUT historic releases
+=====================
+:nut-website-root:	http://networkupstools.org/
+endif::env-github[]
+
+ifndef::env-github[]
+:nut-website-root:	../
+endif::env-github[]
+
+Here are snapshot websites of some earlier NUT releases, stored for
+reference of users of those releases (e.g. via operating system packages).
+
+Note that such sub-site pages could be generated much later than the release
+happened, to adjust to common recent design, etc. wrapping those old contents.
+
+Current development is documented at link:{nut-website-root}[Network UPS Tools]
+main web site.
+
+- link:+++v2.7.4/index.html+++[NUT v2.7.4, released 2016-03-09]
