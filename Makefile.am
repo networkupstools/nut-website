@@ -211,7 +211,13 @@ clean-local:
 # - DDL manufacturers and models
 ups-html.txt scripts/ups_data.js: nut/data/driver.list.in $(srcdir)/tools/nut-hclinfo.py $(MFR_TARGETS) | prerequisites
 	cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list
-	@if python -c "import json,simplejson,lxml"; then	\
+	@if \
+	    python3 -c "import json,lxml"	\
+	 || python -c "import simplejson,lxml"	\
+	 || python -c "import json,lxml"	\
+	 || python2 -c "import simplejson,lxml"	\
+	 || python2 -c "import json,lxml"	\
+	; then	\
 		echo "Regenerating the HTML and JSON formated HCL tables.";	\
 		cd tools/ && ./nut-hclinfo.py;	\
 	else	\
