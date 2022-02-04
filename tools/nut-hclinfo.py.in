@@ -89,6 +89,10 @@ def buildData(deviceDataFile):
     deviceData = []
 
     try:
+        # Python 3.x
+        file = open(deviceDataFile, "r", encoding='utf-8')
+    except TypeError:
+        # Python 2.7
         file = open(deviceDataFile, "r")
     except IOError:
         print ("Cannot open", deviceDataFile)
@@ -283,8 +287,13 @@ def buildHTMLTable(deviceData):
         for cell in row:
             attr = ""
             innerHTML = ""
-            for key, value in cell.iteritems():
-                val = unicode(str(value), "utf-8")
+            for key, value in cell.items():
+                try:
+                    val = str(value).encode("utf-8")
+                except UnicodeDecodeError:
+                    # 'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)
+                    # input already non-ascii?
+                    val = str(value)
                 if key != "text":
                     attr += " %s='%s'" % (key, val)
                 else:
@@ -329,7 +338,33 @@ except OSError:
     print ("Unable to get DDL manufacturers/devices from '%s'" % ddlDir)
 
 # Dump device data and manpage names as JSON
-jsonData = "var UPSData = %s, NUTManPages = %s, NUTddl = %s" % (json.dumps(deviceData, encoding="utf-8"), json.dumps(manPages, encoding="utf-8"), json.dumps(ddl, encoding="utf-8"))
+# Helper inspired by https://stackoverflow.com/a/67724314/4715872
+def json_loads(txt):
+    try:
+        # Approach used in older python, which was
+        # deprecated since 3.1, removed since 3.9
+        return json.loads(txt, encoding="utf-8")
+    except TypeError:
+        txt = txt.encode("utf-8")
+        value = json.loads(txt)
+        return value
+
+def json_dumps(txt):
+    try:
+        return json.dumps(txt, encoding="utf-8")
+    except TypeError:
+        try:
+            if isinstance(txt, list):
+                for entry in txt:
+                    entry = entry.encode("utf-8")
+            else:
+                txt = txt.encode("utf-8")
+        except:
+            print ("No utf8")
+        value = json.dumps(txt)
+        return value
+
+jsonData = "var UPSData = %s, NUTManPages = %s, NUTddl = %s" % (json_dumps(deviceData), json_dumps(manPages), json_dumps(ddl))
 
 # First, check if target directory exists
 dir = os.path.dirname(webJsonHCL)
@@ -343,7 +378,7 @@ try:
     file = open(webJsonHCL, "w")
     file.write(jsonData)
     file.close()
-    print ("JSON HCL written")
+    print ("JSON HCL written: %s" % webJsonHCL)
 except IOError:
     print ("Unable to write JSON device data to %s" % webJsonHCL)
     exit(1)
@@ -351,11 +386,11 @@ except IOError:
 # Create HTML table from device data
 table = buildHTMLTable(deviceData)
 try:
-    file = open(webStaticHCL, "w")
-    file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+    file = open(webStaticHCL, "wb")
+    file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n".encode(encoding='UTF-8'))
     file.write(table)
-    file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-    print ("HTML HCL written")
+    file.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n".encode(encoding='UTF-8'))
+    print ("HTML HCL written: %s" % webStaticHCL)
 except IOError:
     print ("Unable to write HTML device table to %s" % webStaticHCL)
     exit(1)
