@@ -88,7 +88,9 @@ AC_SUBST(TREE_VERSION)
 
 dnl ----------------------------------------------------------------------
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 	protocols/Makefile
 	Makefile
 ])
+
+AC_OUTPUT
