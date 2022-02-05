@@ -49,6 +49,8 @@ fi
 
 if $CI_AUTOPUSH || $CI_AUTOCOMMIT ; then
 	if [ -d networkupstools.github.io ] ; then
+		# May also be a symlink, making later relative reference to
+		# a ../.git-commit-website problematic, hence BUILDDIR below
 		echo "=== Updating local copy of networkupstools.github.io from upstream" >&2
 		( cd networkupstools.github.io || exit
 			git reset --hard || exit
@@ -64,9 +66,10 @@ if $CI_AUTOPUSH || $CI_AUTOCOMMIT ; then
 	# data or ddl/Koenig symlinks
 	echo "=== Updating content in local copy of networkupstools.github.io" >&2
 	rsync -avPHK ./output/ ./networkupstools.github.io/ || exit
+	BUILDDIR="$PWD"
 	( cd networkupstools.github.io || exit
 		git add . || exit
-		[ -s ../.git-commit-website ] && . ../.git-commit-website || exit
+		[ -s "$BUILDDIR"/.git-commit-website ] && . "$BUILDDIR"/.git-commit-website || exit
 		if $CI_AUTOPUSH ; then
 			echo "=== Pushing local copy of networkupstools.github.io to upstream" >&2
 			git push || exit
