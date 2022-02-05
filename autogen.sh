@@ -15,7 +15,7 @@ echo_spacer() {
 
 quit() {
 	echo_spacer
-	echo "Unable to build website"
+	echo "Unable to build website" >&2
 	exit 1
 }
 
