@@ -79,16 +79,16 @@ LAYOUT = web-layout
 
 ADOC_PARAMS_COMMON =	\
 	--backend=xhtml11	\
-	--conf-file=$(srcdir)/$(LAYOUT).conf	\
+	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
 	--attribute icons	\
 	--attribute linkcss	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
-	--attribute=revision=$(WEBSITE_VERSION)	\
-	--attribute tree_version=@TREE_VERSION@	\
-	--attribute localdate=`TZ=UTC date +%Y-%m-%d`	\
-	--attribute localtime=`TZ=UTC date +%H:%M:%S`	\
+	--attribute=revision="$(WEBSITE_VERSION)"	\
+	--attribute tree_version="@TREE_VERSION@"	\
+	--attribute localdate="`TZ=UTC date +%Y-%m-%d`"	\
+	--attribute localtime="`TZ=UTC date +%H:%M:%S`"	\
 	--attribute=date="`TZ=UTC date`"
 
 ASCIIDOC_PARAMS =	\
