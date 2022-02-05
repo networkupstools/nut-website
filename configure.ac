@@ -83,6 +83,25 @@ AC_PATH_PROGS([A2X], [a2x], [none])
 
 dnl ----------------------------------------------------------------------
 
+dnl Note AC_INIT defines a constrained PACKAGE_VERSION based on last tag
+dnl in NUT codebase, not its configure.ac version or detailed revision.
+dnl For the rolling web-site we want to track origins more precisely:
+NUT_VERSION="$(cd nut && git describe --tags 2>/dev/null)"
+DDL_VERSION="$(cd ddl && git describe --tags 2>/dev/null)"
+WEB_VERSION="$(git describe --tags 2>/dev/null)"
+WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+WEBSITE_VERSION="${PACKAGE_VERSION}"
+AS_CASE(["${NUT_VERSION}"],
+	[''], [AC_MSG_NOTICE(Seems there was a problem getting NUT_VERSION)],
+	[*-*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit
+		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
+	],
+	[] dnl Default: exact tag hit, e.g. "v2.7.4" for the release site
+)
+AC_SUBST(WEBSITE_VERSION)
+
+dnl ----------------------------------------------------------------------
+
 TREE_VERSION="`echo "$PACKAGE_VERSION" | awk '{ print substr($0,1,3) }'`"
 AC_SUBST(TREE_VERSION)
 
