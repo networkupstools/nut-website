@@ -51,6 +51,8 @@ if $CI_AUTOPUSH || $CI_AUTOCOMMIT ; then
 	if [ -d networkupstools.github.io ] ; then
 		# May also be a symlink, making later relative reference to
 		# a ../.git-commit-website problematic, hence BUILDDIR below
+		# Note that existing custom checkout may have a different
+		# origin to "git push" to, which may be good for website PRs :)
 		echo "=== Updating local copy of networkupstools.github.io from upstream" >&2
 		( cd networkupstools.github.io || exit
 			git reset --hard || exit
