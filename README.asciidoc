@@ -45,6 +45,30 @@ non-portable constructs in the Makefiles, please let us know.
 Building
 --------
 
+Quick builds for CI and developer iterations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Main rituals for re-builds should now be handled well by a single script:
+
+----
+:; ./ci_build.sh
+----
+
+For maintainers (or CI agents) who may push the web-site codebase, further
+envvars may be useful to commit changes locally, and to push index upwards:
+
+----
+# To publish automatically use:
+:;   export CI_AUTOCOMMIT=true
+:;   export CI_AUTOPUSH=true
+
+# Optionally - for the reare historic-release sub-sites (by NUT tag), e.g.:
+:;   export NUT_HISTORIC_RELEASE=v2.7.4
+----
+
+Manual building in detail
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ----
 :; ./autogen.sh && ./configure && { make -k ; make ; }
 ----
