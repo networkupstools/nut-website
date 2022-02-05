@@ -325,6 +325,8 @@ SP := $(EMPTY) $(EMPTY)
 COMMA := ,
 # Percent sign
 PCT := %
+# A dollar
+DOLLAR := $$
 
 # For DDL generation, we need secondary expansion; enable it from now on:
 .SECONDEXPANSION:
@@ -491,9 +493,16 @@ SOURCE_DIR_TARGETS_RAW := $(addsuffix index.txt,$(SOURCE_DIRS))
 PACKAGE_DIR_TARGETS := $(addsuffix index.html,$(PACKAGE_DIRS))
 SOURCE_DIR_TARGETS := $(addsuffix index.html,$(SOURCE_DIRS))
 
-# Raw asciidoc indices (.txt)
+# Raw asciidoc indices (.txt) for locations not caught by rules above
 # Note: if a file named README{.adoc,.txt,} exists in the same directory (precedence in case there are more than one file with different suffixes: README.adoc -> README.txt -> README), it is included in index.txt
-%/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(patsubst $$(PCT),"$$(PCT)",$$(filter-out $$(sort $$*/ $$(addprefix $$*/,$$(IGNORE_PACKAGESOURCE_FILES) $$(addsuffix /,$$(IGNORE_PACKAGESOURCE_DIRS)))),$$(wildcard $$*/*/))) | sort -f -)
+
+# For the sorted listing below, assuming we have the "dir" and "dir/"
+# showing up in such order, leave only the slashed variant in place;
+# separated because somehow its markup (or length?) in-place confused
+# "make":
+FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)0 } else { print o } ; o=$(DOLLAR)0; next; }'
+
+%/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(patsubst $$(PCT),"$$(PCT)",$$(filter-out $$(sort $$*/ $$(addprefix $$*/,$$(IGNORE_PACKAGESOURCE_FILES) $$(addsuffix /,$$(IGNORE_PACKAGESOURCE_DIRS)))),$$(wildcard $$*/*/ $$*/*))) | sort -f - | $$(FILTER_DIRONCE) )
 	@echo "Generating $@ due to: $^"
 	$(call file,> $@,= Index of /$*)
 	$(call file,>> $@,:root:		$(subst $(SP),$(EMPTY),$(patsubst %,../,$(subst /,$(SP),$*))))
