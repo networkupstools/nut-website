@@ -9,7 +9,7 @@ it shares some history, and you can save some bandwidth if you
 already have a copy of the NUT repository downloaded:
 
 ----
-$ git clone --reference /path/to/nut \
+:; git clone --reference /path/to/nut \
     https://github.com/networkupstools/nut-website.git
 ----
 
@@ -17,10 +17,10 @@ Once you have cloned the nut-website repository, you can initialize the
 submodules, and pull your copy of NUT into the website tree as well:
 
 ----
-$ git submodule init
+:; git submodule init
 Submodule 'ddl' (https://github.com/networkupstools/nut-ddl.git) registered for path 'ddl'
 Submodule 'nut' (https://github.com/networkupstools/nut.git) registered for path 'nut'
-$ git submodule update --reference /path/to/nut nut
+:; git submodule update --reference /path/to/nut nut
 ...
 ----
 
@@ -46,7 +46,7 @@ Building
 --------
 
 ----
-$ ./autogen.sh && ./configure && { make -k ; make ; }
+:; ./autogen.sh && ./configure && { make -k ; make ; }
 ----
 
 NOTE: There are currently some issues with parallel builds (e.g. `protocols`
@@ -110,8 +110,8 @@ github.io latest-release site repository]
 Hence, the rolling master site publication is as easy as:
 
 ----
-$ git clone https://github.com/networkupstools/networkupstools-master.github.io
-$ rsync -avPHK ./output/* /path/to/networkupstools-master.github.io/
+:; git clone https://github.com/networkupstools/networkupstools-master.github.io
+:; rsync -avPHK ./output/* /path/to/networkupstools-master.github.io/
 ----
 
 Release site publication is much less frequent. It follows the master
@@ -123,9 +123,9 @@ a newly generated `index.html` into the release site, to keep intact
 the title (marked with comments) which specifies the type of site.
 
 ----
-$ git clone https://github.com/networkupstools/networkupstools.github.io
-$ cp -R ./output/index.html /path/to/networkupstools.github.io/
-$ (cd /path/to/networkupstools.github.io/ && git difftool -y)
+:; git clone https://github.com/networkupstools/networkupstools.github.io
+:; cp -R ./output/index.html /path/to/networkupstools.github.io/
+:; (cd /path/to/networkupstools.github.io/ && git difftool -y)
 ----
 
 NOTE: Maybe also update the `ddl` and `stable-hcl.html` on master site,
