@@ -134,7 +134,8 @@ all:	\
 	@echo "Please see the README for instructions about publishing to master site and" >&2
 	@echo "    occasionally updating the news (index.html) on the main site" >&2
 	@echo "Comment the commits to master site like this:"
-	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'"
+	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'" > .git-commit-website
+	@cat .git-commit-website
 # Regenerate site 2020-12-21 vs nut commit 46c7da76 and nut-website commit f1992f6f
 
 release: dist-files all
@@ -230,6 +231,7 @@ clean-local:
 		$(SOURCE_DIR_TARGETS)	\
 		$(WEBSITE_FILES)	\
 		$(OUTDIR)	\
+		.git-commit-website     \
 		images/	\
 		ups-html.txt	\
 		scripts/ups_data.js

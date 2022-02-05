@@ -17,6 +17,7 @@ missing
 # NUT Website-specific
 ups-html.txt
 historic-release.txt
+.git-commit-website
 /images/
 /output/
 /*.html
