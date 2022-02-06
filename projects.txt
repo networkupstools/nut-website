@@ -25,7 +25,7 @@ a NUT server. This application is written in Python and PyGTK, and uses the
 NOTE: NUT-Monitor is part of NUT since NUT v2.4.1.
 It will further evolve toward the NUT Control Center.
 
-link:https://github.com/zykh/walNUT[walNUT] 
+link:https://github.com/zykh/walNUT[walNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A Gnome Shell extension to monitor/manage NUT-controlled devices.
@@ -34,7 +34,7 @@ link:http://sourceforge.net/projects/winnutclient[Windows NUT client]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Windows NUT client is a partial port of KNutClient to Windows using
-link:http://www.autoitscript.com[AUTOIT] scripting language. 
+link:http://www.autoitscript.com[AUTOIT] scripting language.
 
 link:http://csociety.ecn.purdue.edu/~delpha/winnut/[WinNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +49,7 @@ link:https://github.com/aquette/wmnut/[WMNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
-(Network UPS Tools) framework on Linux and other systems. 
+(Network UPS Tools) framework on Linux and other systems.
 
 Network Management Systems (NMS) integration
 --------------------------------------------
@@ -66,7 +66,7 @@ link:http://cacti.net[Cacti monitoring tool]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There are at least three different scripts that add NUT support to Cacti:
- 
+
 - link:http://forums.cacti.net/about19250.html[PHP script]
 - link:http://forums.cacti.net/about14475.html[Ruby script]
 - link:http://forums.cacti.net/about9729.html[shell script]
@@ -77,7 +77,7 @@ link:http://collectd.org[collectd]
 
 The `collectd` system statistics collection daemon features a
 link:http://collectd.org/wiki/index.php/Plugin:NUT[NUT plugin] to
-collect statistics from UPSes. 
+collect statistics from UPSes.
 
 link:http://xymon.sourceforge.net/[Xymon (Hobbit) monitor]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,7 +87,7 @@ A link:http://www.revpol.com/xymon_nut_scripts[NUT plugin] is available.
 link:http://monami.sourceforge.net[MonAMI NUT plugin]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A plugin to return UPS status to the MonAMI universal sensor framework. 
+A plugin to return UPS status to the MonAMI universal sensor framework.
 
 link:http://munin-monitoring.org[Munin NUT plugin]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -215,7 +215,7 @@ link:acknowledgements.html[acknowledgements information].
 Synology
 ~~~~~~~~
 
-link:http://www.synology.com[Synology] has worked closely with Arnaud to integrate 
+link:http://www.synology.com[Synology] has worked closely with Arnaud to integrate
 link:http://www.synology.com/support/faq_show.php?lang=enu&q_id=300[UPS support] on all
 its devices.
 
@@ -263,7 +263,7 @@ connection.
 
 link:http://web.archive.org/web/20040409160326/http://www.webbastards.com/projects/[lcd-nut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+
 A project to display the status of a UPS on computer through one of the many
 cheap LCD matrix displays available on the market.
 
