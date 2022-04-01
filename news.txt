@@ -1,3 +1,4 @@
+- Apr 1, 2022: preparing for new release by issuing NUT 2.8.0-rc1
 - Feb 5, 2022: main nut-website regenerated to follow iterative development of NUT features more closely
 - Feb 4, 2022: nut-website repository rearranged to allow publishing sub-sites with historic NUT releases (to help users of distributed packages configure their deployments); published v2.7.4
 - Feb 4, 2022: nut-ddl repository gets rudimentary CI to avoid not-parsable device dump filenames
