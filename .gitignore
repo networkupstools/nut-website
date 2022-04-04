@@ -21,3 +21,6 @@ historic-release.txt
 /images/
 /output/
 /*.html
+
+# Auto-published site
+/networkupstools.github.io
