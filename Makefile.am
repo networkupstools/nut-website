@@ -142,13 +142,13 @@ release: dist-files all
 
 # Generate WEBSITE_DEPS & man pages
 prerequisites:
-	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
-	cd nut/docs; $(MAKE) $(AM_MAKEFLAGS) FAQ.html
-	cd nut/docs/man; $(MAKE) $(AM_MAKEFLAGS) html-man
+	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
+	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) FAQ.html
+	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 
 # Generate distribution files and GPG fingerprint (really needed?) and copy them in source dir
 dist-files:
-	cd nut; $(MAKE) $(AM_MAKEFLAGS) dist dist-hash dist-sig
+	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash dist-sig
 	$(MKDIR_P) $(SOURCE_DIR)/@TREE_VERSION@
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
