@@ -171,7 +171,7 @@ echo "Calling autoreconf..."
 autoreconf -i || quit
 echo_spacer
 
-if [ -n "`git status -uno -s`" ]; then
+if [ -n "`git status -uno -s`" ] && [ -z "$NUT_HISTORIC_RELEASE" ] ; then
 	echo "NOTE: Git sources for this repository have changed:"
 	git status -s -uno
 	if [ x"${CI_AUTOCOMMIT-}" = xtrue ]; then
