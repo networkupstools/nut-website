@@ -4,7 +4,8 @@ dnl +------------------------------------------------------------------+
 
 AC_INIT(nut_website, m4_esyscmd_s(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-.*//'))
 dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
-AC_PREREQ([2.70])
+dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
+AC_PREREQ([2.69])
 
 AC_CONFIG_MACRO_DIRS([m4 nut/m4])
 echo "Network UPS Tools - Website (NUT version ${PACKAGE_VERSION})"
