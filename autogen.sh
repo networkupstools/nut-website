@@ -29,9 +29,13 @@ inject_historic_note() {
 
 	cat "$F" > "$F.bak" || exit
 
-	# To make life hard, some man pages are wrappers to include others
-	# so after a chain of includes, one file has a NAME and another a
-	# SYNOPSIS chapter... We actually embed into SYNOPSIS there:
+	# To make life hard, some man pages have only a NAME section and
+	# others also SYNOPSIS chapter (must be next after NAME)...
+	# We should add the historic note as a section after all of these.
+	# Technically, we want it as high at top as possible, so we either
+	# add the NOTE block just after SYNOPSIS title, or add a new named
+	# section with the block just after the NAME section (if there is
+	# no SYNPOSIS in that file).
 	local ISMAN=false
 	local HAS_SYNOPSIS=false
 	if head -1 "$F" | grep -E '\([0-9]\)$' >/dev/null ; then
@@ -39,7 +43,7 @@ inject_historic_note() {
 	fi
 	if grep -E '^SYNOPSIS$' "$F" >/dev/null ; then
 		ISMAN=true
-#		HAS_SYNOPSIS=true
+		HAS_SYNOPSIS=true
 	fi
 
 	local i=0
@@ -47,7 +51,8 @@ inject_historic_note() {
 	local noted=false
 	# In a manpage txt source, the NAME and its body must be first
 	# meaningful lines after the TITLE(NUM) heading; any metacommands
-	# for asciidoc markup should come later:
+	# for asciidoc markup should come later; any sections after an
+	# optional SYNOPSIS (if present):
 	local manname=false
 	local mannamebody=false
 	local mansynopsis=false
@@ -94,7 +99,7 @@ inject_historic_note() {
 		esac
 		if [ "$i" = 0 ] && $canprint ; then
 			echo ""
-			if $ISMAN ; then
+			if $ISMAN && ! $HAS_SYNOPSIS ; then
 				echo "NOTE ABOUT HISTORIC NUT RELEASE"
 				echo "-------------------------------"
 				echo ""
