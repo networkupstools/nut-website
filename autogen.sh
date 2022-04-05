@@ -159,6 +159,7 @@ echo_spacer
 # reset it to some clean commit state.
 echo "Rewinding the submodules (if any)..."
 git submodule foreach 'git reset --hard' || true
+git submodule foreach 'git checkout -f' || true
 echo "Initializing the submodules..."
 git submodule init || quit
 echo "Updating the submodules..."
