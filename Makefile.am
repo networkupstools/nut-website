@@ -140,7 +140,7 @@ all:	\
 
 release: dist-files all
 
-# Generate WEBSITE_DEPS & man pages
+# Generate WEBSITE_DEPS & HTML versions of man pages
 prerequisites:
 	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
 	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) FAQ.html
