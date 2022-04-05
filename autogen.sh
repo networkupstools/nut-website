@@ -28,9 +28,33 @@ inject_historic_note() {
 	local HN="$2"
 
 	cat "$F" > "$F.bak" || exit
-	i=0
-	title=false
-	noted=false
+
+	# To make life hard, some man pages are wrappers to include others
+	# so after a chain of includes, one file has a NAME and another a
+	# SYNOPSIS chapter... We actually embed into SYNOPSIS there:
+	local ISMAN=false
+	local HAS_SYNOPSIS=false
+	if head -1 "$F" | grep -E '\([0-9]\)$' >/dev/null ; then
+		ISMAN=true
+	fi
+	if grep -E '^SYNOPSIS$' "$F" >/dev/null ; then
+		ISMAN=true
+#		HAS_SYNOPSIS=true
+	fi
+
+	local i=0
+	local title=false
+	local noted=false
+	# In a manpage txt source, the NAME and its body must be first
+	# meaningful lines after the TITLE(NUM) heading; any metacommands
+	# for asciidoc markup should come later:
+	local manname=false
+	local mannamebody=false
+	local mansynopsis=false
+
+	local canprint=false
+
+	local PREVLINE=''
 	while IFS='' read LINE ; do
 		printf '%s\n' "$LINE"
 		if $noted ; then
@@ -39,17 +63,47 @@ inject_historic_note() {
 		case "$LINE" in
 			ifndef::*|ifdef::*) i="`expr $i + 1`" ;;
 			endif::*) i="`expr $i - 1`" ;;
-			======*|-----*|'~~~~~'*)
-				# NOTE: Here we assume we have no blocks up in the file before titles
-				title=true
+			NAME) if $ISMAN ; then manname=true; fi ;;
+			SYNOPSIS) if $ISMAN ; then mansynopsis=true; fi ;;
+			====*|----*|'~~~~'*)
+				if ! $ISMAN ; then
+					# NOTE: Here we assume we have no blocks up in the file before titles
+					canprint=true
+				else
+					if ! $HAS_SYNOPSIS && $manname ; then
+						title=true
+					elif $HAS_SYNOPSIS && $mansynopsis ; then
+						title=true
+					fi
+				fi
+				;;
+			"") # blank lines are separators
+				if $ISMAN && $title ; then
+					if ! $HAS_SYNOPSIS && $manname && $mannamebody ; then
+						canprint=true
+					elif $HAS_SYNOPSIS && $mansynopsis ; then
+						canprint=true
+					fi
+				fi
+				;;
+			*) # Other text/markup/metacommands...
+				if $ISMAN && $manname && $title && ! $mannamebody ; then
+					mannamebody=true
+				fi
 				;;
 		esac
-		if [ "$i" = 0 ] && $title ; then
+		if [ "$i" = 0 ] && $canprint ; then
 			echo ""
+			if $ISMAN ; then
+				echo "NOTE ABOUT HISTORIC NUT RELEASE"
+				echo "-------------------------------"
+				echo ""
+			fi
 			echo "include::${HN}[]"
 			echo ""
 			noted=true
 		fi
+		PREVLINE="$LINE"
 	done < "$F.bak" > "$F"
 	rm -f "$F.bak"
 }
@@ -128,10 +182,19 @@ described here.
 ====
 
 EOF
+
+	# TODO: This injects the NOTE above into each file, so there
+	# would likely be many copies in single-file docs (non-chunked
+	# HTML, and PDF). Fiddle with `ifdef::SOMETHING[]` to manage
+	# that visibility only into starting documents of big stacks.
 	( cd nut/docs && for TF in *.txt ; do
 		inject_historic_note "$TF" "../../historic-release.txt" || exit
 	  done ) || exit
 	( cd nut/docs/man && for TF in *.txt ; do
+		# Common text included into other man page files:
+		case "$TF" in
+			blazer-common.txt) continue ;;
+		esac
 		inject_historic_note "$TF" "../../../historic-release.txt" || exit
 	  done ) || exit
 	# Newer asciidoc cares about CLI syntax more than the old one:
