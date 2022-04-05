@@ -116,7 +116,9 @@ Which would populate e.g. `output/historic/v2.7.4` subdirectory that would be
 copied and committed into same-named path under `networkupstools.github.io` as
 detailed below. Generation of the main nut-website would also populate an index
 file of the "historic" subdirectory, based on `historic/index.txt` contents,
-to refer to such officially published snapshots.
+to refer to such officially published snapshots. This index is currently
+maintained manually, to ensure human decision about publishing (or hiding) an
+historic release (especially a release candidate) vs. experimenting with that.
 
 
 Publishing

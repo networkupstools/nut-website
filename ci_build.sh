@@ -81,3 +81,8 @@ if $CI_AUTOPUSH || $CI_AUTOCOMMIT ; then
 		fi
 	)
 fi
+
+if [ -n "${NUT_HISTORIC_RELEASE-}" ] ; then
+	grep -E "link:.*${NUT_HISTORIC_RELEASE}" historic/index.txt >/dev/null \
+	|| echo "WARNING: Prepared historic release ${NUT_HISTORIC_RELEASE} is not listed in historic/index.txt and would not be publicly exposed on the site!" >&2
+fi

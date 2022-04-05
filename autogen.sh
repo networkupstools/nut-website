@@ -175,6 +175,14 @@ if [ -n "${NUT_HISTORIC_RELEASE-}" ]; then
 	echo "Readying NUT historic release ${NUT_HISTORIC_RELEASE}"
 	( cd nut && git checkout "${NUT_HISTORIC_RELEASE}" ) || quit
 
+	grep -E "link:.*${NUT_HISTORIC_RELEASE}" historic/index.txt >/dev/null \
+	|| {
+		echo ''
+		echo "WARNING: Prepared historic release ${NUT_HISTORIC_RELEASE} is not listed in historic/index.txt and would not be publicly exposed on the site!"
+		echo ''
+		sleep 3
+	} >&2
+
 	sed -e 's/\(AC_INIT([^,]*\),\([^,]*\),/\1,['"`echo "${NUT_HISTORIC_RELEASE}" | sed 's,^v,,'`"'],/' \
 		-i nut/configure.ac
 
