@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 #
 # Autoreconf wrapper script to ensure that the source tree is in a buildable state
 # To automatically commit references to regenerated content, first:
@@ -60,7 +60,7 @@ inject_historic_note() {
 	local canprint=false
 
 	local PREVLINE=''
-	while IFS='' read LINE ; do
+	while IFS='' read -r LINE ; do
 		printf '%s\n' "$LINE"
 		if $noted ; then
 			continue
