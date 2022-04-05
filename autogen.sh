@@ -173,6 +173,10 @@ echo_spacer
 if [ -n "${NUT_HISTORIC_RELEASE-}" ]; then
 	echo "Readying NUT historic release ${NUT_HISTORIC_RELEASE}"
 	( cd nut && git checkout "${NUT_HISTORIC_RELEASE}" ) || quit
+
+	sed -e 's/\(AC_INIT([^,]*\),\([^,]*\),/\1,['"`echo "${NUT_HISTORIC_RELEASE}" | sed 's,^v,,'`"'],/' \
+		-i nut/configure.ac
+
 	cat > historic-release.txt << EOF
 
 [NOTE]
