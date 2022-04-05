@@ -94,12 +94,15 @@ WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],
 	[''], [AC_MSG_NOTICE(Seems there was a problem getting NUT_VERSION)],
-	[*-*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit
+	[*-*-g*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit
 		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
 	],
-	[] dnl Default: exact tag hit, e.g. "v2.7.4" for the release site
+	[] dnl Default: exact tag hit, e.g. "v2.7.4" or "v2.8.0-rc1" for the release site
 )
 AC_SUBST(WEBSITE_VERSION)
+AC_SUBST(NUT_VERSION)
+AC_SUBST(DDL_VERSION)
+AC_SUBST(WEB_VERSION)
 
 dnl ----------------------------------------------------------------------
 
