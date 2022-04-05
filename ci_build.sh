@@ -32,12 +32,15 @@ echo "=== Running make" >&2
 # NOTE: Initial "make" is not "-s" because it goes silent for too long, uneasy
 # Make dist to build all docs files (some mans may be skipped
 # by default build because drivers are not built for them)
-if [ -n "${NUT_HISTORIC_RELEASE}" ]; then
+case "${NUT_HISTORIC_RELEASE-}" in
+0.*|1.*|2.[0123456].*|2.7.[01234].*)
 	# NOTE: v2.7.5+ should be okay with parallelized builds of docs etc
 	{ make -k all ; echo "===== Finalize make:" >&2; make -s all dist ; } || exit
-else
+	;;
+""|2.8.*|*)
 	{ make -k -j 8 all dist ; echo "===== Finalize make:" >&2; make -s all dist ; } || exit
-fi
+	;;
+esac
 
 # If we are here, there should be a populated "output" directory
 # and there were no build issues
