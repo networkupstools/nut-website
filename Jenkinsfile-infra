@@ -85,9 +85,9 @@ pipeline {
                     for (cause in currentBuild.getBuildCauses()) {
                         echo "Checking for code-change detecting build cause in: ${cause}"
 
-                        if (cause instanceof com.cloudbees.jenkins.GitHubPushCause
-                        ||  cause instanceof jenkins.branch.BranchEventCause
-                        ||  cause instanceof jenkins.branch.BranchIndexingCause
+                        if (cause._class.toString().contains('GitHubPushCause')
+                        ||  cause._class.toString().contains('BranchEventCause')
+                        ||  cause._class.toString().contains('BranchIndexingCause')
                         ) {
                             echo "WARNING: Running due to an automated source change trigger, not avoiding work"
                             env.CI_AVOID_RESPIN = false
