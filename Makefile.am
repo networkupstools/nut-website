@@ -85,7 +85,7 @@ ADOC_PARAMS_COMMON =	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
-	--attribute=revision="$(NUT_VERSION)"	\
+	--attribute=revision="$(PACKAGE_VERSION)"	\
 	--attribute=webrevision="$(WEBSITE_VERSION)"	\
 	--attribute tree_version="@TREE_VERSION@"	\
 	--attribute localdate="`TZ=UTC date +%Y-%m-%d`"	\
