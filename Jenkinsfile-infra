@@ -75,6 +75,10 @@ pipeline {
                         env.CI_AUTOPUSH = false
                     }
 
+                    if (currentBuild.changeSets?.size() > 0) {
+                        echo "WARNING: Running with source changes known to CI, so not avoiding work"
+                        env.CI_AVOID_RESPIN = false
+                    } else
                     for (cause in currentBuild.getBuildCauses()) {
                         echo "Checking for code-change detecting build cause in: ${cause}"
 
