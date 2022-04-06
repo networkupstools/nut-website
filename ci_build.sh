@@ -31,11 +31,21 @@ fi
 echo "=== Running make" >&2
 # NOTE: Initial "make" is not "-s" because it goes silent for too long, uneasy
 case "${NUT_HISTORIC_RELEASE-}" in
+"")
+	# Not historic, no source files to publish
+	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
+	;;
 0.*|1.*|2.[0123456].*|2.7.[01234].*)
 	# NOTE: v2.7.5+ should be okay with parallelized builds of docs etc
+	echo "===== Running make dist-files" >&2
+	{ make -k dist-sig-files || make dist-files; } || exit
+	echo "===== Running make of docs" >&2
 	{ make -k ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
-""|2.8.*|*)
+2.8.*|*)
+	echo "===== Running make dist-files" >&2
+	{ make -k -j 8 dist-sig-files || make -k -j 8 dist-files || make dist-files; } || exit
+	echo "===== Running make of docs" >&2
 	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
 esac
