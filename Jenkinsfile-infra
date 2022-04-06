@@ -56,8 +56,10 @@ pipeline {
                     }
 */
 
-                    if (env.BRANCH_NAME != 'master') {
-                        echo "WARNING: Not running for a master branch, disabling Git actions"
+                    if (env.BRANCH_NAME != 'master'
+                    &&  !(env.BRANCH_NAME ==~ /^.*\/master$/ )
+                    ) {
+                        echo "WARNING: Not running for a master branch (${env.BRANCH_NAME}), disabling Git actions"
                         env.CI_AUTOCOMMIT = false
                         env.CI_AUTOPUSH = false
                     }
