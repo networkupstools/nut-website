@@ -252,24 +252,26 @@ echo "Calling autoreconf..."
 autoreconf -i || quit
 echo_spacer
 
-if [ -n "`git status -uno -s`" ] && [ -z "$NUT_HISTORIC_RELEASE" ] ; then
+if [ -n "`git status -uno -s`" ] ; then
 	echo "NOTE: Git sources for this repository have changed:"
 	git status -s -uno
-	if [ x"${CI_AUTOCOMMIT-}" = xtrue ]; then
-		echo "Committing updated submodule references before building the site for publication:"
-	else
-		echo "If you are a website maintainer, please commit updated submodule"
-		echo "references first, before building the site for publication:"
-	fi
-	echo ":; git add nut ddl source package && git commit -m 'Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`'"
-	if [ x"${CI_AUTOCOMMIT-}" = xtrue ]; then
-		git add nut ddl source package \
-		&& git commit -m "Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`" \
-		|| quit
-	fi
 
 	if [ -n "${NUT_HISTORIC_RELEASE-}" ]; then
 		echo "NOTE: You were building website for NUT historic release ${NUT_HISTORIC_RELEASE}"
+	else
+		if [ x"${CI_AUTOCOMMIT-}" = xtrue ]; then
+			echo "Committing updated submodule references before building the site for publication:"
+		else
+			echo "If you are a website maintainer, please commit updated submodule"
+			echo "references first, before building the site for publication:"
+		fi
+
+		echo ":; git add nut ddl source package && git commit -m 'Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`'"
+		if [ x"${CI_AUTOCOMMIT-}" = xtrue ]; then
+			git add nut ddl source package \
+			&& git commit -m "Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`" \
+			|| quit
+		fi
 	fi
 fi
 
