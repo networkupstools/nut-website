@@ -56,6 +56,17 @@ pipeline {
                     }
 */
 
+                    if (env?.BRANCH_NAME == null) {
+                        if (env?.GIT_BRANCH) {
+                            env.BRANCH_NAME = env.GIT_BRANCH - ~/^origin\//
+                        } else {
+                            env.BRANCH_NAME = sh (
+                                script: 'git rev-parse --abbrev-ref HEAD',
+                                returnStdout: true
+                            ).trim()
+                        }
+                    }
+
                     if (env.BRANCH_NAME != 'master'
                     &&  !(env.BRANCH_NAME ==~ /^.*\/master$/ )
                     ) {
