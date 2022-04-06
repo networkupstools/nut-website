@@ -75,7 +75,7 @@ pipeline {
                         env.CI_AUTOPUSH = false
                     }
 
-                    for (cause in currentBuild.getRawBuild().getAction(hudson.model.CauseAction.class).getCauses()) {
+                    for (cause in currentBuild.getBuildCauses()) {
                         if (cause in [com.cloudbees.jenkins.GitHubPushCause]) {
                             echo "WARNING: Running due to an automated source change trigger, not avoiding work"
                             env.CI_AVOID_RESPIN = false
