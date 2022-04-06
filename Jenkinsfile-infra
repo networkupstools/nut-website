@@ -75,8 +75,16 @@ pipeline {
                         env.CI_AUTOPUSH = false
                     }
 
+                    for (cause in currentBuild.getRawBuild().getAction(hudson.model.CauseAction.class).getCauses()) {
+                        if (cause in [com.cloudbees.jenkins.GitHubPushCause]) {
+                            echo "WARNING: Running due to an automated source change trigger, not avoiding work"
+                            env.CI_AVOID_RESPIN = false
+                        }
+                    }
+
                     def shRes
                     def msg
+                    // TODO: withCredentials() for git push in shell
                     shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     switch (shRes) {
                         case 0:
