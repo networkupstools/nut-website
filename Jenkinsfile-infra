@@ -1,0 +1,85 @@
+pipeline {
+    // Note: fixed label set from NUT CI farm since the overall
+    // checkout workspace is huge and so persistent, as well as
+    // lots of heavier tools are used and vetted to work well:
+    agent {
+        //label "jenkins-nut-doc-deb11"
+        label "nut-website-builder && nut-builder && doc-builder && NUT_BUILD_CAPS=docs:all"
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        booleanParam(
+            name: 'CI_AUTOCOMMIT',
+            defaultValue: true,
+            description: 'Create the commits for site source and public?'
+        )
+        booleanParam(
+            name: 'CI_AUTOPUSH',
+            defaultValue: true,
+            description: 'Push the commits for site source and public?'
+        )
+        booleanParam(
+            name: 'CI_AVOID_RESPIN',
+            defaultValue: true,
+            description: 'Avoid needless work (site date changes etc) if nut-website and source components did not change in git'
+        )
+    }
+
+    stages {
+        stage("Build and optionally push") {
+            steps {
+                script {
+/*
+// TODO: Allow admin users to run the job and others not?
+// For now rely on Jenkins folder/job security matrix
+                    def causeUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')?.userId[0]
+                    def adminGroup = 'networkupstools'
+
+                    // May be null/not of wanted type if Role Strategy Plugin is missing
+                    def authStrategy = null
+                    try {
+                        authStrategy = Jenkins.instance.getAuthorizationStrategy()
+                        if (! (authStrategy instanceof RoleBasedAuthorizationStrategy) ) authStrategy=null
+                    } catch (Throwable t) {}
+
+                    def roleMaps = null
+                    def roleSids = null
+                    if (authStrategy) {
+                        try {
+                            roleMaps = authStrategy.getRoleMap(com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Global)
+                            roleSids = roleMaps.getSidsForRole(adminGroup.trim())
+                        } catch (Throwable t) {}
+                    }
+*/
+
+                    if (env.BRANCH_NAME != 'master') {
+                        echo "WARNING: Not running for a master branch, disabling Git actions"
+                        env.CI_AUTOCOMMIT = false
+                        env.CI_AUTOPUSH = false
+                    }
+
+                    def shRes = sh (returnStatus: true, script: "./ci_build.sh")
+                    switch (shRes) {
+                        case 0:
+                            manager.addShortText("Site updated")
+                            break
+                        case 42:
+                            manager.addShortText("Site already up to date")
+                            break
+                        default:
+                            def msg = "FAILED to process site update"
+                            manager.addShortText(msg)
+                            echo msg
+                            error msg
+                            break
+                    }
+
+                }
+            }
+        }
+    }
+}
