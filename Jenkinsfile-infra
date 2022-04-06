@@ -84,6 +84,7 @@ pipeline {
 
                     def shRes
                     def msg
+                    echo "Starting website build: CI_AUTOCOMMIT=${env.CI_AUTOCOMMIT} CI_AUTOPUSH=${env.CI_AUTOPUSH} CI_AVOID_RESPIN=${env.CI_AVOID_RESPIN} BRANCH_NAME=${env.BRANCH_NAME}"
                     // TODO: withCredentials() for git push in shell
                     shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     switch (shRes) {
