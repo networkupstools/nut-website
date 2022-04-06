@@ -85,7 +85,7 @@ if $CI_AUTOPUSH || $CI_AUTOCOMMIT ; then
 	# Note: no "delete", to avoid dropping e.g. historic sub-site
 	# data or ddl/Koenig symlinks
 	echo "=== Updating content in local copy of networkupstools.github.io" >&2
-	rsync -avPHK ./output/ ./networkupstools.github.io/ || exit
+	rsync -qavPHK ./output/ ./networkupstools.github.io/ || exit
 	BUILDDIR="$PWD"
 	( cd networkupstools.github.io || exit
 		git add . || exit
