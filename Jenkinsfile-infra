@@ -76,6 +76,8 @@ pipeline {
                     }
 
                     for (cause in currentBuild.getBuildCauses()) {
+                        echo "Checking for code-change detecting build cause in: ${cause}"
+
                         if (cause instanceof com.cloudbees.jenkins.GitHubPushCause
                         ||  cause instanceof jenkins.branch.BranchEventCause
                         ||  cause instanceof jenkins.branch.BranchIndexingCause
