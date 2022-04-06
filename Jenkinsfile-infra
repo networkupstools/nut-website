@@ -73,6 +73,9 @@ pipeline {
                         echo "WARNING: Not running for a master branch (${env.BRANCH_NAME}), disabling Git actions"
                         env.CI_AUTOCOMMIT = false
                         env.CI_AUTOPUSH = false
+                    } else {
+                        // Be ready to push later
+                        sh 'git checkout master && git rebase origin/master'
                     }
 
                     if (currentBuild.changeSets?.size() > 0) {
