@@ -69,7 +69,7 @@ pipeline {
                     shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     switch (shRes) {
                         case 0:
-                            if (env.CI_AUTOPUSH) {
+                            if ("${env.CI_AUTOPUSH}" == "true") {
                                 msg = "Site updated"
                             } else {
                                 msg = "Site regenerated successfully, but not pushed"
