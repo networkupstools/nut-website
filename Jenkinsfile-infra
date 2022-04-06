@@ -76,7 +76,10 @@ pipeline {
                     }
 
                     for (cause in currentBuild.getBuildCauses()) {
-                        if (cause instanceof com.cloudbees.jenkins.GitHubPushCause) {
+                        if (cause instanceof com.cloudbees.jenkins.GitHubPushCause
+                        ||  cause instanceof jenkins.branch.BranchEventCause
+                        ||  cause instanceof jenkins.branch.BranchIndexingCause
+                        ) {
                             echo "WARNING: Running due to an automated source change trigger, not avoiding work"
                             env.CI_AVOID_RESPIN = false
                         }
