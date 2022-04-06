@@ -147,16 +147,27 @@ prerequisites:
 	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) FAQ.html
 	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 
-# Generate distribution files and GPG fingerprint (really needed?) and copy them in source dir
-dist-files:
-	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash dist-sig
+# Generate distribution files and GPG fingerprint (really needed?)
+# and copy them in source dir, once (keep old published releases
+# immutable by default - let maintainer clean away corrupt attempts)!
+dist-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz
+
+# Separate chore for maintainers with a key
+dist-sig-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig
+
+$(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz:
+	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash
 	$(MKDIR_P) $(SOURCE_DIR)/@TREE_VERSION@
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
-	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
 	cp -f nut/ChangeLog $(SOURCE_DIR)/@TREE_VERSION@/
+
+# Separate chore for maintainers with a key
+$(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz
+	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
+	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
 	gpg --export -a 0x55CA5976 > $(SOURCE_DIR)/nut-key.gpg
 
 $(WEBSITE_FILES): $(LAYOUT).conf
