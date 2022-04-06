@@ -109,6 +109,7 @@ Normally this should be done once per release, with a call like this:
 :; export NUT_HISTORIC_RELEASE=v2.7.4
 :; ./autogen.sh && \
     ./configure --with-NUT_HISTORIC_RELEASE=${NUT_HISTORIC_RELEASE} && \
+    { make -k dist-sig-files || make dist-files; } && \
     { make -k ; make; }
 ----
 
@@ -120,6 +121,12 @@ to refer to such officially published snapshots. This index is currently
 maintained manually, to ensure human decision about publishing (or hiding) an
 historic release (especially a release candidate) vs. experimenting with that.
 
+NOTE: `make dist-files` should update the historic release site source tarballs
+and related changelog, news and checksum files IFF the release data was not yet
+there. You probably need to commit that back to "source" github repository.
+
+NOTE: For hardcore maintainers, there should be a PGP/GPG key to also sign the
+release tarball, calling `make dist-sig-files` (would fail without a key).
 
 Publishing
 ----------
