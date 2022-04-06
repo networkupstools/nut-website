@@ -3,6 +3,8 @@
 # Autoreconf wrapper script to ensure that the source tree is in a buildable state
 # To automatically commit references to regenerated content, first:
 #   export CI_AUTOCOMMIT=true
+# To skip re-generation if there were no git changes in this or component repos:
+#   export CI_AVOID_RESPIN=true
 # To prepare (usually once) a sub-site for a historic release, tell it so:
 #   export NUT_HISTORIC_RELEASE=v2.7.4
 #   ./autogen.sh && ./configure --with-NUT_HISTORIC_RELEASE="${NUT_HISTORIC_RELEASE}"
@@ -272,6 +274,12 @@ if [ -n "`git status -uno -s`" ] ; then
 			&& git commit -m "Updated submodule references as of `date -u +%Y%m%dT%H%M%SZ`: nut:`(cd nut && git log -1 --format=%h)` nut-ddl:`(cd ddl && git log -1 --format=%h)` source:`(cd source && git log -1 --format=%h)` package:`(cd package && git log -1 --format=%h)`" \
 			|| quit
 		fi
+	fi
+else
+	# No git changes
+	if [ "${CI_AVOID_RESPIN-}" = "true" ]; then
+		echo "SKIP: Git sources for this repository (or submodules) have not changed" >&2
+		exit 42
 	fi
 fi
 

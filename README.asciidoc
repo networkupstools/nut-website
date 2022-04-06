@@ -62,6 +62,11 @@ envvars may be useful to commit changes locally, and to push index upwards:
 :;   export CI_AUTOCOMMIT=true
 :;   export CI_AUTOPUSH=true
 
+# Optionally (on CI) to avoid rebuilds in cases when Git sources did not
+# change after a pull of all nut-website and submodule HEADs (returns exit
+# code "42" then, to be handled by the caller):
+:;   export CI_AVOID_RESPIN=true
+
 # Optionally - for the reare historic-release sub-sites (by NUT tag), e.g.:
 :;   export NUT_HISTORIC_RELEASE=v2.7.4
 ----

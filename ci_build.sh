@@ -3,13 +3,15 @@
 # To publish automatically use:
 #   export CI_AUTOCOMMIT=true
 #   export CI_AUTOPUSH=true
+#   export CI_AVOID_RESPIN=true
 # Optionally:
 #   export NUT_HISTORIC_RELEASE=v2.7.4
 
 [ x"${CI_AUTOCOMMIT-}" = xtrue ] || CI_AUTOCOMMIT=false
 [ x"${CI_AUTOPUSH-}" = xtrue ] || CI_AUTOPUSH=false
+[ x"${CI_AVOID_RESPIN-}" = xtrue ] || CI_AVOID_RESPIN=false
 [ x"${NUT_HISTORIC_RELEASE-}" != x ] || NUT_HISTORIC_RELEASE=""
-export CI_AUTOCOMMIT CI_AUTOPUSH NUT_HISTORIC_RELEASE
+export CI_AUTOCOMMIT CI_AUTOPUSH CI_AVOID_RESPIN NUT_HISTORIC_RELEASE
 
 LANG=C
 LC_ALL=C
@@ -18,6 +20,9 @@ export LANG LC_ALL TZ
 
 rm -f .git-commit-website || true
 # NOTE: This can honour CI_AUTOCOMMIT=true for updating the local git workspace
+# and CI_AVOID_RESPIN=true to avoid rebuilds in cases when Git sources did not
+# change after a pull of all nut-website and submodule HEADs (returns exit code
+# "42" then, to be handled by the caller).
 echo "=== Running autogen.sh" >&2
 ./autogen.sh || exit
 
