@@ -62,20 +62,31 @@ pipeline {
                         env.CI_AUTOPUSH = false
                     }
 
-                    def shRes = sh (returnStatus: true, script: "./ci_build.sh")
+                    def shRes
+                    def msg
+                    shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     switch (shRes) {
                         case 0:
-                            manager.addShortText("Site updated")
+                            if (env.CI_AUTOPUSH) {
+                                msg = "Site updated"
+                            } else {
+                                msg = "Site regenerated successfully, but not pushed"
+                            }
                             break
+
                         case 42:
-                            manager.addShortText("Site already up to date")
+                            msg = "Site already up to date, skipped"
                             break
+
                         default:
-                            def msg = "FAILED to process site update"
-                            manager.addShortText(msg)
-                            echo msg
-                            error msg
+                            msg = "FAILED to process site update"
                             break
+                    }
+
+                    manager.addShortText(msg)
+                    echo msg
+                    if ( !(shRes in [0, 42]) ) {
+                        error msg
                     }
 
                 }
