@@ -18,6 +18,8 @@ missing
 ups-html.txt
 historic-release.txt
 .git-commit-website
+*.txt-spellchecked
+*.asciidoc-spellchecked
 /images/
 /output/
 /*.html
