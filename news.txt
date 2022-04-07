@@ -1,3 +1,4 @@
+- Apr 7, 2022: nut-website repository integrated with NUT CI farm to enable regular documentation updates as NUT code development and DDL get refreshed. Users of official "historic" releases which are the basis for distribution packaging have the new sub-sites frozen in time. 
 - Apr 1, 2022: preparing for new release by issuing NUT 2.8.0-rc1
 - Feb 5, 2022: main nut-website regenerated to follow iterative development of NUT features more closely
 - Feb 4, 2022: nut-website repository rearranged to allow publishing sub-sites with historic NUT releases (to help users of distributed packages configure their deployments); published v2.7.4
