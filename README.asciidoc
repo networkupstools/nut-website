@@ -67,7 +67,7 @@ envvars may be useful to commit changes locally, and to push index upwards:
 # code "42" then, to be handled by the caller):
 :;   export CI_AVOID_RESPIN=true
 
-# Optionally - for the reare historic-release sub-sites (by NUT tag), e.g.:
+# Optionally - for the rare historic-release sub-sites (by NUT tag), e.g.:
 :;   export NUT_HISTORIC_RELEASE=v2.7.4
 ----
 
@@ -79,8 +79,8 @@ Manual building in detail
 ----
 
 NOTE: There are currently some issues with parallel builds (e.g. `protocols`
-subdir should be built before `OUTDIR` but target dependencies do not say so).
-Please run `make` sequentially for the time being.
+sub-directory should be built before `OUTDIR` but target dependencies do not
+say so). Please run `make` sequentially for the time being.
 
 The root of the website will be in the `output/` directory, if all goes well.
 
@@ -93,7 +93,7 @@ used by the majority of NUT users.
 
 While the main nut-website now aims to follow the active development based on
 current "master" or "main" branches of the components involved, we also publish
-reference sub-sites with static data (man pages, configuration, compatibiblity
+reference sub-sites with static data (man pages, configuration, compatibility
 information, etc.) for those people to see about setting up their practical
 systems properly. Such pages are marked with a note on top that they represent
 an old and immutable codebase which may differ from modern project state.
@@ -127,7 +127,7 @@ maintained manually, to ensure human decision about publishing (or hiding) an
 historic release (especially a release candidate) vs. experimenting with that.
 
 NOTE: `make dist-files` should update the historic release site source tarballs
-and related changelog, news and checksum files IFF the release data was not yet
+and related ChangeLog, news and checksum files IFF the release data was not yet
 there. You probably need to commit that back to "source" github repository.
 
 NOTE: For hardcore maintainers, there should be a PGP/GPG key to also sign the
