@@ -39,8 +39,8 @@ link:http://www.autoitscript.com[AUTOIT] scripting language.
 NOTE: The original "winnutclient" project seems abandoned since 2015;
 however a "WinNUT-Client" fork (below) picked up the torch.
 
-link:https://github.com/gawindx/WinNUT-Client
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://github.com/gawindx/WinNUT-Client[WinNUT-Client]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WinNUT-Client V2 is a replacement for older WinNUT Client (v1.x) which can use
 its configuration files. It allows a Windows client to monitor UPS state from
