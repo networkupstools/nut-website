@@ -4,12 +4,18 @@
 #   export CI_AUTOCOMMIT=true
 #   export CI_AUTOPUSH=true
 #   export CI_AVOID_RESPIN=true
+# By default we do spellcheck so manually prepared site updates are nice and
+# clean (as much as nut/docs/nut.dict file in checked-out version permits)
+# but for CI we want that as a separately diagnosed (and non-prohibitive)
+# action:
+#   export CI_AVOID_SPELLCHECK=true
 # Optionally:
 #   export NUT_HISTORIC_RELEASE=v2.7.4
 
 [ x"${CI_AUTOCOMMIT-}" = xtrue ] || CI_AUTOCOMMIT=false
 [ x"${CI_AUTOPUSH-}" = xtrue ] || CI_AUTOPUSH=false
 [ x"${CI_AVOID_RESPIN-}" = xtrue ] || CI_AVOID_RESPIN=false
+[ x"${CI_AVOID_SPELLCHECK-}" = xtrue ] || CI_AVOID_SPELLCHECK=false
 [ x"${NUT_HISTORIC_RELEASE-}" != x ] || NUT_HISTORIC_RELEASE=""
 export CI_AUTOCOMMIT CI_AUTOPUSH CI_AVOID_RESPIN NUT_HISTORIC_RELEASE
 
@@ -38,6 +44,11 @@ echo "=== Running make" >&2
 case "${NUT_HISTORIC_RELEASE-}" in
 "")
 	# Not historic, no source files to publish
+	if [ "${CI_AVOID_SPELLCHECK-}" != true ] ; then
+		echo "===== Running spellcheck against modern nut.dict" >&2
+		{ make -k -s -j 8 spellcheck 2>/dev/null ; make -sk spellcheck ; } || exit
+	fi
+	echo "===== Running make of docs" >&2
 	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
 0.*|1.*|2.[0123456].*|2.7.[01234].*)

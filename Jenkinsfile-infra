@@ -27,6 +27,11 @@ pipeline {
             defaultValue: true,
             description: 'Avoid needless work (site date changes etc) if nut-website and source components did not change in git'
         )
+        booleanParam(
+            name: 'CI_AVOID_SPELLCHECK',
+            defaultValue: true,
+            description: 'If "true", the spellcheck of site files would be a separate action with a non-fatal diagnosis after a site build an push (best-effort FYI); if "false" then spelling issues vs. master nut/docs/nut.dict would be fatal before site build.'
+        )
     }
 
     stages {
@@ -96,7 +101,7 @@ pipeline {
 
                     def shRes
                     def msg
-                    echo "Starting website build: CI_AUTOCOMMIT=${env.CI_AUTOCOMMIT} CI_AUTOPUSH=${env.CI_AUTOPUSH} CI_AVOID_RESPIN=${env.CI_AVOID_RESPIN} BRANCH_NAME=${env.BRANCH_NAME}"
+                    echo "Starting website build: CI_AUTOCOMMIT=${env.CI_AUTOCOMMIT} CI_AUTOPUSH=${env.CI_AUTOPUSH} CI_AVOID_RESPIN=${env.CI_AVOID_RESPIN} CI_AVOID_SPELLCHECK=${env.CI_AVOID_SPELLCHECK} BRANCH_NAME=${env.BRANCH_NAME}"
                     // TODO: withCredentials() for git push in shell
                     shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     switch (shRes) {
@@ -123,6 +128,26 @@ pipeline {
                         error msg
                     }
 
+                    // NOTE: If there would be support for historic site publishing,
+                    // spellcheck for those snapshots can not be impacted so should
+                    // be skipped.
+                    if ("${env.CI_AVOID_SPELLCHECK}" == "true") {
+                        shRes = sh (returnStatus: true, script: "make -k -s -j 8 spellcheck 2>/dev/null >/dev/null; make -k -s spellcheck")
+                        switch (shRes) {
+                            case 0:
+                                msg = "Spellcheck passed"
+                                manager.addShortText(msg)
+                                echo msg
+                                break
+
+                            default:
+                                msg = "Spellchecker had concerns"
+                                manager.addShortText(msg)
+                                echo msg
+                                unstable(msg)
+                                break
+                        }
+                    }
                 }
             }
         }
