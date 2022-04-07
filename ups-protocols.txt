@@ -184,7 +184,8 @@ Documents in this section are provided courtesy of various manufacturers.
 USB/HID Power Devices Class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- link:https://www.usb.org/sites/default/files/pdcv10_0.pdf[USB Usage Tables for HID Power Devices] (offsite PDF, 981 KB)
+- link:https://www.usb.org/document-library/power-device-class-document-10[Power Device Class Document 1.0] library page
+ * link:https://www.usb.org/sites/default/files/pdcv10_0.pdf[Currently published revision of USB Usage Tables for HID Power Devices] (offsite PDF, 981 KB)
 
 
 Various
