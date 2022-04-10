@@ -247,6 +247,7 @@ clean-local:
 		images/	\
 		ups-html.txt	\
 		scripts/ups_data.js
+	git checkout -f images || true
 	rm -f *-spellchecked protocols/*-spellchecked
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
