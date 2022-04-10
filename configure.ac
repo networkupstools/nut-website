@@ -8,7 +8,7 @@ dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
 AC_PREREQ([2.69])
 
 AC_CONFIG_MACRO_DIRS([m4 nut/m4])
-echo "Network UPS Tools - Website (NUT version ${PACKAGE_VERSION})"
+echo "Network UPS Tools - Website (most recently tagged NUT version ${PACKAGE_VERSION})"
 AM_INIT_AUTOMAKE([foreign no-dist])
 
 dnl NOTE: Macro seems to have some issues carrying over whitespace after
@@ -97,7 +97,12 @@ AS_CASE(["${NUT_VERSION}"],
 	[*-*-g*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit
 		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
 	],
-	[] dnl Default: exact tag hit, e.g. "v2.7.4" or "v2.8.0-rc1" for the release site
+	[dnl Default: exact tag hit, e.g. "v2.7.4" or "v2.8.0-rc1" for the release site
+	 dnl This is a problem for publishing a non-historic site when master HEAD is the most recently tagged commit
+	 AS_IF([test -z "${NUT_HISTORIC_RELEASE-}"], [
+		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
+	 ])
+	]
 )
 AC_SUBST(WEBSITE_VERSION)
 AC_SUBST(NUT_VERSION)
