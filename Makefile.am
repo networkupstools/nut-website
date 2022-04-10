@@ -277,34 +277,36 @@ ups-html.txt scripts/ups_data.js: nut/data/driver.list.in $(srcdir)/tools/nut-hc
 		echo "----------------------------------------------------------------------";	\
 	fi
 
-index.html: website.txt news.txt
+# Report each rebuild by depending on the Makefile
+index.html: website.txt news.txt Makefile $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 
-acknowledgements.html: nut/docs/acknowledgements.txt
+acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-cables.html: nut/docs/cables.txt
+cables.html: nut/docs/cables.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
-download.html: nut/docs/download.txt
+# React to newly published sources
+download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
-documentation.html: nut/docs/documentation.txt
+documentation.html: nut/docs/documentation.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-features.html: nut/docs/features.txt
+features.html: nut/docs/features.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-nut-qa.html: nut/docs/nut-qa.txt
+nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-projects.html: projects.txt
+projects.html: projects.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
-stable-hcl.html: stable-hcl.txt ups-html.txt
+stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
 
-support.html: nut/docs/support.txt
+support.html: nut/docs/support.txt $(LAYOUT).conf
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 SUFFIXES = .txt .html
