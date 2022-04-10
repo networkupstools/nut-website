@@ -285,7 +285,7 @@ fi
 
 echo "You can now safely configure and build website!"
 if [ -n "${NUT_HISTORIC_RELEASE-}" ]; then
-	echo "...with: ./configure --with-NUT_HISTORIC_RELEASE=${NUT_HISTORIC_RELEASE} && { make -k dist-sig-files || make dist-files; } && { make -k ; make ; }"
+	echo "...with: ./configure --with-NUT_HISTORIC_RELEASE=${NUT_HISTORIC_RELEASE} && { (cd nut && git stash -- docs) ; make -k dist-sig-files || make dist-files; } && { (cd nut && git stash pop); make -k ; make ; }"
 else
 	echo "...with: ./configure && { make -k -j 8 ; make ; }"
 fi

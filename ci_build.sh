@@ -54,14 +54,18 @@ case "${NUT_HISTORIC_RELEASE-}" in
 0.*|1.*|2.[0123456].*|2.7.[01234].*)
 	# NOTE: v2.7.5+ should be okay with parallelized builds of docs etc
 	echo "===== Running make dist-files" >&2
-	{ make -k dist-sig-files || make dist-files; } || exit
+	(cd nut && git stash -- docs)
+	{ make -k dist-sig-files || make dist-files; } || { (cd nut && git stash pop); exit 1; }
 	echo "===== Running make of docs" >&2
+	(cd nut && git stash pop)
 	{ make -k ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
 2.8.*|*)
 	echo "===== Running make dist-files" >&2
-	{ make -k -j 8 dist-sig-files || make -k -j 8 dist-files || make dist-files; } || exit
+	(cd nut && git stash -- docs)
+	{ make -k -j 8 dist-sig-files || make -k -j 8 dist-files || make dist-files; } || { (cd nut && git stash pop); exit 1; }
 	echo "===== Running make of docs" >&2
+	(cd nut && git stash pop)
 	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
 esac
