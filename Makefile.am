@@ -247,6 +247,10 @@ clean-local:
 		images/	\
 		ups-html.txt	\
 		scripts/ups_data.js
+	rm -f *-spellchecked protocols/*-spellchecked
+	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
+	rm -f historic-release.txt
+	rm -f .git-commit-website
 
 # HCL depends on:
 # - NUT's data/driver.list.in
