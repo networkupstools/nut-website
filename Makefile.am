@@ -240,6 +240,7 @@ clean-local:
 		$${ddlfiles}	\
 		$(DDL_DIR)/index.txt	\
 		$(DDL_DIR)/index.html	\
+		$(HISTORIC_DIR)/index.html	\
 		$(PACKAGE_DIR_TARGETS_RAW)	\
 		$(PACKAGE_DIR_TARGETS)	\
 		$(SOURCE_DIR_TARGETS_RAW)	\
