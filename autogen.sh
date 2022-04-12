@@ -241,7 +241,10 @@ else
 	echo "Readying NUT (current development)"
 	# This file is included in a few nut-website "root" templates as well,
 	# e.g. into "stable-hcl.txt" listing the nut/data/device.list contents.
-	cat /dev/null > historic-release.txt
+	# Nullify it, but only if not empty yet (spurious make dependencies):
+	if [ -s historic-release.txt ] || [ ! -e historic-release.txt ]; then
+		cat /dev/null > historic-release.txt
+	fi
 fi
 echo_spacer
 ( cd nut && ./autogen.sh ) || quit
