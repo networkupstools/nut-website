@@ -173,7 +173,7 @@ $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig: $(SOURCE_DIR)/@T
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
 	gpg --export -a 0x55CA5976 > $(SOURCE_DIR)/nut-key.gpg
 
-$(WEBSITE_FILES): $(LAYOUT).conf
+$(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt
 
 images/:
 	$(MKDIR_P) images
@@ -282,35 +282,35 @@ ups-html.txt scripts/ups_data.js: nut/data/driver.list.in $(srcdir)/tools/nut-hc
 	fi
 
 # Report each rebuild by depending on the Makefile
-index.html: website.txt news.txt Makefile $(LAYOUT).conf
+index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 
-acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf
+acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-cables.html: nut/docs/cables.txt $(LAYOUT).conf
+cables.html: nut/docs/cables.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
 # React to newly published sources
-download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf
+download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
-documentation.html: nut/docs/documentation.txt $(LAYOUT).conf
+documentation.html: nut/docs/documentation.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-features.html: nut/docs/features.txt $(LAYOUT).conf
+features.html: nut/docs/features.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf
+nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
-projects.html: projects.txt $(LAYOUT).conf
+projects.html: projects.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
 
-stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf
+stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
 
-support.html: nut/docs/support.txt $(LAYOUT).conf
+support.html: nut/docs/support.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 SUFFIXES = .txt .html
@@ -415,7 +415,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
-$(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf
+$(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
 
 ## Pages to build for each manufacturer
@@ -434,7 +434,7 @@ $(DDL_DIR)/%/index.txt: $$(shell export LC_ALL=C && printf "$$(PCT)s\n" $$(addsu
 	$(foreach MODEL,$^,$(call file,>> $@,- link:+++$(subst %,%25,$(basename $(notdir $(MODEL)))).html+++[$(subst _,$(SP),$(basename $(notdir $(MODEL))))]))
 
 # Compiled asciidoc pages (.html)
-$(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf
+$(DDL_DIR)/%/index.html: $(DDL_DIR)/%/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) -o "$@" "$<"
 
 ## DDL home
@@ -456,12 +456,12 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,include::$(notdir $<)[])
 
 # Compiled asciidoc page (.html)
-$(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf
+$(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ###
 
-$(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf
+$(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ### Package and source directories indexer
@@ -546,7 +546,7 @@ FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)
 	$(call file,>> $@,|====)
 
 # Compiled asciidoc indices (.html)
-%/index.html: %/index.txt $$(if $$(wildcard $$*/README.adoc),$$*/README.adoc,$$(if $$(wildcard $$*/README.txt),$$*/README.txt,$$(if $$(wildcard $$*/README),$$*/README))) $(LAYOUT).conf
+%/index.html: %/index.txt $$(if $$(wildcard $$*/README.adoc),$$*/README.adoc,$$(if $$(wildcard $$*/README.txt),$$*/README.txt,$$(if $$(wildcard $$*/README),$$*/README))) $(LAYOUT).conf historic-release.txt
 	@echo "Generating $@ due to: $^"
 	$(ASCIIDOC) $(ADOC_PARAMS_COMMON) -o "$@" "$<"
 
