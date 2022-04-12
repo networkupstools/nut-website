@@ -156,11 +156,14 @@ dist-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz
 dist-sig-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig
 
 $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz:
+	cd nut && rm -f nut-*.tar.gz*
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash
 	$(MKDIR_P) $(SOURCE_DIR)/@TREE_VERSION@
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
+	cd $(SOURCE_DIR)/@TREE_VERSION@/ && md5sum -c nut-$(PACKAGE_VERSION).tar.gz.md5
+	cd $(SOURCE_DIR)/@TREE_VERSION@/ && sha256sum -c nut-$(PACKAGE_VERSION).tar.gz.sha256
 	cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
 	cp -f nut/ChangeLog $(SOURCE_DIR)/@TREE_VERSION@/
 
