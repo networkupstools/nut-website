@@ -117,12 +117,12 @@ if [ -n "${NUT_HISTORIC_RELEASE-}" ] ; then
 	|| echo "WARNING: Prepared historic release ${NUT_HISTORIC_RELEASE} is not listed in historic/index.txt and would not be publicly exposed on the site!" >&2
 
 	NUT_HISTORIC_RELEASE_NOV="`echo "$NUT_HISTORIC_RELEASE" | sed 's,^v,,'`"
-	PUBSRC="`find ./networkupstools.github.io/source/ -type f -name "*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz" -o -name "*${NUT_HISTORIC_RELEASE_NOV}*.txt"`" \
+	PUBSRC="`find ./networkupstools.github.io/source/ -type f -name "*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz*" -o -name "*${NUT_HISTORIC_RELEASE_NOV}*.txt"`" \
 	&& [ -n "$PUBSRC" ] \
 	&& { echo "INFO: Found published source files:" ; echo "$PUBSRC"; } >&2 \
 	|| {
 		echo "WARNING: Did not find published source files for ${NUT_HISTORIC_RELEASE_NOV}! Copy some under ./networkupstools.github.io/source/ then git add, git commit and git push!" >&2
-		find ./source/ ./nut/ -type f -name "*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz" -o -name "*${NUT_HISTORIC_RELEASE_NOV}*.txt" >&2
+		find ./source/ ./nut/ -type f -name "*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz*" -o -name "*${NUT_HISTORIC_RELEASE_NOV}*.txt" >&2
 		(cd source && git status -u) >&2 || true
 	}
 fi
