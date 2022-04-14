@@ -64,6 +64,7 @@ WEBSITE_FILES =	\
 	ups-protocols.html
 
 WEBSITE_DEPS =	\
+	nut/docs/solaris-usb.html	\
 	nut/docs/cables.pdf	\
 	nut/docs/developer-guide.chunked	\
 	nut/docs/developer-guide.pdf	\
@@ -151,9 +152,8 @@ release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
 prerequisites:
-	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf
-	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) FAQ.html
 	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
+	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
 # Generate distribution files and GPG fingerprint (really needed?)
 # and copy them in source dir, once (keep old published releases
