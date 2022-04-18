@@ -23,6 +23,14 @@ Belkin
 - link:protocols/belkin-universal.html[Belkin Universal UPS] - courtesy of Peter Selinger
 
 
+CyberPower
+----------
+
+- https://www.cyberpowersystems.com/products/software/mib-files/
+- link:protocols/snmp/CyberPower_MIB_v2.3.mib[CyberPower UPS MIB v2.3] (TXT, 330 KB)
+- link:protocols/snmp/CyberPower_MIB_v2.9.mib[CyberPower UPS MIB v2.9] (TXT, 341 KB)
+
+
 Delta
 -----
 
