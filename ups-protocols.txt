@@ -207,3 +207,9 @@ Voltronic Power
 
 - link:protocols/voltronic.html[Voltronic Power UPS Protocol] - unofficial decoding work
 - link:protocols/voltronic-qs.html[Voltronic Power - `QS' Protocols]
+
+
+External SNMP MIB collections
+-----------------------------
+
+- https://github.com/librenms/librenms/tree/master/mibs
