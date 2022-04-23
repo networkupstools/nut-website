@@ -294,10 +294,13 @@ def buildHTMLTable(deviceData):
                     # 'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)
                     # input already non-ascii?
                     val = str(value)
+
                 if key != "text":
                     attr += " %s='%s'" % (key, val)
                 else:
-                    innerHTML = val
+                    # decode back, to avoid final markup like
+                    # <td>b'apc'</td>
+                    innerHTML = val.decode('UTF-8')
 
             r.append(html.fromstring("<td%s>%s</td>" % (attr, innerHTML)))
 
