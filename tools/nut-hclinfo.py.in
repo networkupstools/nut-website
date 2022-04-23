@@ -295,11 +295,13 @@ def buildHTMLTable(deviceData):
                     # input already non-ascii?
                     val = str(value)
 
+                # decode "val" back, to avoid final markup like
+                #   <td class="b" hidden="">b'apc'</td>
+                # and have proper
+                #   <td class="hidden">apc</td>
                 if key != "text":
-                    attr += " %s='%s'" % (key, val)
+                    attr += " %s='%s'" % (key, val.decode('UTF-8'))
                 else:
-                    # decode back, to avoid final markup like
-                    # <td>b'apc'</td>
                     innerHTML = val.decode('UTF-8')
 
             r.append(html.fromstring("<td%s>%s</td>" % (attr, innerHTML)))
