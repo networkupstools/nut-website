@@ -3,6 +3,7 @@ Network UPS Tools website
 
 This repository contains the scripts needed to generate the
 link:http://www.networkupstools.org[NUT website].
+
 Since it was originally part of the
 link:https://github.com/networkupstools/nut/[NUT source tree],
 it shares some history, and you can save some bandwidth if you
@@ -179,16 +180,22 @@ Feel free to create a pull request on this repository, or (less preferable
 as slower to process) send the patch as an attachment to the
 link:http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list].
 
-[NOTE]
-.Legacy publishing method
-====
-We will submit the patch to the
-link:http://buildbot.networkupstools.org/public/nut/builders/Debian-website[Buildbot]
-queue. Buildbot publishes its results at http://new.networkupstools.org and
-the contents of that site will be copied to http://www.networkupstools.org
-for the next NUT release.
-====
+Maintainer note: Publishing became part of NUT CI farm automation in 2022,
+so whenever master branch sources of relevant repositories are changed,
+the website should not lag behind too long. Needed behavior is defined in
+this repository in `Jenkinsfile-infra` file, with job history visible at
+https://ci.networkupstools.org/view/InfraTasks/job/nut-website/
 
-Maintainer note: Publishing is currently triggered manually, but this
-should eventually become part of NUT CI farm automation whenever master
-branch sources of relevant repositories change.
+* As of this writing, changes of `nut-website` repository should get picked
+  up quickly thanks to "web hooks" sent by GitHub to NUT CI farm servers,
+  and changes in NUT, NUT-DDL and other repos involved would be evaluated
+  every 3 hours.
+
+* (Re-)builds of historic sub-sites for release candidates etc. are handled
+  manually by maintainers, to publish source tarballs as well (in nut-source
+  repository, in the web-site, in GitHub releases page), and generally happen
+  once per such release with a spell like this:
++
+------
+:; CI_AUTOCOMMIT=true CI_AUTOPUSH=true NUT_HISTORIC_RELEASE=v2.8.0-rc3 ./ci_build.sh
+------
