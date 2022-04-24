@@ -158,27 +158,27 @@ prerequisites:
 # Generate distribution files and GPG fingerprint (really needed?)
 # and copy them in source dir, once (keep old published releases
 # immutable by default - let maintainer clean away corrupt attempts)!
-dist-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz
+dist-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
 
 # Separate chore for maintainers with a key
-dist-sig-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig
+dist-sig-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig
 
-$(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz:
+$(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 	cd nut && rm -f nut-*.tar.gz*
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash
 	$(MKDIR_P) $(SOURCE_DIR)/@TREE_VERSION@
-	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
-	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
-	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
-	cd $(SOURCE_DIR)/@TREE_VERSION@/ && md5sum -c nut-$(PACKAGE_VERSION).tar.gz.md5
-	cd $(SOURCE_DIR)/@TREE_VERSION@/ && sha256sum -c nut-$(PACKAGE_VERSION).tar.gz.sha256
+	cp -f nut/nut-@TARBALL_VERSION@.tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
+	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
+	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
+	cd $(SOURCE_DIR)/@TREE_VERSION@/ && md5sum -c nut-@TARBALL_VERSION@.tar.gz.md5
+	cd $(SOURCE_DIR)/@TREE_VERSION@/ && sha256sum -c nut-@TARBALL_VERSION@.tar.gz.sha256
 	cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
 	cp -f nut/ChangeLog $(SOURCE_DIR)/@TREE_VERSION@/
 
 # Separate chore for maintainers with a key
-$(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-$(PACKAGE_VERSION).tar.gz
+$(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
-	cp -f nut/nut-$(PACKAGE_VERSION).tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
+	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
 	gpg --export -a 0x55CA5976 > $(SOURCE_DIR)/nut-key.gpg
 
 $(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt

@@ -114,6 +114,9 @@ dnl ----------------------------------------------------------------------
 TREE_VERSION="`echo "$PACKAGE_VERSION" | awk '{ print substr($0,1,3) }'`"
 AC_SUBST(TREE_VERSION)
 
+TARBALL_VERSION="`echo "$NUT_VERSION" | sed 's,^v,,'`"
+AC_SUBST(TARBALL_VERSION)
+
 dnl ----------------------------------------------------------------------
 
 AC_CONFIG_FILES([
