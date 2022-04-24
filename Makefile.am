@@ -137,6 +137,7 @@ all:	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
 	$(HISTORIC_DEPS)	\
+	$(HISTORIC_DIR)/index.html	\
 	scripts/ups_data.js	\
 	ups-html.txt	\
 	.git-commit-website	\
