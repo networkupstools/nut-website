@@ -26,3 +26,4 @@ main web site.
 - link:+++v2.7.4/index.html+++[NUT v2.7.4, released 2016-03-09]
 - link:+++v2.8.0-rc1/index.html+++[NUT v2.8.0-rc1, released 2022-04-01]
 - link:+++v2.8.0-rc2/index.html+++[NUT v2.8.0-rc2, released 2022-04-10]
+- link:+++v2.8.0-rc3/index.html+++[NUT v2.8.0-rc3, released 2022-04-24]
