@@ -188,8 +188,8 @@ https://ci.networkupstools.org/view/InfraTasks/job/nut-website/
 
 * As of this writing, changes of `nut-website` repository should get picked
   up quickly thanks to "web hooks" sent by GitHub to NUT CI farm servers,
-  and changes in NUT, NUT-DDL and other repos involved would be evaluated
-  every 3 hours.
+  and changes in NUT, NUT-DDL and other repositories involved would be
+  evaluated every 3 hours.
 
 * (Re-)builds of historic sub-sites for release candidates etc. are handled
   manually by maintainers, to publish source tarballs as well (in nut-source
