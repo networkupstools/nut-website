@@ -13,7 +13,7 @@ uniform control and management interface. If you are just getting acquainted
 with NUT, link:features.html[that page] also explains the technical design
 and some possible set-ups.
 
-More than 160 different manufacturers, and several thousands of models are
+More than 170 different manufacturers, and several thousands of models are
 link:stable-hcl.html[compatible].
 
 //////////////////////////////////
