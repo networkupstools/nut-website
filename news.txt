@@ -1,4 +1,4 @@
-- Apr 24, 2022: a "dress rehearsal" for new release issuing NUT 2.8.0-rc3, focusing on documentation and API updates to impact the ecosystem just once. Welcome NUTEEE (the Easter Egg Edition, because why not?) ;)
+- Apr 24, 2022: a "dress rehearsal" for new release issuing NUT 2.8.0-rc3, focusing on documentation and API updates to impact the ecosystem just once.
 - Apr 10, 2022: preparing for new release by issuing NUT 2.8.0-rc2, fixing found bugs, adding late-coming features, and rehearsing some automation involved
 - Apr 7, 2022: nut-website repository integrated with NUT CI farm to enable regular documentation updates as NUT code development and DDL get refreshed. Users of official "historic" releases which are the basis for distribution packaging have the new sub-sites frozen in time. 
 - Apr 1, 2022: preparing for new release by issuing NUT 2.8.0-rc1
