@@ -258,7 +258,7 @@ echo_spacer
 echo "Readying NUT Website"
 echo_spacer
 echo "Calling autoreconf..."
-autoreconf -i || quit
+autoreconf -ifv || quit
 echo_spacer
 
 if [ -n "`git status -uno -s`" ] ; then
