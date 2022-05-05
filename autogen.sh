@@ -248,6 +248,9 @@ else
 	fi
 fi
 echo_spacer
+echo "Description of checked-out NUT codebase since latest Git tag, and derived PACKAGE_VERSION:"
+(cd nut && git describe --tags 2>/dev/null)
+(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//')
 ( cd nut && ./autogen.sh ) || quit
 echo_spacer
 
