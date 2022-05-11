@@ -1,3 +1,4 @@
+- May 10, 2022: added free layer of CircleCI to the ecosystem of NUT builders, to cover MacOS and later maybe Windows
 - Apr 26, 2022: NUT 2.8.0 released
 - Apr 24, 2022: a "dress rehearsal" for new release issuing NUT 2.8.0-rc3, focusing on documentation and API updates to impact the ecosystem just once
 - Apr 10, 2022: preparing for new release by issuing NUT 2.8.0-rc2, fixing found bugs, adding late-coming features, and rehearsing some automation involved
