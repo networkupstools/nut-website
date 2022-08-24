@@ -1,3 +1,4 @@
+- Aug 10, 2022: "UPS management protocol", Informational RFC 9271 published by IETF at https://www.rfc-editor.org/info/rfc9271 and the IANA port number registry was updated at https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=3493 (even though this RFC is not formally an Internet Standard)
 - May 10, 2022: added free layer of CircleCI to the ecosystem of NUT builders, to cover MacOS and later maybe Windows
 - Apr 26, 2022: NUT 2.8.0 released
 - Apr 24, 2022: a "dress rehearsal" for new release issuing NUT 2.8.0-rc3, focusing on documentation and API updates to impact the ecosystem just once
