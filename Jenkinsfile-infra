@@ -102,7 +102,7 @@ pipeline {
                     def shRes
                     def msg
                     echo "Starting website build: CI_AUTOCOMMIT=${env.CI_AUTOCOMMIT} CI_AUTOPUSH=${env.CI_AUTOPUSH} CI_AVOID_RESPIN=${env.CI_AVOID_RESPIN} CI_AVOID_SPELLCHECK=${env.CI_AVOID_SPELLCHECK} BRANCH_NAME=${env.BRANCH_NAME}"
-                    withCredentials([gitUsernamePassword(credentialsId: 'NUT-CI-Token')]) { // , gitToolName: 'git-tool'
+                    withCredentials([gitUsernamePassword(credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId())]) {
                         // for git push in shell, using https://www.jenkins.io/blog/2021/07/27/git-credentials-binding-phase-1/
                         shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     }
