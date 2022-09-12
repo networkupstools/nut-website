@@ -52,6 +52,22 @@ link:http://csociety.ecn.purdue.edu/~delpha/winnut/[WinNUT]
 
 WinNUT is a partial port of the client side of Network UPS Tools (NUT) to Windows.
 
+The URL mentioned above seems currently defunct. It was last archived at
+https://web.archive.org/web/20161222060711/http://csociety.ecn.purdue.edu/~delpha/winnut/
+and refers to https://code.google.com/archive/p/winnut/ as the project codebase
+(still available); not sure if there were further iterations on other code hosting.
+
+Tracing the breadcrumbs, seems the project was initially abandoned in 2006
+at version 2.0.0b and then re-hosted at Google Code in 2010 and abandoned
+in 2011.
+
+Curiously, there are recent articles on the name (actually describing WinNUT-Client):
+https://www.gadgetvictims.com/2022/02/configuring-winnut-2x-on-windows-to.html
+as a follow-up to earlier post on that site of
+https://www.gadgetvictims.com/2010/02/battery-backup-solution-for-home.html
+(describing the original WinNUT). Apparently, both use the NUT standard
+configuration files, so to an extent one is a replacement for another.
+
 NOTE: WinNUT is currently being replaced by a full port to Windows, part of the
 official NUT distribution. link:download.html#_binary_packages[MSI packages]
 are available too.
