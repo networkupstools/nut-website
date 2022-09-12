@@ -291,6 +291,17 @@ Open Source data center monitoring software stack, which relies on NUT for
 power devices monitoring.
 
 
+link:https://www.home-assistant.io/integrations/nut/[Home Assistant NUT integration]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This open source home automation project includes a NUT plugin.
+
+Instructions for rolling your own build of the integration based on NUT
+git sources were contributed by community and posted at NUT GitHub wiki:
+
+* https://github.com/networkupstools/nut/wiki/Building-NUT-integration-for-Home-Assistant
+
+
 Legacy and discontinued projects
 --------------------------------
 
