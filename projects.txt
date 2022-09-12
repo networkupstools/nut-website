@@ -186,16 +186,26 @@ A Perl module to talk to an UPS via NUT (Network UPS Tools) upsd.
 
 NOTE: UPS::Nut is part of NUT since NUT v2.6.1.
 
-link:https://github.com/george2/python-nut2/[python-nut2]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://github.com/rshipp/python-nut2/[python-nut2]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A fork and complete API overhaul of PyNUT, a Python library to allow communication
 with Network UPS Tools servers.
 
-link:https://github.com/george2/webNUT/[webNUT]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Originally developed at https://github.com/george2/python-nut2/
+
+* A link:https://pypi.org/project/nut2/[PyPI] is available, to install with just `pip install nut2`
+
+link:https://github.com/rshipp/webNUT/[webNUT]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A simple web interface for Network UPS Tools servers.
+
+* Originally developed at https://github.com/george2/webNUT/
+
+* A link:https://pypi.org/project/webNUT/[PyPI] is available, to install with just `pip install webNUT`
+
+* A link:https://github.com/teknologist/docker-webnut[dockerized version of webNUT] is available at link:https://hub.docker.com/r/teknologist/webnut[DockerHub] to install with just `docker pull teknologist/webnut`
 
 link:https://github.com/robbiet480/go.nut/[go.nut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
