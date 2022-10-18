@@ -2,7 +2,7 @@ Network UPS Tools website
 =========================
 
 This repository contains the scripts needed to generate the
-link:http://www.networkupstools.org[NUT website].
+link:https://www.networkupstools.org[NUT website].
 
 Since it was originally part of the
 link:https://github.com/networkupstools/nut/[NUT source tree],
@@ -178,7 +178,7 @@ If you only have a small patch (fixing a typo or wording), don't feel
 obliged to install all of the dependencies listed above just to test it.
 Feel free to create a pull request on this repository, or (less preferable
 as slower to process) send the patch as an attachment to the
-link:http://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list].
+link:https://www.networkupstools.org/support.html#_mailing_lists[nut-upsdev list].
 
 Maintainer note: Publishing became part of NUT CI farm automation in 2022,
 so whenever master branch sources of relevant repositories are changed,
