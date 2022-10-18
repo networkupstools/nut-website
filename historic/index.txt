@@ -7,7 +7,7 @@ NOTE:
 ifdef::env-github[]
 NUT historic releases
 =====================
-:nut-website-root:	http://networkupstools.org/
+:nut-website-root:	https://www.networkupstools.org/
 endif::env-github[]
 
 ifndef::env-github[]
