@@ -119,6 +119,7 @@ var NUT = {
 		"device-type": function(value) {
 
 			var map = {
+				"ats": "Automatic Transfer Switch",
 				"pdu": "Power Distribution Unit",
 				"ups": "Uninterruptible Power Supply",
 				"scd": "Solar Controller Device"
