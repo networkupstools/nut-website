@@ -153,7 +153,7 @@ for use in the URL.
 
 The form of the URL is the following:
 
-	http://www.networkupstools.org/stable-hcl.html?<filter-name>=<filter-value>
+	https://www.networkupstools.org/stable-hcl.html?<filter-name>=<filter-value>
 
 .Possible values
 [options="header,autowidth",style="asciidoc",cols="<,<"]
@@ -175,7 +175,7 @@ You can combine multiple filters, using ampersand (*&*).
 
 For example, if you only want to select USB units from Eaton, use:
 
-	http://www.networkupstools.org/stable-hcl.html?manufacturer=Eaton&connection=USB
+	https://www.networkupstools.org/stable-hcl.html?manufacturer=Eaton&connection=USB
 
 
 
