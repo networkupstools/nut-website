@@ -325,7 +325,7 @@ link:https://github.com/vectronic/homebridge-nut/[Homebridge NUT integration by 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The link:https://github.com/homebridge/homebridge/[Homebridge] open source
-home automation project includes a NUT plugin.
+home automation project (for monitoring with HomeKit) includes a NUT plugin.
 
 * Alleged fork and re-write of earlier
   link:https://github.com/ToddGreenfield/homebridge-nut[Homebridge
