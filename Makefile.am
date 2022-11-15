@@ -128,7 +128,7 @@ else
 	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'" > .git-commit-website
 endif
 
-all:	\
+all-files:	\
 	prerequisites	\
 	$(WEBSITE_FILES)	\
 	$(FAVICON_FILES)	\
@@ -139,8 +139,11 @@ all:	\
 	$(HISTORIC_DEPS)	\
 	$(HISTORIC_DIR)/index.html	\
 	scripts/ups_data.js	\
-	ups-html.txt	\
-	.git-commit-website	\
+	ups-html.txt
+
+# NOTE: OUTDIR depends on "all-files" above, so no extra dependency here
+all:	\
+	.git-commit-website \
 	$(OUTDIR)
 	@echo "SUCCESS: The website content in output directory is now prepared for deployment." >&2
 	@echo "Please see the README for instructions about publishing to master site and" >&2
@@ -196,7 +199,7 @@ images/cables/:
 $(CABLE_IMAGE_FILES): images/cables/
 	cp -f nut/docs/$@ images/cables/
 
-$(OUTDIR):
+$(OUTDIR): all-files
 	$(RM) -r $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
