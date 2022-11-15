@@ -183,7 +183,8 @@ PyNUT is an abstraction class written in Python to access NUT (Network UPS
 Tools) server and execute commands without needing to know the communication
 protocol.
 
-NOTE: PyNUT is part of NUT since NUT v2.4.1.
+NOTE: (A reference copy of) PyNUT is part of NUT since NUT v2.4.1, see
+https://github.com/networkupstools/nut/tree/master/scripts/python/module/
 
 link:http://bugs.debian.org/343530[RRDtool logging support]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -202,7 +203,8 @@ link:http://search.cpan.org/search?dist=ups-nut[UPS::Nut]
 
 A Perl module to talk to an UPS via NUT (Network UPS Tools) upsd.
 
-NOTE: UPS::Nut is part of NUT since NUT v2.6.1.
+NOTE: (A reference copy of) UPS::Nut is part of NUT since NUT v2.6.1, see
+https://github.com/networkupstools/nut/tree/master/scripts/perl/
 
 link:https://github.com/rshipp/python-nut2/[python-nut2]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
