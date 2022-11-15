@@ -300,7 +300,9 @@ link:https://www.home-assistant.io/integrations/nut/[Home Assistant NUT integrat
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The link:https://github.com/home-assistant/[Home Assistant] open source
-home automation project includes a NUT plugin.
+home automation project includes a NUT plugin:
+
+* https://github.com/home-assistant/core/tree/dev/homeassistant/components/nut
 
 Instructions for rolling your own build of the integration based on NUT
 git sources were contributed by community and posted at NUT GitHub wiki:
