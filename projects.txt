@@ -308,6 +308,19 @@ git sources were contributed by community and posted at NUT GitHub wiki:
 * https://github.com/networkupstools/nut/wiki/Building-NUT-integration-for-Home-Assistant
 
 
+link:https://github.com/vectronic/homebridge-nut/[Homebridge NUT integration by vectronic]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The link:https://github.com/homebridge/homebridge/[Homebridge] open source
+home automation project includes a NUT plugin.
+
+* Alleged fork and re-write of earlier
+  link:https://github.com/ToddGreenfield/homebridge-nut[Homebridge
+  NUT integration by ToddGreenfield]
+
+Instructions are in the project README file.
+
+
 Legacy and discontinued projects
 --------------------------------
 
