@@ -230,6 +230,11 @@ link:https://github.com/robbiet480/go.nut/[go.nut]
 
 A Golang library for interacting with NUT.
 
+link:https://github.com/skarcha/node-nut/[Node-NUT]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A NodeJS module that implements a NUT (Network UPS Tools) client.
+
 Hardware projects involving NUT
 -------------------------------
 
