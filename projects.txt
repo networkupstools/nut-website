@@ -246,6 +246,16 @@ link:https://github.com/skarcha/node-nut/[Node-NUT]
 
 A NodeJS module that implements a NUT (Network UPS Tools) client.
 
+link:https://github.com/nslythe/NUTService[NUTService and C# NUTClient]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Windows service to communicate with NUT server and initiate safe shutdown
+when UPS forced shutdown or low battery happens, depending on your settings.
+
+* The `NUTClient.cs` (along with other files) in project sources provides
+  a C# implementation of the NUT protocol for the client side.
+
+
 Hardware projects involving NUT
 -------------------------------
 
