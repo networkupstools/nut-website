@@ -89,7 +89,9 @@ WEBSITE_DEPS =	\
 	nut/docs/packager-guide.chunked	\
 	nut/docs/packager-guide.pdf	\
 	nut/docs/user-manual.chunked	\
-	nut/docs/user-manual.pdf
+	nut/docs/user-manual.pdf \
+	index-jumboinfo.html \
+	navinfo.html
 
 # CSS based simulated frames layout.
 #LAYOUT = web-layout
@@ -235,11 +237,13 @@ $(OUTDIR): all-files
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)/css
 	cp -f $(LAYOUT_FILES) $(OUTDIR)/css/
+	cp -f $(BOOTSTRAP_LAYOUT_FILES) $(OUTDIR)/css/
 	$(MKDIR_P) $(OUTDIR)/docs/man
 	cp -fR $(WEBSITE_DEPS) $(OUTDIR)/docs/
 	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
 	$(MKDIR_P) $(OUTDIR)/scripts
 	cp -f $(SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
+	cp -f $(BOOTSTRAP_SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
 	$(MKDIR_P) $(OUTDIR)/protocols
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols

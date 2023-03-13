@@ -22,7 +22,7 @@ historic-release.txt
 *.asciidoc-spellchecked
 /images/
 /output/
-/*.html
+#/*.html
 
 # Auto-published site
 /networkupstools.github.io
