@@ -43,11 +43,27 @@ LAYOUT_FILES =	\
 	css/xhtml11-quirks.css	\
 	css/xhtml11.css
 
+BOOTSTRAP_LAYOUT_FILES =	\
+	css/42ity.css	\
+	css/asciidoc-bootstrap.min.css
+
 SCRIPT_FILES =	\
 	scripts/asciidoc.js	\
 	scripts/filter_png.js	\
 	scripts/jquery.js	\
 	scripts/nut_jquery.js
+
+BOOTSTRAP_SCRIPT_FILES =	\
+	js/42ity.js	\
+	js/bootstrap.min.js	\
+	js/jquery.min.js \
+	js/asciidoc.js
+# TODO: do we actually need the following?
+#	js/html5shiv.min.js	\
+#	js/respond.min.js
+#	js/ie8-responsive-file-warning.js
+#	js/ie-emulation-modes-warning.js
+#	js/npm.js
 
 WEBSITE_FILES =	\
 	acknowledgements.html	\
@@ -76,11 +92,23 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.pdf
 
 # CSS based simulated frames layout.
-LAYOUT = web-layout
+#LAYOUT = web-layout
+LAYOUT = bootstrap.conf
 
 ADOC_PARAMS_COMMON =	\
-	--backend=xhtml11	\
+#	--backend=xhtml11	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
+	--backend=html5	\
+	--attribute lang=en	\
+	--attribute totop!	\
+	--attribute brand="Network UPS Tools"	\
+	--attribute brandref=./	\
+	--attribute stylesdir=css	\
+	--attribute navbar=fixed	\
+	--attribute navinfo1	\
+	--attribute favicon	\
+	--attribute script=nut.js \
+	--attribute bootstrapdir=. \
 	--attribute icons	\
 	--attribute linkcss	\
 	--attribute=badges	\
@@ -97,6 +125,7 @@ ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
 	--attribute iconsdir=$(srcdir)/images	\
 	--attribute scriptsdir=$(srcdir)/scripts
+
 
 OUTDIR_BASE = @OUTDIR_BASE@
 NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
