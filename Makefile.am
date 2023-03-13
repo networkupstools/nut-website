@@ -93,10 +93,11 @@ WEBSITE_DEPS =	\
 
 # CSS based simulated frames layout.
 #LAYOUT = web-layout
-LAYOUT = bootstrap.conf
+LAYOUT = bootstrap
+
+#	--backend=xhtml11
 
 ADOC_PARAMS_COMMON =	\
-#	--backend=xhtml11	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
 	--backend=html5	\
 	--attribute lang=en	\
