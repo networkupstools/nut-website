@@ -22,7 +22,18 @@ historic-release.txt
 *.asciidoc-spellchecked
 /images/
 /output/
-#/*.html
+acknowledgements.html
+cables.html
+documentation.html
+download.html
+features.html
+index.html
+nut-qa.html
+old-news.html
+projects.html
+stable-hcl.html
+support.html
+ups-protocols.html
 
 # Auto-published site
 /networkupstools.github.io
