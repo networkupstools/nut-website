@@ -335,8 +335,8 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
