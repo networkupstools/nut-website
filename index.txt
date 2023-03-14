@@ -10,13 +10,6 @@ or a .in style template parsing
 :; grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2" "$8" "$10}' | sort | uniq -c | wc -l
 //////////////////////////////////
 
-
-This software is the combined effort of many
-link:acknowledgements.html[individuals and companies]
-with free and open source code licensed under the terms of GNU Public License
-(GPL), see link:https://github.com/networkupstools/nut/blob/master/COPYING[the
-NUT license text] for specific details.
-
 [NOTE]
 .Two NUT websites
 ====
