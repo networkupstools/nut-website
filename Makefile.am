@@ -335,7 +335,7 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
+index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
@@ -606,7 +606,7 @@ FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)
 
 SPELLCHECK_SRC = \
 	README.asciidoc \
-	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt \
+	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  index.txt \
 	protocols/sec.txt \
 	protocols/us9003.txt \
 	protocols/sec-protocol.txt \
