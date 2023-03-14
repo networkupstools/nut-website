@@ -93,6 +93,13 @@ WEBSITE_DEPS =	\
 	index-jumboinfo.html \
 	navinfo.html
 
+WEBSITE_FONTS = \
+	fonts/glyphicons-halflings-regular.eot \
+	fonts/glyphicons-halflings-regular.svg \
+	fonts/glyphicons-halflings-regular.ttf \
+	fonts/glyphicons-halflings-regular.woff \
+	fonts/glyphicons-halflings-regular.woff2
+
 # CSS based simulated frames layout.
 #LAYOUT = web-layout
 LAYOUT = bootstrap
@@ -238,6 +245,8 @@ $(OUTDIR): all-files
 	$(MKDIR_P) $(OUTDIR)/css
 	cp -f $(LAYOUT_FILES) $(OUTDIR)/css/
 	cp -f $(BOOTSTRAP_LAYOUT_FILES) $(OUTDIR)/css/
+	$(MKDIR_P) $(OUTDIR)/fonts
+	cp -f $(WEBSITE_FONTS) $(OUTDIR)/fonts/
 	$(MKDIR_P) $(OUTDIR)/docs/man
 	cp -fR $(WEBSITE_DEPS) $(OUTDIR)/docs/
 	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
@@ -342,11 +351,11 @@ acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-rel
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 cables.html: nut/docs/cables.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@  -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 # React to newly published sources
 download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 documentation.html: nut/docs/documentation.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
@@ -358,7 +367,7 @@ nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 projects.html: projects.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@  -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
@@ -469,6 +478,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
 
@@ -510,11 +520,13 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,include::$(notdir $<)[])
 
 # Compiled asciidoc page (.html)
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ###
 
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
