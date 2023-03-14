@@ -44,7 +44,7 @@ LAYOUT_FILES =	\
 	css/xhtml11.css
 
 BOOTSTRAP_LAYOUT_FILES =	\
-	css/42ity.css	\
+	css/nut.css	\
 	css/asciidoc-bootstrap.min.css
 
 SCRIPT_FILES =	\
@@ -54,10 +54,10 @@ SCRIPT_FILES =	\
 	scripts/nut_jquery.js
 
 BOOTSTRAP_SCRIPT_FILES =	\
-	js/42ity.js	\
-	js/bootstrap.min.js	\
-	js/jquery.min.js \
-	js/asciidoc.js
+	scripts/nut.js	\
+	scripts/bootstrap.min.js	\
+	scripts/jquery.min.js \
+	scripts/asciidoc.js
 # TODO: do we actually need the following?
 #	js/html5shiv.min.js	\
 #	js/respond.min.js
