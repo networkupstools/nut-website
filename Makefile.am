@@ -109,10 +109,9 @@ BOOTSTRAP_WEBSITE_FONTS = \
 	fonts/glyphicons-halflings-regular.woff \
 	fonts/glyphicons-halflings-regular.woff2
 
-# leaving a space here to work around automake's conditionals
- ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 WEBSITE_DEPS += $(BOOTSTRAP_WEBSITE_DEPS)
- endif
+# HIDE FROM AUTOMAKE #endif
 
 ADOC_PARAMS_COMMON =	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
@@ -144,14 +143,13 @@ ADOC_PARAMS_BOOTSTRAP = \
 	--attribute script=nut.js \
 	--attribute bootstrapdir=.
 
-# leaving a space here to work around automake's conditionals
- ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 ADOC_PARAMS_COMMON += $(ADOC_PARAMS_BOOTSTRAP)
- else
- ifeq ($(strip $(LAYOUT)),web-layout)
-ADOC_PARAMS_COMMON += $(ADOC_PARAMS_WEB_LAYOUT)
- endif
- endif
+# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #ADOC_PARAMS_COMMON += $(ADOC_PARAMS_WEB_LAYOUT)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #endif
 
 ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
@@ -369,21 +367,19 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-# leaving a space here to work around automake's conditionals
- ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
-
 ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
- else
- ifeq ($(strip $(LAYOUT)),web-layout)
-index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
-
-ASCIIDOC_TOC_PARAMS = -a toc
- endif
- endif
+# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
+# HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #endif
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
@@ -679,13 +675,13 @@ SPELLCHECK_SRC = \
 	protocols/oneac.txt
 
 # leaving a space here to work around automake's conditionals
- ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 SPELLCHECK_SRC += index.txt
- else
- ifeq ($(strip $(LAYOUT)),web-layout)
-SPELLCHECK_SRC += website.txt
- endif
- endif
+# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #SPELLCHECK_SRC += website.txt
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #endif
 
 ### Note: currently the NUT makefiles' implementation of spellcheck rules
 ### assumes use of its own nut.dict. When it becomes possible to split it
