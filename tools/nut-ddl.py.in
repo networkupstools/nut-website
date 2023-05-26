@@ -713,7 +713,9 @@ def buildPage():
     if fromFileName["reportNumber"] == 1:
         page.append("\n\n== %s\n" % fromFileName["nutVersion"])
 
-    page.append("\n=== Report #%d\n" % fromFileName["reportNumber"])
+    # Note: report numbering should be sequential per NUT release
+    # and may cover several drivers in it that handle the device:
+    page.append("\n=== Report #%d with driver %s\n" % (fromFileName["reportNumber"], fromFileName["driverName"]))
 
     buf = "This device is known to work with driver "
     if fromFileName["driverName"] in manPages:
