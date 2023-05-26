@@ -68,6 +68,7 @@ ndsVersion = "-1"
 ndsSL = -1
 varCmdComments = {}
 devComment = []
+devURLs = []
 nutVars = {}
 nutRWs = {}
 nutCommands = {}
@@ -134,6 +135,35 @@ def nds_sl(raw):
         return
 
     ndsSL = sl
+
+
+def nds_dev_url(raw):
+    """
+    Parse the URL for more device information (vendor site, NUT issue...)
+    May be present more than once, one URL per line.
+    """
+
+    # '# DEVICE:URL: *...\n'
+
+    # Remove leading 'start' of the line ('# DEVICE:URL: *')
+    line = str(raw[0][13:]).strip()
+
+    # Empty comment
+    if not len(line):
+        if verbose:
+            print ("Empty device URL")
+        return
+
+    # Too eager a copy-paste from asciidoc?
+    if line.startswith("link:"):
+        line = line.replace("link:", "", 1)
+
+    if not "://" in line:
+        if verbose:
+            print ("Device URL does not contain a schema, ignored: %s" % line)
+        return
+
+    devURLs.append(line)
 
 
 def nds_dev_comment(raw):
@@ -230,6 +260,9 @@ ndsCommentsMap = {
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
+    # Further information about the device
+    #  '# DEVICE:URL:<link>\n'
+    "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
     #  '# DEVICE:SUPPORT-LEVEL:<value>\n'
     "^# DEVICE:SUPPORT-LEVEL:\d\d?$": nds_sl
@@ -244,6 +277,9 @@ devCommentsMap = {
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
+    # Further information about the device
+    #  '# DEVICE:URL:<link>\n'
+    "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
     #  '# DEVICE:SUPPORT-LEVEL:<value>\n'
     "^# DEVICE:SUPPORT-LEVEL:\d\d?$": nds_sl
@@ -851,7 +887,7 @@ def buildPage():
         page.append("")
 
     # Device comment/support-level
-    if len(devComment) or ndsSL != -1:
+    if len(devComment) or len(devURLs) or ndsSL != -1:
         page.append("\n==== About this device\n")
         # Support level
         if ndsSL != -1:
@@ -860,6 +896,13 @@ def buildPage():
         if len(devComment):
             for commentLine in devComment:
                 page.append(commentLine)
+        # Device URL(s)
+        if len(devURLs):
+            # Note: asciidoc list is separated by a blank line
+            page.append("\nSee also:\n\n")
+            for commentLine in devURLs:
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
 
     page.append("")
 
