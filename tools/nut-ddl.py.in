@@ -623,6 +623,13 @@ EOLComments = {
 
 ###
 
+def haveDetailedComments():
+    """
+    Based on collected information, estimate if we have any
+    detailed comments to show for the particular report
+    """
+    return (len(devComment) or len(devURLs) or len(devCommentBlocks))
+
 def parseFile(inputFile):
     """
     Parse inputFile to split it in comments/non-comments:
@@ -766,7 +773,7 @@ def buildPage():
     # Note: report numbering should be sequential per NUT release
     # and may cover several drivers in it that handle the device:
     page.append("\n=== Report #%d with driver %s%s\n" % (fromFileName["reportNumber"], fromFileName["driverName"],
-        " (detailed comments available)" if (len(devComment) or len(devURLs) or len(devCommentBlocks)) else ""
+        " (detailed comments available)" if haveDetailedComments() else ""
         ))
 
     buf = "This device is known to work with driver "
@@ -816,7 +823,7 @@ def buildPage():
     buf += ".\n"
     page.append(buf)
 
-    if (len(devComment) or len(devURLs) or len(devCommentBlocks)):
+    if haveDetailedComments():
         page.append("Some more detailed comments are available after the Known supported variables section.\n")
 
     # NUT vars
@@ -944,7 +951,7 @@ def buildPage():
         page.append("")
 
     # Device comment/support-level
-    if len(devComment) or len(devURLs) or len(devCommentBlocks) or ndsSL != -1:
+    if haveDetailedComments() or ndsSL != -1:
         page.append("\n==== About this device\n")
         # Support level
         if ndsSL != -1:
