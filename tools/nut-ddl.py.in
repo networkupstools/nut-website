@@ -28,6 +28,14 @@ manDir = "nut/docs/man/"
 # Path to manpage directory in website
 webManDir = "../../docs/man/"
 
+# Currently not configurable, but maybe in the future we can make use of
+# the difference of the two renderer projects with different features...
+WITH_ASCIIDOCTOR = False
+
+# Also not configurable externally now, but toggles rendering markup
+# below as we experiment with it:
+DEV_COMMENT_BLOCKS_AS_LIST = False #True
+
 ###
 
 # Old (no longer available in NUT) -> new (currently available) drivers map
@@ -973,7 +981,18 @@ def buildPage():
                 "s" if (len(devCommentBlocks) > 1) else ""
                 ))
             for report in devCommentBlocks:
-                page.append("* *%s*:\n+\n------" % report['title'])
+                if DEV_COMMENT_BLOCKS_AS_LIST:
+                    ### Style this as a list with bold text for titles?
+                    page.append("* *%s*:\n+\n------" % report['title'])
+                else:
+                    ### ...or style this as blocks which include the title
+                    ### attribute (can't make them a bulleted list though)?
+                    # NOTE: [%%collapsible] is an asciidoctor feature, but not asciidoc:
+                    # https://docs.asciidoctor.org/asciidoc/latest/blocks/collapsible/#ex-collapsible
+                    page.append(".%s%s\n------" % (report['title'],
+                        "\n[%%collapsible]" if WITH_ASCIIDOCTOR else ""
+                        ))
+
                 for line in report['content']:
                     page.append(line)
                 page.append("------\n")
