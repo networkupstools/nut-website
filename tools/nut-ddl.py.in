@@ -832,7 +832,7 @@ def buildPage():
     page.append(buf)
 
     if haveDetailedComments():
-        page.append("Some more detailed comments are available after the Known supported variables section.\n")
+        page.append("Some more detailed comments are available <<anchor-about-%s-%s,after>> the \"Known supported...\" sections.\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
 
     # NUT vars
     page.append("\n==== Known supported variables\n")
@@ -960,7 +960,8 @@ def buildPage():
 
     # Device comment/support-level
     if haveDetailedComments() or ndsSL != -1:
-        page.append("\n==== About this device\n")
+        page.append("\n[[anchor-about-%s-%s]]\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
+        page.append("==== About this device\n")
         # Support level
         if ndsSL != -1:
             page.append("*Support level*: *%d* (out of 10)\n" % ndsSL)
