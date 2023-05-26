@@ -68,6 +68,7 @@ ndsVersion = "-1"
 ndsSL = -1
 varCmdComments = {}
 devComment = []
+devCommentBlocks = []
 devURLs = []
 nutVars = {}
 nutRWs = {}
@@ -205,6 +206,49 @@ def nds_dev_comment(raw):
         devComment.append(line[2:])
 
 
+def nds_dev_comment_block(raw):
+    """
+    Parse device block-comment(s).
+    """
+
+    # '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    # '# <comment>\n'
+    # '# <comment>\n'
+    #	...
+    # '# DEVICE:EOC\n'
+
+    # Preferably titled like "Configuration section" or "lsusb listing":
+    title = str(raw[0][23:]).strip()
+    if not len(title):
+        if verbose:
+            print ("Invalid device block comment title, using default")
+        title = "Data sample"
+
+    # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK: *<title>\n')
+    raw = raw[1:]
+
+    # Not a valid device comment, don't do anything with it
+    if not len(raw) or raw[-1] != "# DEVICE:EOC":
+        if verbose:
+            print ("Invalid device block comment")
+        return
+
+    # Remove the 'close' line
+    raw = raw[:-1]
+
+    # Empty comment
+    if not len(raw):
+        if verbose:
+            print ("Empty device block comment")
+        return
+
+    # Remove hash and one leading space
+    blk = []
+    for line in raw:
+        blk.append(line[2:])
+
+    devCommentBlocks.append({'title': title, 'content': blk})
+
 def nds_var_cmd_comments(raw):
     """
     Parse comments of variables/commands.
@@ -257,6 +301,9 @@ ndsCommentsMap = {
     # Vars/commands - Start of comment:
     #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT[:]\n'
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
+    # Device - Start of comment block
+    #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
@@ -274,6 +321,9 @@ devCommentsMap = {
     # Vars/commands - Start of comment:
     #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:COMMENT[:]\n'
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
+    # Device - Start of comment block
+    #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
@@ -715,7 +765,9 @@ def buildPage():
 
     # Note: report numbering should be sequential per NUT release
     # and may cover several drivers in it that handle the device:
-    page.append("\n=== Report #%d with driver %s\n" % (fromFileName["reportNumber"], fromFileName["driverName"]))
+    page.append("\n=== Report #%d with driver %s%s\n" % (fromFileName["reportNumber"], fromFileName["driverName"],
+        " (detailed comments available)" if (len(devComment) or len(devURLs) or len(devCommentBlocks)) else ""
+        ))
 
     buf = "This device is known to work with driver "
     if fromFileName["driverName"] in manPages:
@@ -889,7 +941,7 @@ def buildPage():
         page.append("")
 
     # Device comment/support-level
-    if len(devComment) or len(devURLs) or ndsSL != -1:
+    if len(devComment) or len(devURLs) or len(devCommentBlocks) or ndsSL != -1:
         page.append("\n==== About this device\n")
         # Support level
         if ndsSL != -1:
@@ -901,9 +953,20 @@ def buildPage():
         # Device URL(s)
         if len(devURLs):
             # Note: asciidoc list is separated by a blank line
-            page.append("\nSee also:\n\n")
+            page.append("\nSee also:\n")
             for commentLine in devURLs:
                 page.append("* %s\n" % commentLine)
+            page.append("\n")
+        # Block-formatted information piece(s) from the report:
+        if len(devCommentBlocks):
+            page.append("\nFurther system data or configuration example%s:\n" % (
+                "s" if (len(devCommentBlocks) > 1) else ""
+                ))
+            for report in devCommentBlocks:
+                page.append("* *%s*:\n+\n------" % report['title'])
+                for line in report['content']:
+                    page.append(line)
+                page.append("------\n")
             page.append("\n")
 
     page.append("")
