@@ -816,6 +816,9 @@ def buildPage():
     buf += ".\n"
     page.append(buf)
 
+    if (len(devComment) or len(devURLs) or len(devCommentBlocks)):
+        page.append("Some more detailed comments are available after the Known supported variables section.\n")
+
     # NUT vars
     page.append("\n==== Known supported variables\n")
     page.append("This device is known to support the following variables (values are just examples):\n")
