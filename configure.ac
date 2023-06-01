@@ -2,7 +2,7 @@ dnl +------------------------------------------------------------------+
 dnl | Network UPS Tools - Website: configure.in                        |
 dnl +------------------------------------------------------------------+
 
-AC_INIT(nut_website, m4_esyscmd_s(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'))
+AC_INIT(nut_website, m4_esyscmd_s(cd nut && git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]-signed' --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'))
 dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
 dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
 AC_PREREQ([2.69])
