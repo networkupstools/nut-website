@@ -91,7 +91,7 @@ dnl in NUT codebase, not its configure.ac version or detailed revision.
 dnl For the rolling web-site we want to track origins more precisely:
 NUT_VERSION="$(cd nut && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]-signed' --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
 DDL_VERSION="$(cd ddl && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]-signed' --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
-WEB_VERSION="$((git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]-signed' --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+WEB_VERSION="$( (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]-signed' --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
 WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],
