@@ -263,6 +263,41 @@ echo "Calling autoreconf..."
 autoreconf -ifv || quit
 echo_spacer
 
+# Some autoconf versions may leave "/bin/sh" regardless of CONFIG_SHELL
+# which originally was made for "recheck" operations
+if [ -n "${CONFIG_SHELL-}" ]; then
+	case "${CONFIG_SHELL-}" in
+		*/*)    ;; # use as is, assume full path
+		*)
+			ENV_PROG="`command -v env`" 2>/dev/null
+			if [ -n "$ENV_PROG" -a -x "$ENV_PROG" ] ; then
+				echo "Using '$ENV_PROG' to call unqualified CONFIG_SHELL program name '$CONFIG_SHELL'" >&2
+				CONFIG_SHELL="$ENV_PROG $CONFIG_SHELL"
+			fi
+			;;
+	esac
+
+	echo "Injecting caller-provided CONFIG_SHELL='$CONFIG_SHELL' into the script" >&2
+	echo "#!${CONFIG_SHELL}" > configure.tmp
+	cat configure >> configure.tmp
+	# keep the original file rights intact
+	cat configure.tmp > configure
+	rm configure.tmp
+else
+	CONFIG_SHELL="`head -1 configure | sed 's,^#!,,'`"
+fi
+
+# NOTE: Unquoted, may be multi-token
+$CONFIG_SHELL -n configure 2>/dev/null >/dev/null \
+|| { echo "FAILED: nut-website configure script did not pass shell interpreter syntax checks with $CONFIG_SHELL" >&2
+	echo "NOTE: If you are using an older OS release, try executing the script with" >&2
+	echo "a more functional shell implementation (dtksh, bash, dash...)" >&2
+	echo "You can re-run this script with a CONFIG_SHELL in environment" >&2
+	exit 1
+}
+
+echo "The generated nut-website configure script passed shell interpreter syntax checks"
+
 if [ -n "`git status -uno -s`" ] ; then
 	echo "NOTE: Git sources for this repository have changed:"
 	git status -s -uno
