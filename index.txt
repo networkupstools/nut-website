@@ -1,15 +1,3 @@
-
-//////////////////////////////////
-TODO: Automate the number above with Makefile magic and asciidoc variables
-or a .in style template parsing
-
-# Manufacturers:
-:; grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2}' | sort | uniq | wc -l
-
-# Models:
-:; grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2" "$8" "$10}' | sort | uniq -c | wc -l
-//////////////////////////////////
-
 [NOTE]
 .Two NUT websites
 ====
