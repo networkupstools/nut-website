@@ -132,6 +132,7 @@ dnl ----------------------------------------------------------------------
 AC_CONFIG_FILES([
 	protocols/Makefile
 	Makefile
+	index-jumboinfo.html
 ])
 
 AC_OUTPUT
