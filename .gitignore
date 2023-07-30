@@ -16,6 +16,7 @@ missing
 
 # NUT Website-specific
 ups-html.txt
+website.txt
 historic-release.txt
 .git-commit-website
 *.txt-spellchecked

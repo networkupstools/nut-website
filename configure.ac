@@ -132,6 +132,7 @@ dnl ----------------------------------------------------------------------
 AC_CONFIG_FILES([
 	protocols/Makefile
 	Makefile
+	website.txt
 ])
 
 AC_OUTPUT

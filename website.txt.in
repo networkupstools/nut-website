@@ -13,7 +13,8 @@ uniform control and management interface. If you are just getting acquainted
 with NUT, link:features.html[that page] also explains the technical design
 and some possible set-ups.
 
-More than 170 different manufacturers, and several thousands of models are
+As of this publication, at least @COUNT_HCL_MANUFACTURERS@ different
+manufacturers, and @COUNT_HCL_MODELS@ hardware device models are known as
 link:stable-hcl.html[compatible].
 
 //////////////////////////////////
