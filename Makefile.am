@@ -74,10 +74,9 @@ BOOTSTRAP_SCRIPT_FILES_EXTRA =
 
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 SCRIPT_FILES = $(BOOTSTRAP_SCRIPT_FILES)
-# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #SCRIPT_FILES = $(WEBLAYOUT_SCRIPT_FILES)
-# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #endif
 
 WEBSITE_FILES =	\
@@ -154,10 +153,9 @@ ADOC_PARAMS_BOOTSTRAP = \
 
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 ADOC_PARAMS_COMMON += $(ADOC_PARAMS_BOOTSTRAP)
-# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #ADOC_PARAMS_COMMON += $(ADOC_PARAMS_WEB_LAYOUT)
-# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #endif
 
 ASCIIDOC_PARAMS =	\
@@ -378,13 +376,12 @@ index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt inde
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
-# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
 # HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
-# HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #endif
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
