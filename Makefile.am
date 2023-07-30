@@ -2,8 +2,10 @@
 
 # CSS based simulated frames layout. The "web-layout" is old design
 # used for NUT releases 2.8.0 and before. The "bootstrap" is newer.
-#LAYOUT = web-layout
-LAYOUT = bootstrap
+LAYOUT = web-layout
+# New Bootstrap project based layout, proposed for NUT release 2.8.1
+# and later, see https://github.com/networkupstools/nut-website/pull/31
+#LAYOUT = bootstrap
 
 # Also relies on GNU `ln -fsr` options, for historic sub-site publication
 LN = ln
