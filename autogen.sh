@@ -263,8 +263,12 @@ echo "Calling autoreconf..."
 autoreconf -ifv || quit
 # Trick borrowed from https://gitlab.gnome.org/luzpaz/gimp-help/-/blob/master/autogen.sh
 if [ -e Makefile.in ]; then
-    sed -e 's/^# HIDE FROM AUTOMAKE #//' \
-       Makefile.in > Makefile.in.tmp &&
+    sed \
+        -e 's/^# HIDE FROM AUTOMAKE #if-eq/ifeq/' \
+        -e 's/^# HIDE FROM AUTOMAKE #if-else/else/' \
+        -e 's/^# HIDE FROM AUTOMAKE #end-if/endif/' \
+        -e 's/^# HIDE FROM AUTOMAKE #//' \
+        Makefile.in > Makefile.in.tmp &&
     mv Makefile.in.tmp Makefile.in
 else
     echo >&2 "Error: cannot find Makefile.in"
