@@ -95,6 +95,8 @@ WEBSITE_FILES =	\
 	ups-protocols.html
 
 WEBSITE_DEPS =	\
+	index-jumboinfo.html \
+	index-jumboinfo-header-$(LAYOUT).html \
 	nut/docs/solaris-usb.html	\
 	nut/docs/cables.pdf	\
 	nut/docs/developer-guide.chunked	\
@@ -107,7 +109,6 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.pdf
 
 BOOTSTRAP_WEBSITE_DEPS = \
-	index-jumboinfo.html \
 	navinfo.html
 
 BOOTSTRAP_WEBSITE_FONTS = \
@@ -373,13 +374,13 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 
 # Report each rebuild by depending on the Makefile
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
-# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
+# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html index-jumboinfo-header-$(LAYOUT).html
 # HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
 # HIDE FROM AUTOMAKE #endif
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
-# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
+# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html index-jumboinfo-header-$(LAYOUT).html
 # HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
@@ -691,6 +692,7 @@ SPELLCHECK_SRC += index.txt
 # only spell-check *.txt filename patterns. Specifying this input file
 # does not hurt but may have no effect then.
 SPELLCHECK_SRC += index-jumboinfo.html.in
+#SPELLCHECK_SRC += index-jumboinfo-header-$(LAYOUT).html
 
 ### Note: currently the NUT makefiles' implementation of spellcheck rules
 ### assumes use of its own nut.dict. When it becomes possible to split it
