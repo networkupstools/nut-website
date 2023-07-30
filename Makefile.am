@@ -52,7 +52,7 @@ BOOTSTRAP_LAYOUT_FILES =	\
 	css/nut.css	\
 	css/asciidoc-bootstrap.min.css
 
-SCRIPT_FILES =	\
+WEBLAYOUT_SCRIPT_FILES =	\
 	scripts/asciidoc.js	\
 	scripts/filter_png.js	\
 	scripts/jquery.js	\
@@ -71,6 +71,14 @@ BOOTSTRAP_SCRIPT_FILES_EXTRA =
 	js/ie8-responsive-file-warning.js
 	js/ie-emulation-modes-warning.js
 	js/npm.js
+
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
+SCRIPT_FILES = $(BOOTSTRAP_SCRIPT_FILES)
+# HIDE FROM AUTOMAKE #else
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #SCRIPT_FILES = $(WEBLAYOUT_SCRIPT_FILES)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #endif
 
 WEBSITE_FILES =	\
 	acknowledgements.html	\
@@ -274,9 +282,6 @@ $(OUTDIR): all-files
 	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
 	$(MKDIR_P) $(OUTDIR)/scripts
 	cp -f $(SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
-	if test x"$(LAYOUT)" = xbootstrap ; then \
-		cp -f $(BOOTSTRAP_SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/ ; \
-	fi
 	$(MKDIR_P) $(OUTDIR)/protocols
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols
