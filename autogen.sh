@@ -249,8 +249,10 @@ else
 fi
 echo_spacer
 echo "Description of checked-out NUT codebase since latest Git tag, and derived PACKAGE_VERSION:"
-(cd nut && git describe --tags 2>/dev/null)
-(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//')
+# NOTE: When maintaining, use same definition of NUT_VERSION as configure.ac
+# However keep in mind that the report here is just informative (into build logs)
+NUT_VERSION="$(cd nut && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+printf "%s => %s\n" "${NUT_VERSION}" "`echo "${NUT_VERSION}" | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'`"
 ( cd nut && ./autogen.sh ) || quit
 echo_spacer
 
@@ -270,6 +272,41 @@ else
 fi
 
 echo_spacer
+
+# Some autoconf versions may leave "/bin/sh" regardless of CONFIG_SHELL
+# which originally was made for "recheck" operations
+if [ -n "${CONFIG_SHELL-}" ]; then
+	case "${CONFIG_SHELL-}" in
+		*/*)    ;; # use as is, assume full path
+		*)
+			ENV_PROG="`command -v env`" 2>/dev/null
+			if [ -n "$ENV_PROG" -a -x "$ENV_PROG" ] ; then
+				echo "Using '$ENV_PROG' to call unqualified CONFIG_SHELL program name '$CONFIG_SHELL'" >&2
+				CONFIG_SHELL="$ENV_PROG $CONFIG_SHELL"
+			fi
+			;;
+	esac
+
+	echo "Injecting caller-provided CONFIG_SHELL='$CONFIG_SHELL' into the script" >&2
+	echo "#!${CONFIG_SHELL}" > configure.tmp
+	cat configure >> configure.tmp
+	# keep the original file rights intact
+	cat configure.tmp > configure
+	rm configure.tmp
+else
+	CONFIG_SHELL="`head -1 configure | sed 's,^#!,,'`"
+fi
+
+# NOTE: Unquoted, may be multi-token
+$CONFIG_SHELL -n configure 2>/dev/null >/dev/null \
+|| { echo "FAILED: nut-website configure script did not pass shell interpreter syntax checks with $CONFIG_SHELL" >&2
+	echo "NOTE: If you are using an older OS release, try executing the script with" >&2
+	echo "a more functional shell implementation (dtksh, bash, dash...)" >&2
+	echo "You can re-run this script with a CONFIG_SHELL in environment" >&2
+	exit 1
+}
+
+echo "The generated nut-website configure script passed shell interpreter syntax checks"
 
 if [ -n "`git status -uno -s`" ] ; then
 	echo "NOTE: Git sources for this repository have changed:"

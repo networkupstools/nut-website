@@ -1,8 +1,10 @@
 dnl +------------------------------------------------------------------+
-dnl | Network UPS Tools - Website: configure.in                        |
+dnl | Network UPS Tools - Website: configure.ac                        |
 dnl +------------------------------------------------------------------+
 
-AC_INIT(nut_website, m4_esyscmd_s(cd nut && git describe --tags 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'))
+dnl Note: funny markup in the next line is m4-escaped square braces
+dnl for glob-expression text in an m4 macro
+AC_INIT(nut_website, m4_esyscmd_s(cd nut && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'))
 dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
 dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
 AC_PREREQ([2.69])
@@ -87,9 +89,9 @@ dnl ----------------------------------------------------------------------
 dnl Note AC_INIT defines a constrained PACKAGE_VERSION based on last tag
 dnl in NUT codebase, not its configure.ac version or detailed revision.
 dnl For the rolling web-site we want to track origins more precisely:
-NUT_VERSION="$(cd nut && git describe --tags 2>/dev/null)"
-DDL_VERSION="$(cd ddl && git describe --tags 2>/dev/null)"
-WEB_VERSION="$(git describe --tags 2>/dev/null)"
+NUT_VERSION="$(cd nut && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+DDL_VERSION="$(cd ddl && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+WEB_VERSION="$( (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
 WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],
