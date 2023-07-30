@@ -346,6 +346,21 @@ home automation project (for monitoring with HomeKit) includes a NUT plugin.
 Instructions are in the project README file.
 
 
+link:https://github.com/DRuggeri/nut_exporter/[Network UPS Tools (NUT) Prometheus Exporter]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A link:https://prometheus.io/[Prometheus] exporter for the Network UPS Tools server.
+This exporter utilizes the link:https://github.com/robbiet480/go.nut[go.nut] project
+as a network client of the NUT platform. The exporter is written in a way to permit
+an administrator to scrape one or many UPS devices visible to a NUT client as well
+as one or all NUT variables. A single instance of this exporter can scrape one or
+many NUT servers as well.
+
+A sample
+link:https://github.com/DRuggeri/nut_exporter/blob/master/dashboard/dashboard.json[dashboard]
+for Grafana is also available.
+
+
 Legacy and discontinued projects
 --------------------------------
 
