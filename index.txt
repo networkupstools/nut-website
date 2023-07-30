@@ -1,3 +1,9 @@
+ifeval::["{websitelayout}" == "web-layout"]
+++++
+include::index-jumboinfo.html[]
+++++
+endif::[]
+
 [NOTE]
 .Two NUT websites
 ====

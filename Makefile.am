@@ -120,6 +120,7 @@ ADOC_PARAMS_COMMON =	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
+	--attribute=websitelayout="$(LAYOUT)"		\
 	--attribute=revision="$(PACKAGE_VERSION)"	\
 	--attribute=webrevision="$(WEBSITE_VERSION)"	\
 	--attribute tree_version="@TREE_VERSION@"	\
@@ -368,13 +369,13 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 
 # Report each rebuild by depending on the Makefile
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
-index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
+index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
 # HIDE FROM AUTOMAKE #else
 # HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
-# HIDE FROM AUTOMAKE #index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
+# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
 # HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
@@ -674,14 +675,12 @@ SPELLCHECK_SRC = \
 	protocols/minicol.txt \
 	protocols/oneac.txt
 
-# leaving a space here to work around automake's conditionals
-# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 SPELLCHECK_SRC += index.txt
-# HIDE FROM AUTOMAKE #else
-# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
-# HIDE FROM AUTOMAKE #SPELLCHECK_SRC += website.txt
-# HIDE FROM AUTOMAKE #endif
-# HIDE FROM AUTOMAKE #endif
+
+# NOTE: It is possible that in historic releases "nut" source recipes
+# only spell-check *.txt filename patterns. Specifying this input file
+# does not hurt but may have no effect then.
+SPELLCHECK_SRC += index-jumboinfo.html.in
 
 ### Note: currently the NUT makefiles' implementation of spellcheck rules
 ### assumes use of its own nut.dict. When it becomes possible to split it
