@@ -121,9 +121,18 @@ AC_SUBST(TARBALL_VERSION)
 
 dnl ----------------------------------------------------------------------
 
+# Some statistics for the front page:
+COUNT_HCL_MANUFACTURERS="$(grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2}' | sort | uniq | wc -l)"
+COUNT_HCL_MODELS="$(grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2" "$8" "$10}' | sort | uniq -c | wc -l)"
+AC_SUBST(COUNT_HCL_MANUFACTURERS)
+AC_SUBST(COUNT_HCL_MODELS)
+
+dnl ----------------------------------------------------------------------
+
 AC_CONFIG_FILES([
 	protocols/Makefile
 	Makefile
+	website.txt
 ])
 
 AC_OUTPUT
