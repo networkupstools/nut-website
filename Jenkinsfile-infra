@@ -32,6 +32,11 @@ pipeline {
             defaultValue: true,
             description: 'If "true", the spellcheck of site files would be a separate action with a non-fatal diagnosis after a site build an push (best-effort FYI); if "false" then spelling issues vs. master nut/docs/nut.dict would be fatal before site build.'
         )
+        choice(
+            name: 'LAYOUT',
+            choices: ['web-layout', 'bootstrap'],
+            description: 'Select the web-site design to generate.\nThe "bootstrap" is intended for NUT v2.8.1 or later releases, and is currently work in progress.\nThe "web-layout" shows its age, for a few decades - used until NUT v2.8.0 release.'
+        )
     }
 
     stages {
