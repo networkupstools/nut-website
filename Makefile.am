@@ -72,12 +72,12 @@ BOOTSTRAP_SCRIPT_FILES_EXTRA =
 	js/ie-emulation-modes-warning.js
 	js/npm.js
 
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 SCRIPT_FILES = $(BOOTSTRAP_SCRIPT_FILES)
-# HIDE FROM AUTOMAKE #end-if
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #SCRIPT_FILES = $(WEBLAYOUT_SCRIPT_FILES)
-# HIDE FROM AUTOMAKE #end-if
+# HIDE FROM AUTOMAKE #endif
 
 WEBSITE_FILES =	\
 	acknowledgements.html	\
@@ -116,9 +116,9 @@ BOOTSTRAP_WEBSITE_FONTS = \
 	fonts/glyphicons-halflings-regular.woff \
 	fonts/glyphicons-halflings-regular.woff2
 
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 WEBSITE_DEPS += $(BOOTSTRAP_WEBSITE_DEPS)
-# HIDE FROM AUTOMAKE #end-if
+# HIDE FROM AUTOMAKE #endif
 
 ADOC_PARAMS_COMMON =	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
@@ -151,12 +151,12 @@ ADOC_PARAMS_BOOTSTRAP = \
 	--attribute script=nut.js \
 	--attribute bootstrapdir=.
 
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 ADOC_PARAMS_COMMON += $(ADOC_PARAMS_BOOTSTRAP)
-# HIDE FROM AUTOMAKE #end-if
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #ADOC_PARAMS_COMMON += $(ADOC_PARAMS_WEB_LAYOUT)
-# HIDE FROM AUTOMAKE #end-if
+# HIDE FROM AUTOMAKE #endif
 
 ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
@@ -371,18 +371,18 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
 index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
-# HIDE FROM AUTOMAKE #end-if
-# HIDE FROM AUTOMAKE #if-eq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
 # HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html
 # HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
-# HIDE FROM AUTOMAKE #end-if
+# HIDE FROM AUTOMAKE #endif
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
