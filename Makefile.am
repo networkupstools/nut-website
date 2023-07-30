@@ -427,20 +427,27 @@ SUFFIXES = .txt .html
 
 ## AsciiDoc params for DDL
 # Docs in DDL dir
+#ADOC_PARAMS_DDL_L1 =	\
+#	$(ADOC_PARAMS_COMMON)	\
+#	--attribute iconsdir=../images	\
+#	--attribute scriptsdir=../scripts	\
+#	--attribute stylesdir=../css	\
+#	--attribute root=../
 ADOC_PARAMS_DDL_L1 =	\
 	$(ADOC_PARAMS_COMMON)	\
-	--attribute iconsdir=../images	\
-	--attribute scriptsdir=../scripts	\
-	--attribute stylesdir=../css	\
-	--attribute root=../
+	--attribute iconsdir=$(abs_top_srcdir)/images	\
+	--attribute scriptsdir=$(abs_top_srcdir)/scripts	\
+	--attribute stylesdir=$(abs_top_srcdir)/css	\
+	--attribute root=$(abs_top_srcdir)
 
 # Docs in children directories of DDL dir
-ADOC_PARAMS_DDL_L2 =	\
-	$(ADOC_PARAMS_COMMON)	\
-	--attribute iconsdir=../../images	\
-	--attribute scriptsdir=../../scripts	\
-	--attribute stylesdir=../../css	\
-	--attribute root=../../
+ADOC_PARAMS_DDL_L2 = $(ADOC_PARAMS_DDL_L1)
+#ADOC_PARAMS_DDL_L2 =	\
+#	$(ADOC_PARAMS_COMMON)	\
+#	--attribute iconsdir=../../images	\
+#	--attribute scriptsdir=../../scripts	\
+#	--attribute stylesdir=../../css	\
+#	--attribute root=../../
 
 ## Handy things..
 # Empty string
