@@ -5,7 +5,9 @@ include::historic-release.txt[]
 
 There are many programs and devices that integrate NUT support.
 
-This page tries to track them.
+This page tries to track them. Please note there can be even more
+references contributed by the NUT user community members at the
+link:https://github.com/networkupstools/nut/wiki/[NUT GitHub wiki].
 
 Graphical desktop clients
 -------------------------
