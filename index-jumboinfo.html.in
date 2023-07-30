@@ -5,14 +5,14 @@
           devices, and to consistently name equivalent features and data points, across
           a vast range of vendor-specific protocols and connection media types.</p>
           <p>
-          NUT provides many control and monitoring <a href="features.html">features</a>, with a
-          uniform control and management interface. If you are just getting acquainted
-          with NUT, <a href="features.html">that page</a> also explains the technical design
-          and some possible set-ups.</p>
+          NUT provides many control and monitoring <a href="{root=.}/features.html">features</a>,
+          with a uniform control and management interface. If you are just getting acquainted
+          with NUT, <a href="{root=.}/features.html">that page</a> also explains the technical
+          design and some possible set-ups.</p>
           <p>
           As of this publication, at least @COUNT_HCL_MANUFACTURERS@ different manufacturers,
           and @COUNT_HCL_MODELS@ hardware device models are known as
-          <a href="{root=}stable-hcl.html">compatible</a>.</p>
+          <a href="{root=.}/stable-hcl.html">compatible</a>.</p>
           <p>
           This software is the combined effort of many
           <a href="acknowledgements.html">individuals and companies</a> with free and
