@@ -263,7 +263,7 @@ def nds_dev_comment(raw):
     raw = raw[1:]
 
     # Not a valid device comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# DEVICE:EOC":
+    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
         if verbose:
             print ("Invalid device comment")
         return
@@ -304,7 +304,7 @@ def nds_dev_comment_block(raw):
     raw = raw[1:]
 
     # Not a valid device comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# DEVICE:EOC":
+    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
         if verbose:
             print ("Invalid device block comment")
         return
@@ -348,7 +348,7 @@ def nds_var_cmd_comments(raw):
     raw = raw[1:]
 
     # Not a valid comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# %s:EOC" % itemName:
+    if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
         if verbose:
             print ("Invalid comment for '%s'" % itemName)
         return
@@ -425,10 +425,10 @@ devCommentsMap = {
 EOCPatterns = [
     # Vars/commands comments
     #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:EOC\n'
-    "^# ([\w\-]+\.)+[\w\-]+:EOC$",
+    "^# ([\w\-]+\.)+[\w\-]+:EOC:?$",
     # Device comment
     #  '# DEVICE:EOC\n'
-    "^# DEVICE:EOC$"
+    "^# DEVICE:EOC:?$"
 ]
 
 ###
