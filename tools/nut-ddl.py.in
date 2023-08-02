@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#   Copyright (c) 2014 - Daniele Pezzini <hyouko@gmail.com>
+#   Copyright (C) 2014 - Daniele Pezzini <hyouko@gmail.com>
+#   Copyright (C) 2022 - 2023 - Jim Klimov <jimklimov+nut@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -22,6 +23,8 @@ import os
 import argparse
 
 ###
+
+# NOTE: Detailed documentation is in nut-ddl repo README file
 
 # Path to NUT's manpages directory, relative to the working directory
 manDir = "nut/docs/man/"
@@ -240,7 +243,9 @@ def nds_dev_url(raw):
 
 def nds_dev_comment(raw):
     """
-    Parse device comment.
+    Parse device comment. Note that only one per device may be defined.
+    See also DEVICE:COMMENT-BLOCK:<title> which may be repeated for tool
+    output "screenshots".
     """
 
     # '# DEVICE:COMMENT[:]\n'
@@ -279,7 +284,7 @@ def nds_dev_comment(raw):
 
 def nds_dev_comment_block(raw):
     """
-    Parse device block-comment(s).
+    Parse device block-comment(s) with pre-formatted text (tool "screenshots").
     """
 
     # '# DEVICE:COMMENT-BLOCK: *<title>\n'
