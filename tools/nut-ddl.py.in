@@ -77,6 +77,8 @@ ndsSL = -1
 varCmdComments = {}
 devComment = []
 devCommentBlocks = []
+devURLs_vendor = []
+devURLs_report = []
 devURLs = []
 nutVars = {}
 nutRWs = {}
@@ -146,9 +148,70 @@ def nds_sl(raw):
     ndsSL = sl
 
 
+def nds_dev_url_vendor(raw):
+    """
+    Parse the URL for more device information
+    (manufacturer/vendor/brander site or product page).
+    May be present more than once, one URL per line.
+    """
+
+    # '# DEVICE:URL:VENDOR: *...\n'
+
+    # Remove leading 'start' of the line ('# DEVICE:URL:VENDOR: *')
+    line = str(raw[0][20:]).strip()
+
+    # Empty comment
+    if not len(line):
+        if verbose:
+            print ("Empty device vendor URL")
+        return
+
+    # Too eager a copy-paste from asciidoc?
+    if line.startswith("link:"):
+        line = line.replace("link:", "", 1)
+
+    if not "://" in line:
+        if verbose:
+            print ("Device vendor URL does not contain a schema, ignored: %s" % line)
+        return
+
+    devURLs_vendor.append(line)
+
+
+def nds_dev_url_report(raw):
+    """
+    Parse the URL for more device information (mailing list, blog, NUT issue...)
+    where the report originated, driver was implemented, etc.
+    May be present more than once, one URL per line.
+    """
+
+    # '# DEVICE:URL:REPORT: *...\n'
+
+    # Remove leading 'start' of the line ('# DEVICE:URL:REPORT: *')
+    line = str(raw[0][20:]).strip()
+
+    # Empty comment
+    if not len(line):
+        if verbose:
+            print ("Empty device report URL")
+        return
+
+    # Too eager a copy-paste from asciidoc?
+    if line.startswith("link:"):
+        line = line.replace("link:", "", 1)
+
+    if not "://" in line:
+        if verbose:
+            print ("Device report URL does not contain a schema, ignored: %s" % line)
+        return
+
+    devURLs_report.append(line)
+
+
 def nds_dev_url(raw):
     """
     Parse the URL for more device information (vendor site, NUT issue...)
+    if not converted or suited to the more specific VENDOR or REPORT types.
     May be present more than once, one URL per line.
     """
 
@@ -315,7 +378,11 @@ ndsCommentsMap = {
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
-    # Further information about the device
+    # Further information about the device (vendor/mfr, issue/blog/mailing list, unclassified)
+    #  '# DEVICE:URL:VENDOR:<link>\n'
+    "^# DEVICE:URL:VENDOR: *[^ ]+://[^ ]+$": nds_dev_url_vendor,
+    #  '# DEVICE:URL:REPORT:<link>\n'
+    "^# DEVICE:URL:REPORT: *[^ ]+://[^ ]+$": nds_dev_url_report,
     #  '# DEVICE:URL:<link>\n'
     "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
@@ -335,7 +402,11 @@ devCommentsMap = {
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
-    # Further information about the device
+    # Further information about the device (vendor/mfr, issue/blog/mailing list, unclassified)
+    #  '# DEVICE:URL:VENDOR:<link>\n'
+    "^# DEVICE:URL:VENDOR: *[^ ]+://[^ ]+$": nds_dev_url_vendor,
+    #  '# DEVICE:URL:REPORT:<link>\n'
+    "^# DEVICE:URL:REPORT: *[^ ]+://[^ ]+$": nds_dev_url_report,
     #  '# DEVICE:URL:<link>\n'
     "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
@@ -636,7 +707,7 @@ def haveDetailedComments():
     Based on collected information, estimate if we have any
     detailed comments to show for the particular report
     """
-    return (len(devComment) or len(devURLs) or len(devCommentBlocks))
+    return (len(devComment) or len(devURLs_vendor) or len(devURLs_report) or len(devURLs) or len(devCommentBlocks))
 
 def parseFile(inputFile):
     """
@@ -969,7 +1040,21 @@ def buildPage():
         if len(devComment):
             for commentLine in devComment:
                 page.append(commentLine)
-        # Device URL(s)
+        # Device report URL(s)
+        if len(devURLs_report):
+            # Note: asciidoc list is separated by a blank line
+            page.append("\nReported at:\n")
+            for commentLine in devURLs_report:
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
+        # Device vendor URL(s)
+        if len(devURLs_vendor):
+            # Note: asciidoc list is separated by a blank line
+            page.append("\nVendor/Manufacturer information:\n")
+            for commentLine in devURLs_vendor:
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
+        # Device URL(s) (unclassified)
         if len(devURLs):
             # Note: asciidoc list is separated by a blank line
             page.append("\nSee also:\n")
