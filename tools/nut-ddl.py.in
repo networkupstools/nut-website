@@ -39,6 +39,11 @@ WITH_ASCIIDOCTOR = False
 # below as we experiment with it:
 DEV_COMMENT_BLOCKS_AS_LIST = False #True
 
+# Should we warn or fail when we see unique entries like comments twice, etc.?
+PEDANTIC_DECLARATIONS = os.getenv("NUT_DDL_PEDANTIC_DECLARATIONS", "False")
+# Booleanize this:
+PEDANTIC_DECLARATIONS = (PEDANTIC_DECLARATIONS in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
+
 ###
 
 # Old (no longer available in NUT) -> new (currently available) drivers map
@@ -118,8 +123,11 @@ def nds_version(raw):
     global ndsVersion
 
     if ndsVersion != "-1":
+        msg = "Redeclaration of NDS version"
         if verbose:
-            print ("Redeclaration of NDS version")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove '# NDS:VERSION:'
@@ -136,16 +144,22 @@ def nds_sl(raw):
     global ndsSL
 
     if ndsSL != -1:
+        msg = "Redeclaration of NDS support-level"
         if verbose:
-            print ("Redeclaration od NDS support-level")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove '# DEVICE:SUPPORT-LEVEL:'
     sl = int(raw[0][23:])
 
     if not 1 <= sl <= 10:
+        msg = ("NDS support-level: '%d' out of range [1..10]" % sl)
         if verbose:
-            print ("NDS support-level: '%d' out of range [1..10]" % sl)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     ndsSL = sl
@@ -165,8 +179,11 @@ def nds_dev_url_vendor(raw):
 
     # Empty comment
     if not len(line):
+        msg = "Empty device vendor URL"
         if verbose:
-            print ("Empty device vendor URL")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Too eager a copy-paste from asciidoc?
@@ -174,8 +191,11 @@ def nds_dev_url_vendor(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
+        msg = ("Device vendor URL does not contain a schema, ignored: %s" % line)
         if verbose:
-            print ("Device vendor URL does not contain a schema, ignored: %s" % line)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     devURLs_vendor.append(line)
@@ -195,8 +215,11 @@ def nds_dev_url_report(raw):
 
     # Empty comment
     if not len(line):
+        msg = "Empty device report URL"
         if verbose:
-            print ("Empty device report URL")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Too eager a copy-paste from asciidoc?
@@ -204,8 +227,11 @@ def nds_dev_url_report(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
+        msg = ("Device report URL does not contain a schema, ignored: %s" % line)
         if verbose:
-            print ("Device report URL does not contain a schema, ignored: %s" % line)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     devURLs_report.append(line)
@@ -225,8 +251,11 @@ def nds_dev_url(raw):
 
     # Empty comment
     if not len(line):
+        msg = "Empty device URL"
         if verbose:
-            print ("Empty device URL")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Too eager a copy-paste from asciidoc?
@@ -234,8 +263,11 @@ def nds_dev_url(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
+        msg = ("Device URL does not contain a schema, ignored: %s" % line)
         if verbose:
-            print ("Device URL does not contain a schema, ignored: %s" % line)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     devURLs.append(line)
@@ -255,8 +287,11 @@ def nds_dev_comment(raw):
     # '# DEVICE:EOC\n'
 
     if len(devComment):
+        msg = "Redeclaration of device comment"
         if verbose:
-            print ("Redeclaration of device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove leading 'start' line ('# DEVICE:COMMENT[:]\n')
@@ -264,8 +299,11 @@ def nds_dev_comment(raw):
 
     # Not a valid device comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
+        msg = "Invalid device comment"
         if verbose:
-            print ("Invalid device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
@@ -273,8 +311,11 @@ def nds_dev_comment(raw):
 
     # Empty comment
     if not len(raw):
+        msg = "Empty device comment"
         if verbose:
-            print ("Empty device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove hash and leading space
@@ -296,17 +337,23 @@ def nds_dev_comment_block(raw):
     # Preferably titled like "Configuration section" or "lsusb listing":
     title = str(raw[0][23:]).strip()
     if not len(title):
-        if verbose:
-            print ("Invalid device block comment title, using default")
         title = "Data sample"
+        msg = ("Invalid device block comment title, using default: '%s'" % title)
+        if verbose:
+            print (msg)
+        # if PEDANTIC_DECLARATIONS:
+        #    raise RuntimeWarning (msg)
 
     # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK: *<title>\n')
     raw = raw[1:]
 
     # Not a valid device comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
+        msg = "Invalid device block comment"
         if verbose:
-            print ("Invalid device block comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
@@ -314,8 +361,11 @@ def nds_dev_comment_block(raw):
 
     # Empty comment
     if not len(raw):
+        msg = "Empty device block comment"
         if verbose:
-            print ("Empty device block comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove hash and one leading space
@@ -340,8 +390,11 @@ def nds_var_cmd_comments(raw):
     itemName = re.sub(":COMMENT:?.*$", "", raw[0][2:])
 
     if varCmdComments.get(itemName):
+        msg = ("Redeclaration of comment for '%s'" % itemName)
         if verbose:
-            print ("Redeclaration of comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove leading 'start' line
@@ -349,8 +402,11 @@ def nds_var_cmd_comments(raw):
 
     # Not a valid comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
+        msg = ("Invalid comment for '%s'" % itemName)
         if verbose:
-            print ("Invalid comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
@@ -358,8 +414,11 @@ def nds_var_cmd_comments(raw):
 
     # Empty comment
     if not len(raw):
+        msg = ("Empty comment for '%s'" % itemName)
         if verbose:
-            print ("Empty comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     varCmdComments[itemName] = []
@@ -457,8 +516,11 @@ def nds_vars(raw):
     varName = re.sub(":.*$", "", raw["line"])
 
     if nutVars.get(varName):
+        msg = ("Redeclaration of variable '%s'" % varName)
         if verbose:
-            print ("Redeclaration of variable '%s'" % varName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     nutVars[varName] = {}
@@ -501,8 +563,11 @@ def nds_rw_vars(raw):
         nutRWs[varName] = {}
         nutRWs[varName]["type"] = varType
     elif not nutRWs[varName].get("type") or nutRWs[varName]["type"] != varType:
+        msg = ("Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"]))
         if verbose:
-            print ("Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"]))
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     if varType == "STRING":
@@ -512,22 +577,36 @@ def nds_rw_vars(raw):
             if len(buf) < 4:
                 buf.append("0")
         elif len(buf) < 4:
+            msg = ("Declaration of RW variable '%s' of type 'STRING' without a length" % varName)
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'STRING' without a length" % varName)
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
         if not buf[3].isdigit():
+            msg = ("Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3]))
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3]))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         length = int(buf[3])
         if nutRWs[varName].get("opts"):
-            if verbose and length != nutRWs[varName]["opts"]:
-                print ("Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"]))
-            elif verbose:
-                print ("Redeclaration of variable '%s' of type 'STRING'" % varName)
+            if length != nutRWs[varName]["opts"]:
+                msg = ("Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"]))
+            else:
+                msg = ("Redeclaration of variable '%s' of type 'STRING'" % varName)
+
+            if verbose:
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             return
         nutRWs[varName]["opts"] = length
         if eol is not None:
@@ -535,10 +614,15 @@ def nds_rw_vars(raw):
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match("^\".+\"$", buf[3]):
+            msg = ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName)
-                print ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'")
-                print ("\tgot: '%s'" % raw["line"])
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -551,25 +635,40 @@ def nds_rw_vars(raw):
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match("^\"\d+\" \"\d+\"$", buf[3]):
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName)
-                print ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'")
-                print ("\tgot: '%s'" % raw["line"])
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         rwRange = buf[3].split("\"")
         if not len(rwRange[1]) or not rwRange[1].isdigit() or not len(rwRange[3]) or not rwRange[3].isdigit():
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         rangeMin = int(rwRange[1])
         rangeMax = int(rwRange[3])
         if not rangeMin < rangeMax:
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax))
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -585,8 +684,13 @@ def nds_rw_vars(raw):
     else:
         if not nutRWs[varName].get("opts"):
             del nutRWs[varName]
+        msg = ("Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType))
+
         if verbose:
-            print ("Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType))
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+
         return
 
 
@@ -615,8 +719,11 @@ def nds_commands(raw):
     command = re.sub("^#?CMD:", "", raw["line"])
 
     if nutCommands.get(command):
+        msg = ("Redeclaration of command '%s'" % command)
         if verbose:
-            print ("Redeclaration of command '%s'" % command)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     nutCommands[command] = {};
@@ -787,8 +894,11 @@ def parseFile(inputFile):
                 break
         if bailout:
             if not ignoreNonComments:
+                msg = ("NUT's 'EOF' found, ignoring remaining non-comment lines")
                 if verbose:
-                    print ("NUT's 'EOF' found, ignoring remaining non-comment lines")
+                    print (msg)
+                if PEDANTIC_DECLARATIONS:
+                    raise RuntimeWarning (msg)
                 ignoreNonComments = True
             commentContinuation = False
             continue
@@ -1197,6 +1307,7 @@ except OSError:
 page = buildPage()
 
 # Write page to outputFile
+# Note: no "pedantic" checks for these reports
 try:
     # Already existing page
     if os.path.isfile(outputFile):
