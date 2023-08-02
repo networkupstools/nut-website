@@ -276,8 +276,8 @@ def nds_dev_url(raw):
 def nds_dev_comment(raw):
     """
     Parse device comment. Note that only one per device may be defined.
-    See also DEVICE:COMMENT-BLOCK:<title> which may be repeated for tool
-    output "screenshots".
+    See also DEVICE:COMMENT-BLOCK<:type>?: <title> which may be repeated
+    for tool output "screenshots".
     """
 
     # '# DEVICE:COMMENT[:]\n'
@@ -328,26 +328,56 @@ def nds_dev_comment_block(raw):
     Parse device block-comment(s) with pre-formatted text (tool "screenshots").
     """
 
-    # '# DEVICE:COMMENT-BLOCK: *<title>\n'
-    # '# <comment>\n'
-    # '# <comment>\n'
+    # '# DEVICE:COMMENT-BLOCK:UPSCONF: *<title ignored>\n'
+    # '# DEVICE:COMMENT-BLOCK:LSUSB: *<title with lsusb cmdline>\n'
+    # '# DEVICE:COMMENT-BLOCK:LOGS: *<optional title>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *<title ignored>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *<title ignored>\n'
+    # '# DEVICE:COMMENT-BLOCK: *<title of unstructured info>\n'
+    # '# <content-to-become-pre-formatted>\n'
+    # '# <content-to-become-pre-formatted>\n'
     #	...
     # '# DEVICE:EOC\n'
 
-    # Preferably titled like "Configuration section" or "lsusb listing":
-    title = str(raw[0][23:]).strip()
-    if not len(title):
-        title = "Data sample"
-        msg = ("Invalid device block comment title, using default: '%s'" % title)
+    # Preferably titled like "Configuration section" or "lsusb listing",
+    # or specifying the content type, or both in some cases. The cut-off
+    # point is the colon char (comment_type_title starts with either type
+    # or possible space and title right away):
+    comment_type_title = str(raw[0][23:])
+    try:
+        # Variants of the remaining "type +/- title" to consider:
+        # " *<empty>"
+        # " *Some title (unstructured)"
+        # "TYPE: *<empty>"
+        # "TYPE: *Some title"
+        # For regex below, currently the "TYPE:" is all-caps letters and colon
+        # (may be inside, e.g. "FIXME:SOMETHING"); not adding more match chars
+        # until needed by a syntax extension.
+        matcher = re.match(r'^([A-Z:]+:)? *(.*)$', comment_type_title)
+        if matcher:
+            comment_type = matcher.group(1)
+            title = matcher.group(2)
+            if title is None:
+                # Be sure it is a string type
+                title = ""
+        else:
+            # Report below and use it all as title if not in pedantic mode
+            raise ValueError("regular expression did not match expected pattern")
+    except ValueError as exc:
+        msg = ("Could not parse tag '%s' => tail '%s' further into a type and title: %s" % (str(raw[0]), comment_type_title, str(exc)))
         if verbose:
             print (msg)
-        # if PEDANTIC_DECLARATIONS:
-        #    raise RuntimeWarning (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        comment_type = None
+        title = comment_type_title
+    title = title.strip()
+    # NOTE: Title validation continued after general content sanity check and trim
 
-    # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK: *<title>\n')
+    # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK<:TYPE>: *<title>\n')
     raw = raw[1:]
 
-    # Not a valid device comment, don't do anything with it
+    # Not a valid device block comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
         msg = "Invalid device block comment"
         if verbose:
@@ -359,7 +389,7 @@ def nds_dev_comment_block(raw):
     # Remove the 'close' line
     raw = raw[:-1]
 
-    # Empty comment
+    # Empty comment block
     if not len(raw):
         msg = "Empty device block comment"
         if verbose:
@@ -368,8 +398,70 @@ def nds_dev_comment_block(raw):
             raise RuntimeWarning (msg)
         return
 
-    # Remove hash and one leading space
+    # Collect stripped and prepared contents here:
     blk = []
+
+    # Pre-populate contents (and default title sometimes), as
+    # based on caller-specified type and/or title of the entry:
+    if comment_type == "UPSCONF:":
+        if len(title) and title not in raw[0]:
+            blk.append("# %s" % title)
+        # if not len(title):
+        title = "Driver configuration"
+    elif comment_type == "LSUSB:":
+        if len(title):
+            # Title assumed to be e.g. `lsusb -vvv` or `lsusb -s 007:002` (bus:dev)
+            # or `lsusb -d 1234:5678` (vid:pid) or even `lsusb | grep Liebert`
+            blk.append(":; %s" % title)
+            title = "`%s` listing"
+        else:
+            if "lsusb" in raw[0]:
+                title = "`lsusb` listing"
+            else:
+                # Assume the content starts with desired command, if posted
+                title = "`lsusb` or similar tool listing"
+    elif comment_type == "LOGS:":
+        if not len(title):
+            title = "Logs of NUT service startup"
+    elif comment_type == "FIXME:UPSCMD:":
+        if len(title) and title not in raw[0]:
+            blk.append("# %s" % title)
+        # if not len(title):
+        title = "Commands per `upscmd -l ups@localhost` listing"
+        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
+                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+            blk.append("# TODO: Convert to CMD:... markup")
+        if "upscmd" not in raw[0] \
+                and (len(raw) < 2 or "upscmd" not in raw[1]):
+            blk.append(":; upscmd -l ups@localhost")
+    elif comment_type == "FIXME:UPSRW:":
+        if len(title) and title not in raw[0]:
+            blk.append("# %s" % title)
+        # if not len(title):
+        title = "Variables per `upsrw ups@localhost` listing"
+        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
+                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+            blk.append("# TODO: Convert to RW:... and RO:... markup")
+        if "upsrw" not in raw[0] \
+                and (len(raw) < 2 or "upsrw" not in raw[1]):
+            blk.append(":; upsrw ups@localhost")
+    elif comment_type is not None:
+        msg = ("Invalid device block comment type: '%s'" % str(comment_type))
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        comment_type = None
+
+    if not len(title):
+        title = "Data sample"
+        msg = ("Invalid device block comment title, using default: '%s'" % title)
+        if verbose:
+            print (msg)
+        # if PEDANTIC_DECLARATIONS:
+        #    raise RuntimeWarning (msg)
+
+    # Remove hash and one leading space
     for line in raw:
         blk.append(line[2:])
 
@@ -438,6 +530,11 @@ ndsCommentsMap = {
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment block
     #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK:UPSCONF: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LSUSB: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LOGS: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *.*$": nds_dev_comment_block,
     "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
@@ -462,6 +559,11 @@ devCommentsMap = {
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment block
     #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK:UPSCONF: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LSUSB: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LOGS: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *.*$": nds_dev_comment_block,
     "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
