@@ -20,6 +20,7 @@
 
 import re
 import os
+import pathlib
 import argparse
 
 ###
@@ -1135,6 +1136,51 @@ def buildPage():
     # New NUT version in page
     if fromFileName["reportNumber"] == 1:
         page.append("\n\n== %s\n" % fromFileName["nutVersion"])
+    else:
+        if PEDANTIC_DECLARATIONS:
+            # Check that preceding numbers exist. Reminder from our spec:
+            # <report-number> is the progressive number of reports available
+            # for a device limited to a version of NUT (also if the driver,
+            # <driver-name>, is different from one report to another), i.e.
+            # for each device:
+            # * every report being the first one for a particular version
+            #   of NUT must have a report number equal to 01.
+            # * every report still in the same version number must increase
+            #   the report number also if the driver is not the same as the
+            #   other ones.
+            num = fromFileName["reportNumber"]
+            assert (num is not None and num > 0)
+
+            # FIXME: Here we currently hardcode that report numbers have
+            # two-digit lengths. If this ever gets to vary, extend here.
+            repnumlen = 2
+
+            # See also: getInfoFFN() parsing
+            # [/path/to/]<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}
+            repGlob = re.sub(
+                    r"^(.*__.*__).*(__.*__\d+)$",
+                    r"\1*\2",
+                    fromFileName["fileName"]
+                ) + "." + fromFileName["fileType"]
+            while num > 1:
+                num = num - 1
+                zNum = str(num).zfill(repnumlen)
+                prevFileGlob = re.sub(
+                    r"__0*%s(\....)$" % fromFileName["reportNumber"],
+                    r"__%s\1" % zNum,
+                    repGlob)
+                prevFiles = list(pathlib.Path(
+                        "." if fromFileName["filePath"] is None or not len(fromFileName["filePath"]) else fromFileName["filePath"]
+                    ).glob(prevFileGlob))
+                if prevFiles is None or len(prevFiles) != 1:
+                    msg = "While processing file %s discovered that a single preceding report file numbered %s does not exist: %s: matched %s" % (
+                            inputFile, zNum,
+                            os.path.sep.join([fromFileName["filePath"], str(prevFileGlob)]),
+                            str(prevFiles)
+                        )
+                    if verbose:
+                        print (msg)
+                    raise RuntimeWarning (msg)
 
     # Note: report numbering should be sequential per NUT release
     # and may cover several drivers in it that handle the device:
