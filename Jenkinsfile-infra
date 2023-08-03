@@ -32,6 +32,11 @@ pipeline {
             defaultValue: true,
             description: 'If "true", the spellcheck of site files would be a separate action with a non-fatal diagnosis after a site build an push (best-effort FYI); if "false" then spelling issues vs. master nut/docs/nut.dict would be fatal before site build.'
         )
+        booleanParam(
+            name: 'NUT_DDL_PEDANTIC_DECLARATIONS',
+            defaultValue: true,
+            description: 'If "true", the "nut-ddl.py" script should fail if there are concerns about DDL file markup (so something is ambiguous, duplicate where should be unique, missing where required...) so these would be fatal before site build; if "false" then such issues are only printed as warnings.'
+        )
         choice(
             name: 'LAYOUT',
             choices: ['web-layout', 'bootstrap'],
