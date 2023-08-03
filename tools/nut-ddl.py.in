@@ -328,11 +328,11 @@ def nds_dev_comment_block(raw):
     Parse device block-comment(s) with pre-formatted text (tool "screenshots").
     """
 
-    # '# DEVICE:COMMENT-BLOCK:UPSCONF: *<title ignored>\n'
+    # '# DEVICE:COMMENT-BLOCK:UPSCONF: *<single-token title may be UPS name if no section in text, otherwise pasted as a starting comment>\n'
     # '# DEVICE:COMMENT-BLOCK:LSUSB: *<title with lsusb cmdline>\n'
     # '# DEVICE:COMMENT-BLOCK:LOGS: *<optional title>\n'
-    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *<title ignored>\n'
-    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *<title ignored>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *<single-token title is UPS name for example command, multi-token is pasted as a starting comment>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *<single-token title is UPS name for example command, multi-token is pasted as a starting comment>\n'
     # '# DEVICE:COMMENT-BLOCK: *<title of unstructured info>\n'
     # '# <content-to-become-pre-formatted>\n'
     # '# <content-to-become-pre-formatted>\n'
@@ -400,12 +400,36 @@ def nds_dev_comment_block(raw):
 
     # Collect stripped and prepared contents here:
     blk = []
+    upsname = None
 
     # Pre-populate contents (and default title sometimes), as
     # based on caller-specified type and/or title of the entry:
     if comment_type == "UPSCONF:":
-        if len(title) and title not in raw[0]:
-            blk.append("# %s" % title)
+        # single-token title is UPS name, multi-token is pasted as a starting comment
+        bGotSection = False
+        bTitleComment = True
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    for line in raw:
+                        line = line[2:].strip()
+                        # No dollar, trailing comment syntactically possible:
+                        matcher = re.match(r'^\[([^ ]+)\]', line)
+                        if matcher:
+                            bGotSection = True
+                            if matcher.group(1) == upsname:
+                                bTitleComment = False
+                            break
+                    if not bGotSection:
+                        blk.append("[%s]" % upsname)
+                        bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+
         # if not len(title):
         title = "Driver configuration"
     elif comment_type == "LSUSB:":
@@ -424,27 +448,66 @@ def nds_dev_comment_block(raw):
         if not len(title):
             title = "Logs of NUT service startup"
     elif comment_type == "FIXME:UPSCMD:":
-        if len(title) and title not in raw[0]:
-            blk.append("# %s" % title)
+        # single-token title is UPS name for example command, multi-token is pasted as a starting comment
+        bTitleComment = True
+        upsname = "ups"
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+        # else: TODO: extract upsname from example command and/or
+        # > Instant commands supported on UPS [myupsname]:
+        # line, if any.
+
+        if not "@" in upsname:
+            upsname = upsname + "@localhost"
+
         # if not len(title):
-        title = "Commands per `upscmd -l ups@localhost` listing"
+        title = "Commands per `upscmd -l %s` listing" % upsname
         if "TODO" not in raw[0] and "FIXME" not in raw[0] \
                 and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
             blk.append("# TODO: Convert to CMD:... markup")
-        if "upscmd" not in raw[0] \
-                and (len(raw) < 2 or "upscmd" not in raw[1]):
-            blk.append(":; upscmd -l ups@localhost")
+        if "upscmd -l" not in raw[0] \
+                and (len(raw) < 2 or "upscmd -l" not in raw[1]):
+            blk.append(":; upscmd -l %s" % upsname)
+        # else: TODO: rewrite upsname in example command and/or
+        # > Instant commands supported on UPS [myupsname]:
+        # line, if any? Perhaps to address below in the loop.
     elif comment_type == "FIXME:UPSRW:":
-        if len(title) and title not in raw[0]:
-            blk.append("# %s" % title)
+        # single-token title is UPS name for example command, multi-token is pasted as a starting comment
+        bTitleComment = True
+        upsname = "ups"
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+        # else: TODO: extract upsname from example command, if any
+
+        if not "@" in upsname:
+            upsname = upsname + "@localhost"
+
         # if not len(title):
-        title = "Variables per `upsrw ups@localhost` listing"
+        title = "Variables per `upsrw %s` listing" % upsname
         if "TODO" not in raw[0] and "FIXME" not in raw[0] \
                 and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
             blk.append("# TODO: Convert to RW:... and RO:... markup")
-        if "upsrw" not in raw[0] \
-                and (len(raw) < 2 or "upsrw" not in raw[1]):
-            blk.append(":; upsrw ups@localhost")
+        if ("upsrw" not in raw[0] or "upsrw output" in raw[0]) \
+                and (len(raw) < 2 or ("upsrw" not in raw[1] or "upsrw output" in raw[1])):
+            blk.append(":; upsrw %s" % upsname)
+        # else: TODO: rewrite upsname in example command, if any?
+        # Perhaps to address below in the loop.
     elif comment_type is not None:
         msg = ("Invalid device block comment type: '%s'" % str(comment_type))
         if verbose:
@@ -461,9 +524,16 @@ def nds_dev_comment_block(raw):
         # if PEDANTIC_DECLARATIONS:
         #    raise RuntimeWarning (msg)
 
-    # Remove hash and one leading space
+    # Loop to populate the rest of ultimately published contents, finally:
     for line in raw:
-        blk.append(line[2:])
+        # Remove hash and one leading space
+        line = line[2:]
+        lineStrip = line.strip()
+        if comment_type == "FIXME:UPSRW:" and re.match(r'^upsrw output:*$', lineStrip):
+            continue
+        elif comment_type == "FIXME:UPSCMD:" and re.match(r'^upscmd output:*$', lineStrip):
+            continue
+        blk.append(line)
 
     devCommentBlocks.append({'title': title, 'content': blk})
 
