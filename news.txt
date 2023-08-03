@@ -1,3 +1,4 @@
+- Aug 3, 2023: revised the mark-up language and contents for NUT DDL (Devices Dumps Library) data files, so the generated pages should now expose much more structured information that was "hidden" there for years
 - May 31, 2023: published maintainer GPG key, `DE0184DA7043DCF7: public key "Jim Klimov (Doing FOSS since last millennium) <jimklimov@gmail.com>"` and updated metadata for past NUT v2.8.0 release
 - Feb 2, 2023: signed up for fiscal hosting with Open Source Collective at https://opencollective.com/networkupstools/ and GitHub sponsors program at https://github.com/sponsors/networkupstools
 - late 2022/early 2023: re-affirmed NUT portability goal that new releases should build and run at least wherever old ones worked, by making sure it still works on CentOS 6, Debian 7 and Solaris 8 (yes, there are users who still run them!)
