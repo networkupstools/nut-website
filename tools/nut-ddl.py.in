@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#   Copyright (c) 2014 - Daniele Pezzini <hyouko@gmail.com>
+#   Copyright (C) 2014 - Daniele Pezzini <hyouko@gmail.com>
+#   Copyright (C) 2022 - 2023 - Jim Klimov <jimklimov+nut@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -19,9 +20,12 @@
 
 import re
 import os
+import pathlib
 import argparse
 
 ###
+
+# NOTE: Detailed documentation is in nut-ddl repo README file
 
 # Path to NUT's manpages directory, relative to the working directory
 manDir = "nut/docs/man/"
@@ -35,6 +39,11 @@ WITH_ASCIIDOCTOR = False
 # Also not configurable externally now, but toggles rendering markup
 # below as we experiment with it:
 DEV_COMMENT_BLOCKS_AS_LIST = False #True
+
+# Should we warn or fail when we see unique entries like comments twice, etc.?
+PEDANTIC_DECLARATIONS = os.getenv("NUT_DDL_PEDANTIC_DECLARATIONS", "False")
+# Booleanize this:
+PEDANTIC_DECLARATIONS = (PEDANTIC_DECLARATIONS in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
 
 ###
 
@@ -77,6 +86,8 @@ ndsSL = -1
 varCmdComments = {}
 devComment = []
 devCommentBlocks = []
+devURLs_vendor = []
+devURLs_report = []
 devURLs = []
 nutVars = {}
 nutRWs = {}
@@ -113,8 +124,11 @@ def nds_version(raw):
     global ndsVersion
 
     if ndsVersion != "-1":
+        msg = "Redeclaration of NDS version"
         if verbose:
-            print ("Redeclaration of NDS version")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove '# NDS:VERSION:'
@@ -131,24 +145,103 @@ def nds_sl(raw):
     global ndsSL
 
     if ndsSL != -1:
+        msg = "Redeclaration of NDS support-level"
         if verbose:
-            print ("Redeclaration od NDS support-level")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove '# DEVICE:SUPPORT-LEVEL:'
     sl = int(raw[0][23:])
 
     if not 1 <= sl <= 10:
+        msg = ("NDS support-level: '%d' out of range [1..10]" % sl)
         if verbose:
-            print ("NDS support-level: '%d' out of range [1..10]" % sl)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     ndsSL = sl
 
 
+def nds_dev_url_vendor(raw):
+    """
+    Parse the URL for more device information
+    (manufacturer/vendor/brander site or product page).
+    May be present more than once, one URL per line.
+    """
+
+    # '# DEVICE:URL:VENDOR: *...\n'
+
+    # Remove leading 'start' of the line ('# DEVICE:URL:VENDOR: *')
+    line = str(raw[0][20:]).strip()
+
+    # Empty comment
+    if not len(line):
+        msg = "Empty device vendor URL"
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        return
+
+    # Too eager a copy-paste from asciidoc?
+    if line.startswith("link:"):
+        line = line.replace("link:", "", 1)
+
+    if not "://" in line:
+        msg = ("Device vendor URL does not contain a schema, ignored: %s" % line)
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        return
+
+    devURLs_vendor.append(line)
+
+
+def nds_dev_url_report(raw):
+    """
+    Parse the URL for more device information (mailing list, blog, NUT issue...)
+    where the report originated, driver was implemented, etc.
+    May be present more than once, one URL per line.
+    """
+
+    # '# DEVICE:URL:REPORT: *...\n'
+
+    # Remove leading 'start' of the line ('# DEVICE:URL:REPORT: *')
+    line = str(raw[0][20:]).strip()
+
+    # Empty comment
+    if not len(line):
+        msg = "Empty device report URL"
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        return
+
+    # Too eager a copy-paste from asciidoc?
+    if line.startswith("link:"):
+        line = line.replace("link:", "", 1)
+
+    if not "://" in line:
+        msg = ("Device report URL does not contain a schema, ignored: %s" % line)
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        return
+
+    devURLs_report.append(line)
+
+
 def nds_dev_url(raw):
     """
     Parse the URL for more device information (vendor site, NUT issue...)
+    if not converted or suited to the more specific VENDOR or REPORT types.
     May be present more than once, one URL per line.
     """
 
@@ -159,8 +252,11 @@ def nds_dev_url(raw):
 
     # Empty comment
     if not len(line):
+        msg = "Empty device URL"
         if verbose:
-            print ("Empty device URL")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Too eager a copy-paste from asciidoc?
@@ -168,8 +264,11 @@ def nds_dev_url(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
+        msg = ("Device URL does not contain a schema, ignored: %s" % line)
         if verbose:
-            print ("Device URL does not contain a schema, ignored: %s" % line)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     devURLs.append(line)
@@ -177,7 +276,9 @@ def nds_dev_url(raw):
 
 def nds_dev_comment(raw):
     """
-    Parse device comment.
+    Parse device comment. Note that only one per device may be defined.
+    See also DEVICE:COMMENT-BLOCK<:type>?: <title> which may be repeated
+    for tool output "screenshots".
     """
 
     # '# DEVICE:COMMENT[:]\n'
@@ -187,17 +288,23 @@ def nds_dev_comment(raw):
     # '# DEVICE:EOC\n'
 
     if len(devComment):
+        msg = "Redeclaration of device comment"
         if verbose:
-            print ("Redeclaration of device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove leading 'start' line ('# DEVICE:COMMENT[:]\n')
     raw = raw[1:]
 
     # Not a valid device comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# DEVICE:EOC":
+    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
+        msg = "Invalid device comment"
         if verbose:
-            print ("Invalid device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
@@ -205,8 +312,11 @@ def nds_dev_comment(raw):
 
     # Empty comment
     if not len(raw):
+        msg = "Empty device comment"
         if verbose:
-            print ("Empty device comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove hash and leading space
@@ -216,44 +326,215 @@ def nds_dev_comment(raw):
 
 def nds_dev_comment_block(raw):
     """
-    Parse device block-comment(s).
+    Parse device block-comment(s) with pre-formatted text (tool "screenshots").
     """
 
-    # '# DEVICE:COMMENT-BLOCK: *<title>\n'
-    # '# <comment>\n'
-    # '# <comment>\n'
+    # '# DEVICE:COMMENT-BLOCK:UPSCONF: *<single-token title may be UPS name if no section in text, otherwise pasted as a starting comment>\n'
+    # '# DEVICE:COMMENT-BLOCK:LSUSB: *<title with lsusb cmdline>\n'
+    # '# DEVICE:COMMENT-BLOCK:LOGS: *<optional title>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *<single-token title is UPS name for example command, multi-token is pasted as a starting comment>\n'
+    # '# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *<single-token title is UPS name for example command, multi-token is pasted as a starting comment>\n'
+    # '# DEVICE:COMMENT-BLOCK: *<title of unstructured info>\n'
+    # '# <content-to-become-pre-formatted>\n'
+    # '# <content-to-become-pre-formatted>\n'
     #	...
     # '# DEVICE:EOC\n'
 
-    # Preferably titled like "Configuration section" or "lsusb listing":
-    title = str(raw[0][23:]).strip()
-    if not len(title):
+    # Preferably titled like "Configuration section" or "lsusb listing",
+    # or specifying the content type, or both in some cases. The cut-off
+    # point is the colon char (comment_type_title starts with either type
+    # or possible space and title right away):
+    comment_type_title = str(raw[0][23:])
+    try:
+        # Variants of the remaining "type +/- title" to consider:
+        # " *<empty>"
+        # " *Some title (unstructured)"
+        # "TYPE: *<empty>"
+        # "TYPE: *Some title"
+        # For regex below, currently the "TYPE:" is all-caps letters and colon
+        # (may be inside, e.g. "FIXME:SOMETHING"); not adding more match chars
+        # until needed by a syntax extension.
+        matcher = re.match(r'^([A-Z:]+:)? *(.*)$', comment_type_title)
+        if matcher:
+            comment_type = matcher.group(1)
+            title = matcher.group(2)
+            if title is None:
+                # Be sure it is a string type
+                title = ""
+        else:
+            # Report below and use it all as title if not in pedantic mode
+            raise ValueError("regular expression did not match expected pattern")
+    except ValueError as exc:
+        msg = ("Could not parse tag '%s' => tail '%s' further into a type and title: %s" % (str(raw[0]), comment_type_title, str(exc)))
         if verbose:
-            print ("Invalid device block comment title, using default")
-        title = "Data sample"
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        comment_type = None
+        title = comment_type_title
+    title = title.strip()
+    # NOTE: Title validation continued after general content sanity check and trim
 
-    # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK: *<title>\n')
+    # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK<:TYPE>: *<title>\n')
     raw = raw[1:]
 
-    # Not a valid device comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# DEVICE:EOC":
+    # Not a valid device block comment, don't do anything with it
+    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
+        msg = "Invalid device block comment"
         if verbose:
-            print ("Invalid device block comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
     raw = raw[:-1]
 
-    # Empty comment
+    # Empty comment block
     if not len(raw):
+        msg = "Empty device block comment"
         if verbose:
-            print ("Empty device block comment")
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
-    # Remove hash and one leading space
+    # Collect stripped and prepared contents here:
     blk = []
+    upsname = None
+
+    # Pre-populate contents (and default title sometimes), as
+    # based on caller-specified type and/or title of the entry:
+    if comment_type == "UPSCONF:":
+        # single-token title is UPS name, multi-token is pasted as a starting comment
+        bGotSection = False
+        bTitleComment = True
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    for line in raw:
+                        line = line[2:].strip()
+                        # No dollar, trailing comment syntactically possible:
+                        matcher = re.match(r'^\[([^ ]+)\]', line)
+                        if matcher:
+                            bGotSection = True
+                            if matcher.group(1) == upsname:
+                                bTitleComment = False
+                            break
+                    if not bGotSection:
+                        blk.append("[%s]" % upsname)
+                        bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+
+        # if not len(title):
+        title = "Driver configuration"
+    elif comment_type == "LSUSB:":
+        if len(title):
+            # Title assumed to be e.g. `lsusb -vvv` or `lsusb -s 007:002` (bus:dev)
+            # or `lsusb -d 1234:5678` (vid:pid) or even `lsusb | grep Liebert`
+            blk.append(":; %s" % title)
+            title = "`%s` listing"
+        else:
+            if "lsusb" in raw[0]:
+                title = "`lsusb` listing"
+            else:
+                # Assume the content starts with desired command, if posted
+                title = "`lsusb` or similar tool listing"
+    elif comment_type == "LOGS:":
+        if not len(title):
+            title = "Logs of NUT service startup"
+    elif comment_type == "FIXME:UPSCMD:":
+        # single-token title is UPS name for example command, multi-token is pasted as a starting comment
+        bTitleComment = True
+        upsname = "ups"
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+        # else: TODO: extract upsname from example command and/or
+        # > Instant commands supported on UPS [myupsname]:
+        # line, if any.
+
+        if not "@" in upsname:
+            upsname = upsname + "@localhost"
+
+        # if not len(title):
+        title = "Commands per `upscmd -l %s` listing" % upsname
+        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
+                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+            blk.append("# TODO: Convert to CMD:... markup")
+        if "upscmd -l" not in raw[0] \
+                and (len(raw) < 2 or "upscmd -l" not in raw[1]):
+            blk.append(":; upscmd -l %s" % upsname)
+        # else: TODO: rewrite upsname in example command and/or
+        # > Instant commands supported on UPS [myupsname]:
+        # line, if any? Perhaps to address below in the loop.
+    elif comment_type == "FIXME:UPSRW:":
+        # single-token title is UPS name for example command, multi-token is pasted as a starting comment
+        bTitleComment = True
+        upsname = "ups"
+        if len(title):
+            if not " " in title:
+                # ...else: multi-token, use as comment anyway
+                # Below, we strip possible markup (so far don't care about proper nesting)
+                upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
+                if len(upsname):
+                    bTitleComment = False
+
+            if bTitleComment:
+                blk.append("# %s" % title)
+        # else: TODO: extract upsname from example command, if any
+
+        if not "@" in upsname:
+            upsname = upsname + "@localhost"
+
+        # if not len(title):
+        title = "Variables per `upsrw %s` listing" % upsname
+        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
+                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+            blk.append("# TODO: Convert to RW:... and RO:... markup")
+        if ("upsrw" not in raw[0] or "upsrw output" in raw[0]) \
+                and (len(raw) < 2 or ("upsrw" not in raw[1] or "upsrw output" in raw[1])):
+            blk.append(":; upsrw %s" % upsname)
+        # else: TODO: rewrite upsname in example command, if any?
+        # Perhaps to address below in the loop.
+    elif comment_type is not None:
+        msg = ("Invalid device block comment type: '%s'" % str(comment_type))
+        if verbose:
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+        comment_type = None
+
+    if not len(title):
+        title = "Data sample"
+        msg = ("Invalid device block comment title, using default: '%s'" % title)
+        if verbose:
+            print (msg)
+        # if PEDANTIC_DECLARATIONS:
+        #    raise RuntimeWarning (msg)
+
+    # Loop to populate the rest of ultimately published contents, finally:
     for line in raw:
-        blk.append(line[2:])
+        # Remove hash and one leading space
+        line = line[2:]
+        lineStrip = line.strip()
+        if comment_type == "FIXME:UPSRW:" and re.match(r'^upsrw output:*$', lineStrip):
+            continue
+        elif comment_type == "FIXME:UPSCMD:" and re.match(r'^upscmd output:*$', lineStrip):
+            continue
+        blk.append(line)
 
     devCommentBlocks.append({'title': title, 'content': blk})
 
@@ -272,17 +553,23 @@ def nds_var_cmd_comments(raw):
     itemName = re.sub(":COMMENT:?.*$", "", raw[0][2:])
 
     if varCmdComments.get(itemName):
+        msg = ("Redeclaration of comment for '%s'" % itemName)
         if verbose:
-            print ("Redeclaration of comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove leading 'start' line
     raw = raw[1:]
 
     # Not a valid comment, don't do anything with it
-    if not len(raw) or raw[-1] != "# %s:EOC" % itemName:
+    if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
+        msg = ("Invalid comment for '%s'" % itemName)
         if verbose:
-            print ("Invalid comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     # Remove the 'close' line
@@ -290,8 +577,11 @@ def nds_var_cmd_comments(raw):
 
     # Empty comment
     if not len(raw):
+        msg = ("Empty comment for '%s'" % itemName)
         if verbose:
-            print ("Empty comment for '%s'" % itemName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     varCmdComments[itemName] = []
@@ -311,11 +601,20 @@ ndsCommentsMap = {
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment block
     #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK:UPSCONF: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LSUSB: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LOGS: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *.*$": nds_dev_comment_block,
     "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
-    # Further information about the device
+    # Further information about the device (vendor/mfr, issue/blog/mailing list, unclassified)
+    #  '# DEVICE:URL:VENDOR:<link>\n'
+    "^# DEVICE:URL:VENDOR: *[^ ]+://[^ ]+$": nds_dev_url_vendor,
+    #  '# DEVICE:URL:REPORT:<link>\n'
+    "^# DEVICE:URL:REPORT: *[^ ]+://[^ ]+$": nds_dev_url_report,
     #  '# DEVICE:URL:<link>\n'
     "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
@@ -331,11 +630,20 @@ devCommentsMap = {
     "^# ([\w\-]+\.)+[\w\-]+:COMMENT:?$": nds_var_cmd_comments,
     # Device - Start of comment block
     #  '# DEVICE:COMMENT-BLOCK: *<title>\n'
+    "^# DEVICE:COMMENT-BLOCK:UPSCONF: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LSUSB: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:LOGS: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: *.*$": nds_dev_comment_block,
+    "^# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: *.*$": nds_dev_comment_block,
     "^# DEVICE:COMMENT-BLOCK: *.*$": nds_dev_comment_block,
     # Device - Start of comment
     #  '# DEVICE:COMMENT[:]\n'
     "^# DEVICE:COMMENT:?$": nds_dev_comment,
-    # Further information about the device
+    # Further information about the device (vendor/mfr, issue/blog/mailing list, unclassified)
+    #  '# DEVICE:URL:VENDOR:<link>\n'
+    "^# DEVICE:URL:VENDOR: *[^ ]+://[^ ]+$": nds_dev_url_vendor,
+    #  '# DEVICE:URL:REPORT:<link>\n'
+    "^# DEVICE:URL:REPORT: *[^ ]+://[^ ]+$": nds_dev_url_report,
     #  '# DEVICE:URL:<link>\n'
     "^# DEVICE:URL: *[^ ]+://[^ ]+$": nds_dev_url,
     # Support level
@@ -349,10 +657,10 @@ devCommentsMap = {
 EOCPatterns = [
     # Vars/commands comments
     #  '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:EOC\n'
-    "^# ([\w\-]+\.)+[\w\-]+:EOC$",
+    "^# ([\w\-]+\.)+[\w\-]+:EOC:?$",
     # Device comment
     #  '# DEVICE:EOC\n'
-    "^# DEVICE:EOC$"
+    "^# DEVICE:EOC:?$"
 ]
 
 ###
@@ -381,8 +689,11 @@ def nds_vars(raw):
     varName = re.sub(":.*$", "", raw["line"])
 
     if nutVars.get(varName):
+        msg = ("Redeclaration of variable '%s'" % varName)
         if verbose:
-            print ("Redeclaration of variable '%s'" % varName)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     nutVars[varName] = {}
@@ -425,8 +736,11 @@ def nds_rw_vars(raw):
         nutRWs[varName] = {}
         nutRWs[varName]["type"] = varType
     elif not nutRWs[varName].get("type") or nutRWs[varName]["type"] != varType:
+        msg = ("Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"]))
         if verbose:
-            print ("Redeclaration of RW variable '%s' with mismatching types (%s != %s)" % (varName, varType, nutRWs[varName]["type"]))
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     if varType == "STRING":
@@ -436,22 +750,36 @@ def nds_rw_vars(raw):
             if len(buf) < 4:
                 buf.append("0")
         elif len(buf) < 4:
+            msg = ("Declaration of RW variable '%s' of type 'STRING' without a length" % varName)
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'STRING' without a length" % varName)
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
         if not buf[3].isdigit():
+            msg = ("Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3]))
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'STRING' with an invalid length (%s)" % (varName, buf[3]))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         length = int(buf[3])
         if nutRWs[varName].get("opts"):
-            if verbose and length != nutRWs[varName]["opts"]:
-                print ("Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"]))
-            elif verbose:
-                print ("Redeclaration of variable '%s' of type 'STRING'" % varName)
+            if length != nutRWs[varName]["opts"]:
+                msg = ("Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (varName, length, nutRWs[varName]["opts"]))
+            else:
+                msg = ("Redeclaration of variable '%s' of type 'STRING'" % varName)
+
+            if verbose:
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             return
         nutRWs[varName]["opts"] = length
         if eol is not None:
@@ -459,10 +787,15 @@ def nds_rw_vars(raw):
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match("^\".+\"$", buf[3]):
+            msg = ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName)
-                print ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'")
-                print ("\tgot: '%s'" % raw["line"])
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -475,25 +808,40 @@ def nds_rw_vars(raw):
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match("^\"\d+\" \"\d+\"$", buf[3]):
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName)
-                print ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'")
-                print ("\tgot: '%s'" % raw["line"])
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         rwRange = buf[3].split("\"")
         if not len(rwRange[1]) or not rwRange[1].isdigit() or not len(rwRange[3]) or not rwRange[3].isdigit():
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
         rangeMin = int(rwRange[1])
         rangeMax = int(rwRange[3])
         if not rangeMin < rangeMax:
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax))
+
             if verbose:
-                print ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range (%d..%d)" % (varName, rangeMin, rangeMax))
+                print (msg)
+            if PEDANTIC_DECLARATIONS:
+                raise RuntimeWarning (msg)
+
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
@@ -509,8 +857,13 @@ def nds_rw_vars(raw):
     else:
         if not nutRWs[varName].get("opts"):
             del nutRWs[varName]
+        msg = ("Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType))
+
         if verbose:
-            print ("Declaration of RW variable '%s' of unknown type '%s'." % (varName, varType))
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
+
         return
 
 
@@ -539,8 +892,11 @@ def nds_commands(raw):
     command = re.sub("^#?CMD:", "", raw["line"])
 
     if nutCommands.get(command):
+        msg = ("Redeclaration of command '%s'" % command)
         if verbose:
-            print ("Redeclaration of command '%s'" % command)
+            print (msg)
+        if PEDANTIC_DECLARATIONS:
+            raise RuntimeWarning (msg)
         return
 
     nutCommands[command] = {};
@@ -636,7 +992,7 @@ def haveDetailedComments():
     Based on collected information, estimate if we have any
     detailed comments to show for the particular report
     """
-    return (len(devComment) or len(devURLs) or len(devCommentBlocks))
+    return (len(devComment) or len(devURLs_vendor) or len(devURLs_report) or len(devURLs) or len(devCommentBlocks))
 
 def parseFile(inputFile):
     """
@@ -711,8 +1067,11 @@ def parseFile(inputFile):
                 break
         if bailout:
             if not ignoreNonComments:
+                msg = ("NUT's 'EOF' found, ignoring remaining non-comment lines")
                 if verbose:
-                    print ("NUT's 'EOF' found, ignoring remaining non-comment lines")
+                    print (msg)
+                # if PEDANTIC_DECLARATIONS:
+                #     raise RuntimeWarning (msg)
                 ignoreNonComments = True
             commentContinuation = False
             continue
@@ -777,6 +1136,51 @@ def buildPage():
     # New NUT version in page
     if fromFileName["reportNumber"] == 1:
         page.append("\n\n== %s\n" % fromFileName["nutVersion"])
+    else:
+        if PEDANTIC_DECLARATIONS:
+            # Check that preceding numbers exist. Reminder from our spec:
+            # <report-number> is the progressive number of reports available
+            # for a device limited to a version of NUT (also if the driver,
+            # <driver-name>, is different from one report to another), i.e.
+            # for each device:
+            # * every report being the first one for a particular version
+            #   of NUT must have a report number equal to 01.
+            # * every report still in the same version number must increase
+            #   the report number also if the driver is not the same as the
+            #   other ones.
+            num = fromFileName["reportNumber"]
+            assert (num is not None and num > 0)
+
+            # FIXME: Here we currently hardcode that report numbers have
+            # two-digit lengths. If this ever gets to vary, extend here.
+            repnumlen = 2
+
+            # See also: getInfoFFN() parsing
+            # [/path/to/]<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}
+            repGlob = re.sub(
+                    r"^(.*__.*__).*(__.*__\d+)$",
+                    r"\1*\2",
+                    fromFileName["fileName"]
+                ) + "." + fromFileName["fileType"]
+            while num > 1:
+                num = num - 1
+                zNum = str(num).zfill(repnumlen)
+                prevFileGlob = re.sub(
+                    r"__0*%s(\....)$" % fromFileName["reportNumber"],
+                    r"__%s\1" % zNum,
+                    repGlob)
+                prevFiles = list(pathlib.Path(
+                        "." if fromFileName["filePath"] is None or not len(fromFileName["filePath"]) else fromFileName["filePath"]
+                    ).glob(prevFileGlob))
+                if prevFiles is None or len(prevFiles) != 1:
+                    msg = "While processing file %s discovered that a single preceding report file numbered %s does not exist: %s: matched %s" % (
+                            inputFile, zNum,
+                            os.path.sep.join([fromFileName["filePath"], str(prevFileGlob)]),
+                            str(prevFiles)
+                        )
+                    if verbose:
+                        print (msg)
+                    raise RuntimeWarning (msg)
 
     # Note: report numbering should be sequential per NUT release
     # and may cover several drivers in it that handle the device:
@@ -969,7 +1373,21 @@ def buildPage():
         if len(devComment):
             for commentLine in devComment:
                 page.append(commentLine)
-        # Device URL(s)
+        # Device report URL(s)
+        if len(devURLs_report):
+            # Note: asciidoc list is separated by a blank line
+            page.append("\nReported at:\n")
+            for commentLine in devURLs_report:
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
+        # Device vendor URL(s)
+        if len(devURLs_vendor):
+            # Note: asciidoc list is separated by a blank line
+            page.append("\nVendor/Manufacturer information:\n")
+            for commentLine in devURLs_vendor:
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
+        # Device URL(s) (unclassified)
         if len(devURLs):
             # Note: asciidoc list is separated by a blank line
             page.append("\nSee also:\n")
@@ -1107,6 +1525,7 @@ except OSError:
 page = buildPage()
 
 # Write page to outputFile
+# Note: no "pedantic" checks for these reports
 try:
     # Already existing page
     if os.path.isfile(outputFile):
