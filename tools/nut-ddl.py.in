@@ -1070,8 +1070,8 @@ def parseFile(inputFile):
                 msg = ("NUT's 'EOF' found, ignoring remaining non-comment lines")
                 if verbose:
                     print (msg)
-                if PEDANTIC_DECLARATIONS:
-                    raise RuntimeWarning (msg)
+                # if PEDANTIC_DECLARATIONS:
+                #     raise RuntimeWarning (msg)
                 ignoreNonComments = True
             commentContinuation = False
             continue
