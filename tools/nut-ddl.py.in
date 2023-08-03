@@ -422,27 +422,40 @@ def nds_dev_comment_block(raw):
         # single-token title is UPS name, multi-token is pasted as a starting comment
         bGotSection = False
         bTitleComment = True
+        upsname = None
         if len(title):
             if not " " in title:
                 # ...else: multi-token, use as comment anyway
                 # Below, we strip possible markup (so far don't care about proper nesting)
                 upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
-                if len(upsname):
-                    for line in raw:
-                        line = line[2:].strip()
-                        # No dollar, trailing comment syntactically possible:
-                        matcher = re.match(r'^\[([^ ]+)\]', line)
-                        if matcher:
-                            bGotSection = True
-                            if matcher.group(1) == upsname:
-                                bTitleComment = False
-                            break
-                    if not bGotSection:
-                        blk.append("[%s]" % upsname)
-                        bTitleComment = False
+                if not len(upsname):
+                    upsname = None
 
-            if bTitleComment:
-                blk.append("# %s" % title)
+        for line in raw:
+            line = line[2:].strip()
+            # No dollar, trailing comment syntactically possible:
+            matcher = re.match(r'^\[([^ ]+)\]', line)
+            if matcher:
+                bGotSection = True
+                if upsname is not None and matcher.group(1) == upsname:
+                    bTitleComment = False
+                break
+
+        if not bGotSection:
+            if upsname is None:
+                msg = "Driver configuraton example lacks a section name for the device"
+                if verbose:
+                    print (msg)
+                if PEDANTIC_DECLARATIONS:
+                    raise RuntimeWarning (msg)
+                # else: ugh, whatever
+                blk.append("[ups]")
+            else:
+                blk.append("[%s]" % upsname)
+                bTitleComment = False
+
+        if len(title) and bTitleComment:
+            blk.append("# %s" % title)
 
         # if not len(title):
         title = "Driver configuration"
