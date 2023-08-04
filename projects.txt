@@ -82,6 +82,21 @@ link:https://github.com/networkupstools/wmnut/[WMNUT]
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
 (Network UPS Tools) framework on Linux and other systems.
 
+
+Mobile desktop clients
+----------------------
+
+link:https://github.com/norkator/apcupsd-monitor[apcupsd-monitor]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "apcupsd-monitor" Android app actually supports several server protocols
+for monitoring power devices, including `apcupsd`, NUT, Eaton IPM (XML/HTTP)
+and commands over SSH.
+
+Pre-built application package is available on Google Play at
+https://play.google.com/store/apps/details?id=com.nitramite.apcupsdmonitor
+
+
 Network Management Systems (NMS) integration
 --------------------------------------------
 
