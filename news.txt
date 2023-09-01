@@ -1,3 +1,4 @@
+- Sep 1, 2023: link:https://wmnut.networkupstools.org[WMNut] 0.69 released, updated for NUT 2.8.0 API compatibility and with revices documentation, CI checks, and build recipes
 - Aug 3, 2023: revised the mark-up language and contents for NUT DDL (Devices Dumps Library) data files, so the generated pages should now expose much more structured information that was "hidden" there for years
 - May 31, 2023: published maintainer GPG key, `DE0184DA7043DCF7: public key "Jim Klimov (Doing FOSS since last millennium) <jimklimov@gmail.com>"` and updated metadata for past NUT v2.8.0 release
 - Feb 2, 2023: signed up for fiscal hosting with Open Source Collective at https://opencollective.com/networkupstools/ and GitHub sponsors program at https://github.com/sponsors/networkupstools
