@@ -12,10 +12,12 @@ link:https://github.com/networkupstools/nut/wiki/[NUT GitHub wiki].
 Graphical desktop clients
 -------------------------
 
-link:http://knut.prynych.cz[KNutClient]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://sites.google.com/a/prynych.cz/knutclient[KNutClient]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 KNutClient is a visual client for NUT.
+
+See also: http://knut.prynych.cz/
 
 link:http://www.lestat.st/en/informatique/projets/nut-monitor[NUT-Monitor]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,10 +151,12 @@ UPS status to the Nagios monitoring system using NUT.
 Configuration GUIs
 ------------------
 
-link:http://www.knut.noveradsl.cz/knutsetting/index.html[KNutSetting]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://sites.google.com/a/prynych.cz/knutsetting[KNutSetting]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 KNutSetting is a visual KDE tool for configuring NUT - Network UPS Tools.
+
+See also: http://knut.prynych.cz/
 
 Other software projects
 -----------------------
