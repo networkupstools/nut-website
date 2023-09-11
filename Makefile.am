@@ -1,5 +1,12 @@
 # NOTE: Syntax relies on GNU Make; YMMV with other implementations
 
+# CSS based simulated frames layout. The "web-layout" is old design
+# used for NUT releases 2.8.0 and before. The "bootstrap" is newer.
+LAYOUT = web-layout
+# New Bootstrap project based layout, proposed for NUT release 2.8.1
+# and later, see https://github.com/networkupstools/nut-website/pull/31
+#LAYOUT = bootstrap
+
 # Also relies on GNU `ln -fsr` options, for historic sub-site publication
 LN = ln
 #LN = gln
@@ -43,11 +50,37 @@ LAYOUT_FILES =	\
 	css/xhtml11-quirks.css	\
 	css/xhtml11.css
 
-SCRIPT_FILES =	\
+BOOTSTRAP_LAYOUT_FILES =	\
+	css/nut.css	\
+	css/asciidoc-bootstrap.min.css
+
+WEBLAYOUT_SCRIPT_FILES =	\
 	scripts/asciidoc.js	\
 	scripts/filter_png.js	\
 	scripts/jquery.js	\
 	scripts/nut_jquery.js
+
+BOOTSTRAP_SCRIPT_FILES =	\
+	scripts/nut.js	\
+	scripts/bootstrap.min.js	\
+	scripts/jquery.min.js \
+	scripts/asciidoc.js
+
+# TODO: do we actually need the following?
+BOOTSTRAP_SCRIPT_FILES_EXTRA =
+	js/html5shiv.min.js	\
+	js/respond.min.js
+	js/ie8-responsive-file-warning.js
+	js/ie-emulation-modes-warning.js
+	js/npm.js
+
+SCRIPT_FILES =
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #SCRIPT_FILES += $(BOOTSTRAP_SCRIPT_FILES)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #SCRIPT_FILES += $(WEBLAYOUT_SCRIPT_FILES)
+# HIDE FROM AUTOMAKE #endif
 
 WEBSITE_FILES =	\
 	acknowledgements.html	\
@@ -64,6 +97,8 @@ WEBSITE_FILES =	\
 	ups-protocols.html
 
 WEBSITE_DEPS =	\
+	index-jumboinfo.html \
+	index-jumboinfo-header-$(LAYOUT).html \
 	nut/docs/solaris-usb.html	\
 	nut/docs/cables.pdf	\
 	nut/docs/developer-guide.chunked	\
@@ -75,23 +110,57 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.chunked	\
 	nut/docs/user-manual.pdf
 
-# CSS based simulated frames layout.
-LAYOUT = web-layout
+BOOTSTRAP_WEBSITE_DEPS = \
+	navinfo.html
+
+BOOTSTRAP_WEBSITE_FONTS = \
+	fonts/glyphicons-halflings-regular.eot \
+	fonts/glyphicons-halflings-regular.svg \
+	fonts/glyphicons-halflings-regular.ttf \
+	fonts/glyphicons-halflings-regular.woff \
+	fonts/glyphicons-halflings-regular.woff2
+
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #WEBSITE_DEPS += $(BOOTSTRAP_WEBSITE_DEPS)
+# HIDE FROM AUTOMAKE #endif
 
 ADOC_PARAMS_COMMON =	\
-	--backend=xhtml11	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
 	--attribute icons	\
 	--attribute linkcss	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
+	--attribute=websitelayout="$(LAYOUT)"		\
 	--attribute=revision="$(PACKAGE_VERSION)"	\
 	--attribute=webrevision="$(WEBSITE_VERSION)"	\
 	--attribute tree_version="@TREE_VERSION@"	\
 	--attribute localdate="`TZ=UTC date +%Y-%m-%d`"	\
 	--attribute localtime="`TZ=UTC date +%H:%M:%S`"	\
 	--attribute=date="`TZ=UTC date`"
+
+ADOC_PARAMS_WEB_LAYOUT = \
+	--backend=xhtml11
+
+ADOC_PARAMS_BOOTSTRAP = \
+	--backend=html5	\
+	--attribute lang=en	\
+	--attribute totop!	\
+	--attribute brand="Network UPS Tools"	\
+	--attribute brandref=./	\
+	--attribute stylesdir=css	\
+	--attribute navbar=fixed	\
+	--attribute navinfo1	\
+	--attribute favicon	\
+	--attribute script=nut.js \
+	--attribute bootstrapdir=.
+
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #ADOC_PARAMS_COMMON += $(ADOC_PARAMS_BOOTSTRAP)
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #ADOC_PARAMS_COMMON += $(ADOC_PARAMS_WEB_LAYOUT)
+# HIDE FROM AUTOMAKE #endif
 
 ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
@@ -205,6 +274,11 @@ $(OUTDIR): all-files
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)/css
 	cp -f $(LAYOUT_FILES) $(OUTDIR)/css/
+	if test x"$(LAYOUT)" = xbootstrap ; then \
+		cp -f $(BOOTSTRAP_LAYOUT_FILES) $(OUTDIR)/css/ && \
+		$(MKDIR_P) $(OUTDIR)/fonts && \
+		cp -f $(BOOTSTRAP_WEBSITE_FONTS) $(OUTDIR)/fonts/ ; \
+	fi
 	$(MKDIR_P) $(OUTDIR)/docs/man
 	cp -fR $(WEBSITE_DEPS) $(OUTDIR)/docs/
 	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
@@ -301,18 +375,28 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),bootstrap)
+# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html index-jumboinfo-header-$(LAYOUT).html
+# HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc2 -a toc-placement=right -a toclevels=3
+# HIDE FROM AUTOMAKE #endif
+# HIDE FROM AUTOMAKE #ifeq ($(strip $(LAYOUT)),web-layout)
+# HIDE FROM AUTOMAKE #index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt index-jumboinfo.html index-jumboinfo-header-$(LAYOUT).html
+# HIDE FROM AUTOMAKE #	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE #ASCIIDOC_TOC_PARAMS = -a toc
+# HIDE FROM AUTOMAKE #endif
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 cables.html: nut/docs/cables.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $(ASCIIDOC_TOC_PARAMS) $<
 
 # React to newly published sources
 download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $(ASCIIDOC_TOC_PARAMS) $<
 
 documentation.html: nut/docs/documentation.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
@@ -324,7 +408,7 @@ nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 projects.html: projects.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $(ASCIIDOC_TOC_PARAMS) $<
 
 stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
@@ -435,6 +519,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc" - see $(ASCIIDOC_TOC_PARAMS)
 $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
 
@@ -476,11 +561,13 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,include::$(notdir $<)[])
 
 # Compiled asciidoc page (.html)
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc" - see $(ASCIIDOC_TOC_PARAMS)
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ###
 
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc" - see $(ASCIIDOC_TOC_PARAMS)
 $(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
@@ -572,7 +659,11 @@ FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)
 
 SPELLCHECK_SRC = \
 	README.asciidoc \
-	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt \
+	news.txt \
+	old-news.txt \
+	projects.txt \
+	stable-hcl.txt \
+	ups-protocols.txt \
 	protocols/sec.txt \
 	protocols/us9003.txt \
 	protocols/sec-protocol.txt \
@@ -589,6 +680,14 @@ SPELLCHECK_SRC = \
 	protocols/belkin.txt \
 	protocols/minicol.txt \
 	protocols/oneac.txt
+
+SPELLCHECK_SRC += index.txt
+
+# NOTE: It is possible that in historic releases "nut" source recipes
+# only spell-check *.txt filename patterns. Specifying this input file
+# does not hurt but may have no effect then.
+SPELLCHECK_SRC += index-jumboinfo.html.in
+#SPELLCHECK_SRC += index-jumboinfo-header-$(LAYOUT).html
 
 ### Note: currently the NUT makefiles' implementation of spellcheck rules
 ### assumes use of its own nut.dict. When it becomes possible to split it

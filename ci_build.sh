@@ -39,6 +39,15 @@ else
 	./configure || exit
 fi
 
+# Make sets its vars over those from env by default,
+# so the portable approach is to specify them on CLI:
+LAYOUT_ARG=""
+case "${LAYOUT-}" in
+	"") ;; # no-op
+	*" "*) echo "WARNING: there should be no spaces in LAYOUT, ignored" >&2 ;;
+	*) LAYOUT_ARG="LAYOUT=${LAYOUT}" ;;
+esac
+
 echo "=== Running make" >&2
 # NOTE: Initial "make" is not "-s" because it goes silent for too long, uneasy
 case "${NUT_HISTORIC_RELEASE-}" in
@@ -46,27 +55,29 @@ case "${NUT_HISTORIC_RELEASE-}" in
 	# Not historic, no source files to publish
 	if [ "${CI_AVOID_SPELLCHECK-}" != true ] ; then
 		echo "===== Running spellcheck against modern nut.dict" >&2
-		{ make -k -s -j 8 spellcheck 2>/dev/null ; make -sk spellcheck ; } || exit
+		{ make -k -s -j 8 $LAYOUT_ARG spellcheck 2>/dev/null ; make -sk $LAYOUT_ARG spellcheck ; } || exit
 	fi
 	echo "===== Running make of docs" >&2
-	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
+	{ make -k -j 8 $LAYOUT_ARG ; echo "===== Finalize make:" >&2; make -s $LAYOUT_ARG ; } || exit
 	;;
 0.*|1.*|2.[0123456].*|2.7.[01234].*)
 	# NOTE: v2.7.5+ should be okay with parallelized builds of docs etc
+	[ -n "$LAYOUT_ARG" ] || LAYOUT_ARG="LAYOUT=web-layout"
 	echo "===== Running make dist-files" >&2
 	(cd nut && git stash -- docs)
-	{ make -k dist-sig-files || make dist-files; } || { (cd nut && git stash pop); exit 1; }
+	{ make -k $LAYOUT_ARG dist-sig-files || make $LAYOUT_ARG dist-files; } || { (cd nut && git stash pop); exit 1; }
 	echo "===== Running make of docs" >&2
 	(cd nut && git stash pop)
-	{ make -k ; echo "===== Finalize make:" >&2; make -s ; } || exit
+	{ make -k $LAYOUT_ARG ; echo "===== Finalize make:" >&2; make -s $LAYOUT_ARG ; } || exit
 	;;
 2.8.*|*)
+	[ -n "$LAYOUT_ARG" ] || { [ x"${NUT_HISTORIC_RELEASE-}" = x"2.8.0" ] && LAYOUT_ARG="LAYOUT=web-layout" ; }
 	echo "===== Running make dist-files" >&2
 	(cd nut && git stash -- docs)
-	{ make -k -j 8 dist-sig-files || make -k -j 8 dist-files || make dist-files; } || { (cd nut && git stash pop); exit 1; }
+	{ make -k -j 8 $LAYOUT_ARG dist-sig-files || make -k -j 8 $LAYOUT_ARG dist-files || make $LAYOUT_ARG dist-files; } || { (cd nut && git stash pop); exit 1; }
 	echo "===== Running make of docs" >&2
 	(cd nut && git stash pop)
-	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
+	{ make -k -j 8 $LAYOUT_ARG ; echo "===== Finalize make:" >&2; make -s $LAYOUT_ARG ; } || exit
 	;;
 esac
 
