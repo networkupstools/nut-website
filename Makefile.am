@@ -203,7 +203,13 @@ $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
-	gpg --export -a 0x55CA5976 > $(SOURCE_DIR)/nut-key.gpg
+
+# Requires that local system keychain has the needed keys
+# TODO: Update with current set of identifiers?
+# NOTE: Since 2023 the file in probably maintained manually,
+# including older used release keys and ones introduced by JK.
+$(SOURCE_DIR)/nut-key.gpg:
+	gpg --export -a 0x55CA5976 > $@
 
 $(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt
 
