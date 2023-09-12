@@ -75,6 +75,16 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.chunked	\
 	nut/docs/user-manual.pdf
 
+if WITH_NUT_HISTORIC_RELEASE
+else
+# Since run-up to NUT v2.8.1 [#1953]
+WEBSITE_DEPS +=	\
+	nut/docs/release-notes.chunked	\
+	nut/docs/release-notes.pdf	\
+	nut/docs/ChangeLog.chunked	\
+	nut/docs/ChangeLog.pdf
+endif
+
 # CSS based simulated frames layout.
 LAYOUT = web-layout
 
@@ -176,8 +186,18 @@ $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
 	cd $(SOURCE_DIR)/@TREE_VERSION@/ && md5sum -c nut-@TARBALL_VERSION@.tar.gz.md5
 	cd $(SOURCE_DIR)/@TREE_VERSION@/ && sha256sum -c nut-@TARBALL_VERSION@.tar.gz.sha256
-	cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
+	if test -s nut/NEWS.adoc ; then \
+	    cp -f nut/NEWS.adoc $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt ; \
+	else \
+	    cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt ; \
+	fi
 	cp -f nut/ChangeLog $(SOURCE_DIR)/@TREE_VERSION@/
+	if test -s nut/docs/release-notes.pdf ; then \
+	    cp -f nut/docs/release-notes.pdf $(SOURCE_DIR)/@TREE_VERSION@/release-notes-$(PACKAGE_VERSION).pdf ; \
+	fi
+	if test -s nut/docs/ChangeLog.pdf ; then \
+	    cp -f nut/docs/ChangeLog.pdf $(SOURCE_DIR)/@TREE_VERSION@/ChangeLog-$(PACKAGE_VERSION).pdf ; \
+	fi
 
 # Separate chore for maintainers with a key
 $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
