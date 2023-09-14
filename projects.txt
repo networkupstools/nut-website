@@ -330,7 +330,6 @@ link:http://www.thecus.com[Thecus NAS]
 Thecus NAS firmware includes NUT for UPS support. The
 link:http://www.thecus.com/Downloads/DOM/Compatible_List/UPS_List_v1.0_ALL.pdf[following list of devices] is known to be supported.
 
-
 link:http://www.buffalotech.com[Buffalo NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -343,7 +342,6 @@ link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
 provides easy infrastructure monitoring solution, using the link:http://42ity.org[42ITy(TM)]
 Open Source data center monitoring software stack, which relies on NUT for
 power devices monitoring.
-
 
 link:https://www.home-assistant.io/integrations/nut/[Home Assistant NUT integration]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -358,7 +356,6 @@ git sources were contributed by community and posted at NUT GitHub wiki:
 
 * https://github.com/networkupstools/nut/wiki/Building-NUT-integration-for-Home-Assistant
 
-
 link:https://github.com/vectronic/homebridge-nut/[Homebridge NUT integration by vectronic]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -370,7 +367,6 @@ home automation project (for monitoring with HomeKit) includes a NUT plugin.
   NUT integration by ToddGreenfield]
 
 Instructions are in the project README file.
-
 
 link:https://github.com/DRuggeri/nut_exporter/[Network UPS Tools (NUT) Prometheus Exporter]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
