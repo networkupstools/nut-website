@@ -267,6 +267,13 @@ link:https://github.com/skarcha/node-nut/[Node-NUT]
 
 A NodeJS module that implements a NUT (Network UPS Tools) client.
 
+link:https://github.com/dietah/nut-http[NUT HTTP API]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An API wrapper that outputs the `upsc` command as a JSON output. This is a small
+HTTP server written in JavaScript which relays HTTP request parameters to `upsc`
+command line arguments, and neatly wraps the result as JSON.
+
 link:https://github.com/nslythe/NUTService[NUTService and C# NUTClient]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
