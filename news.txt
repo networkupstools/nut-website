@@ -1,3 +1,4 @@
+- Sep 18, 2023: access to interactive NUT CI farm resources now requires a logged-in session (web scrapers overwhelmed it)
 - Sep 12, 2023: NUT documentation was restructured, in particular, from now on the current codebase provides `INSTALL.nut.adoc`, `NEWS.adoc` and `UPGRADING.adoc` files (with `.adoc` extensions) so older URLs pointing to files without these extensions may have got obsoleted. This change allows IDEs (including GitHub Web UI) to render most of the markup automagically. Also, a recipe and artifact for `release-notes.pdf` is now provided.
 - Sep 1, 2023: link:http://wmnut.networkupstools.org[WMNut] 0.69 released, updated for NUT 2.8.0 API compatibility and with revised documentation, CI checks, and build recipes
 - Aug 3, 2023: revised the mark-up language and contents for NUT DDL (Devices Dumps Library) data files, so the generated pages should now expose much more structured information that was "hidden" there for years
