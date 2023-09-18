@@ -166,7 +166,9 @@ echo "Initializing the submodules..."
 git submodule init || quit
 echo "Updating the submodules..."
 git submodule update || quit
+echo "Updating the submodules recursively (just in case)..."
 git submodule update --remote --recursive || quit
+echo "Updating the submodule tags..."
 git submodule foreach 'git fetch --tags' || true
 echo_spacer
 
