@@ -27,3 +27,9 @@ historic-release.txt
 
 # Auto-published site
 /networkupstools.github.io
+
+# IDEs
+nbproject
+.idea
+.vscode
+*.iml
