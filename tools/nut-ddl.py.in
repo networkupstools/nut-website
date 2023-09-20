@@ -301,7 +301,7 @@ def nds_dev_comment(raw):
     # '# DEVICE:EOC\n'
 
     if len(devComment):
-        msg = "Redeclaration of device comment"
+        msg = "Redeclaration of device comment (only one un-typed block is allowed)"
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -313,7 +313,7 @@ def nds_dev_comment(raw):
 
     # Not a valid device comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = "Invalid device comment"
+        msg = ("Invalid device comment: %s" % ("seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -591,7 +591,7 @@ def nds_var_cmd_comments(raw):
 
     # Not a valid comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
-        msg = ("Invalid comment for '%s'" % itemName)
+        msg = ("Invalid comment for '%s': %s" % (itemName, "seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
