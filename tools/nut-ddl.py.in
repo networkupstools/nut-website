@@ -393,7 +393,7 @@ def nds_dev_comment_block(raw):
 
     # Not a valid device block comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = "Invalid device block comment"
+        msg = ("Invalid device block comment: %s" % ("seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
