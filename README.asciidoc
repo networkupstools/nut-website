@@ -97,6 +97,23 @@ envvars may be useful to commit changes locally, and to push index upwards:
 :;   export NUT_HISTORIC_RELEASE=v2.7.4
 ----
 
+Also, to make sure that syntax of `nut-ddl` data dump files is not ambiguous,
+you can tell their parser to abort in case of doubts:
+
+----
+:;   export NUT_DDL_PEDANTIC_DECLARATIONS=True
+
+:; ... make ...
+Traceback (most recent call last):
+  File "/home/jim/nut-website/./tools/nut-ddl.py", line 1532, in <module>
+    commentsMap[pattern](comment)
+  File "/home/jim/nut-website/./tools/nut-ddl.py", line 400, in nds_dev_comment_block
+    raise RuntimeWarning (msg)
+RuntimeWarning: Invalid device block comment: does not end with DEVICE:EOC (blank non-comment lines mid-block?)
+make: *** [Makefile:1012: ddl/PowerWalker/PowerWalker__VI_2200_SH__usbhid-ups__2.7.4__01.dev.txt] Error 1
+----
+
+
 Manual building in detail
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
