@@ -29,6 +29,7 @@ CyberPower
 - https://www.cyberpowersystems.com/products/software/mib-files/
 - link:protocols/snmp/CyberPower_MIB_v2.3.mib[CyberPower UPS MIB v2.3] (TXT, 330 KB)
 - link:protocols/snmp/CyberPower_MIB_v2.9.mib[CyberPower UPS MIB v2.9] (TXT, 341 KB)
+- link:protocols/snmp/CyberPower_MIB_v2.11.mib[CyberPower UPS MIB v2.11] (TXT, 420 KB)
 
 
 Delta
