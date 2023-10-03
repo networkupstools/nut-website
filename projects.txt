@@ -156,7 +156,7 @@ UPS status to the Nagios monitoring system using NUT.
 MQTT
 ----
 
-link:https://mqtt.org/[MQTT] is  an OASIS standard messaging protocol for
+link:https://mqtt.org/[MQTT] is an OASIS standard messaging protocol for
 IoT Messaging. For a quick overview of the protocol and its history, see also
 link:https://en.wikipedia.org/wiki/MQTT[Wikipedia article about MQTT].
 
