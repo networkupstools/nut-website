@@ -152,6 +152,40 @@ link:http://www.nagios.org/[Nagios plugin]
 The link:http://sourceforge.net/projects/nagiosplug/[check_ups] plugin returns
 UPS status to the Nagios monitoring system using NUT.
 
+
+MQTT
+----
+
+link:https://mqtt.org/[MQTT] is  an OASIS standard messaging protocol for
+IoT Messaging. For a quick overview of the protocol and its history, see also
+link:https://en.wikipedia.org/wiki/MQTT[Wikipedia article about MQTT].
+
+It is typically used for monitoring and management systems, so projects which
+provide MQTT data streams with NUT information (and vice versa) do not fall
+flat into either category and are listed here.
+
+They may also be of interest to developers, being NUT clients written in
+different programming languages which use different available projects for
+binding to NUT Networking API.
+
+link:https://github.com/rburkholder/nut2mqtt[nut2mqtt]
+
+Communication between Network UPS Tools (NUT) and MQTT, uses NUT's own
+C++ library (`libnutclient`).
+
+link:https://github.com/jnovack/nut-to-mqtt[nut-to-mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Written in Go, `nut-to-mqtt` is a data converter for exporting information
+from Network UPS Tools, and streaming to an MQTT broker.
+
+link:https://github.com/dniklewicz/ups-mqtt[ups-mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Simple python tool for fetching data from NUT server and publishing output
+to MQTT server. Can be used for UPS connected to Synology NAS with UPS Network
+Server enabled.
+
 Configuration GUIs
 ------------------
 
