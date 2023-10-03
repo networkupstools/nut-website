@@ -169,6 +169,7 @@ different programming languages which use different available projects for
 binding to NUT Networking API.
 
 link:https://github.com/rburkholder/nut2mqtt[nut2mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Communication between Network UPS Tools (NUT) and MQTT, uses NUT's own
 C++ library (`libnutclient`).
