@@ -37,30 +37,29 @@ Python module (the json module that comes with Python 2.7 will work) and the
 `lxml` module. You will also need `autoconf` and `automake`, and possibly
 `libtool` since the NUT module uses it.
 
-NOTE
-----
+[NOTE]
+======
 With recent Ubuntu/Debian releases, Python2 is deprecated so much that `pip2`
 tool seems to be no longer packaged. If you have both `python2` and `python3`
 installed, you may have install modules by `pip3` and to either declare the
 preference via environment variables for NUT and NUT-Website `configure` and
 other scripts, or change system-wide default symlink to `python` once:
 
-------
+----
 :; sudo apt-get install python3-pip
 :; pip3 install lxml simplejson pycparser
-------
+----
 
 and then either system-wide:
-------
+----
 :; sudo apt-get install python-is-python3
-------
+----
 
 or constrain the preference to nut-website builds:
-------
-:; PYTHON='/usr/bin/env python3' ./ci_build.sh
-------
-
 ----
+:; PYTHON='/usr/bin/env python3' ./ci_build.sh
+----
+======
 
 The `source-highlight` package is optional, but if available, will be used by
 AsciiDoc for syntax highlighting of examples.
