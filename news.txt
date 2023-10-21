@@ -1,3 +1,5 @@
+- Oct 20, 2023: a very long-awaited feature is now delivered, an APC Modbus capable NUT driver `apc_modbus` (due to be part of NUT v2.8.1 release)
+  * NOTE: As of this publication, the upstream `libmodbus` project lacks the needed support for USB; a fork is available and PR to upstream is pending.
 - Oct 3, 2023: thanks to generous FOSS project support from link:https://gandi.net/[Gandi.net], NUT DNS hosting costs are now handled by them
 - Sep 18, 2023: access to interactive NUT CI farm resources now requires a logged-in session (web scrapers overwhelmed it)
 - Sep 12, 2023: NUT documentation was restructured, in particular, from now on the current codebase provides `INSTALL.nut.adoc`, `NEWS.adoc` and `UPGRADING.adoc` files (with `.adoc` extensions) so older URLs pointing to files without these extensions may have got obsoleted. This change allows IDEs (including GitHub Web UI) to render most of the markup automagically. Also, a recipe and artifact for `release-notes.pdf` is now provided.
