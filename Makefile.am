@@ -166,6 +166,7 @@ release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
 prerequisites:
+	cd nut && rm -f ChangeLog && $(MAKE) ChangeLog
 	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
