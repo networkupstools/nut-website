@@ -1,3 +1,4 @@
+- Oct 31, 2023: NUT 2.8.1 released
 - Oct 20, 2023: a very long-awaited feature is now delivered, an APC Modbus capable NUT driver `apc_modbus` (due to be part of NUT v2.8.1 release)
   * NOTE: As of this publication, the upstream `libmodbus` project lacks the needed support for USB; a fork is available and PR to upstream is pending.
 - Oct 3, 2023: thanks to generous FOSS project support from link:https://gandi.net/[Gandi.net], NUT DNS hosting costs are now handled by them
