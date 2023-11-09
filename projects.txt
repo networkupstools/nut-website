@@ -263,6 +263,10 @@ protocol.
 
 NOTE: (A reference copy of) PyNUT is part of NUT since NUT v2.4.1, see
 https://github.com/networkupstools/nut/tree/master/scripts/python/module/
+and is published as `PyNUTClient` by CI to
+https://pypi.org/project/PyNUTClient (release snapshots) and
+https://test.pypi.org/project/PyNUTClient/ (rolling master-branch revisions).
+Hopefully, `pip` would find it to help create NUT clients.
 
 link:http://bugs.debian.org/343530[RRDtool logging support]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
