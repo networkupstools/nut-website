@@ -43,11 +43,27 @@ LAYOUT_FILES =	\
 	css/xhtml11-quirks.css	\
 	css/xhtml11.css
 
+BOOTSTRAP_LAYOUT_FILES =	\
+	css/nut.css	\
+	css/asciidoc-bootstrap.min.css
+
 SCRIPT_FILES =	\
 	scripts/asciidoc.js	\
 	scripts/filter_png.js	\
 	scripts/jquery.js	\
 	scripts/nut_jquery.js
+
+BOOTSTRAP_SCRIPT_FILES =	\
+	scripts/nut.js	\
+	scripts/bootstrap.min.js	\
+	scripts/jquery.min.js \
+	scripts/asciidoc.js
+# TODO: do we actually need the following?
+#	js/html5shiv.min.js	\
+#	js/respond.min.js
+#	js/ie8-responsive-file-warning.js
+#	js/ie-emulation-modes-warning.js
+#	js/npm.js
 
 WEBSITE_FILES =	\
 	acknowledgements.html	\
@@ -73,7 +89,16 @@ WEBSITE_DEPS =	\
 	nut/docs/packager-guide.chunked	\
 	nut/docs/packager-guide.pdf	\
 	nut/docs/user-manual.chunked	\
-	nut/docs/user-manual.pdf
+	nut/docs/user-manual.pdf \
+	index-jumboinfo.html \
+	navinfo.html
+
+WEBSITE_FONTS = \
+	fonts/glyphicons-halflings-regular.eot \
+	fonts/glyphicons-halflings-regular.svg \
+	fonts/glyphicons-halflings-regular.ttf \
+	fonts/glyphicons-halflings-regular.woff \
+	fonts/glyphicons-halflings-regular.woff2
 
 if WITH_NUT_HISTORIC_RELEASE
 else
@@ -86,11 +111,24 @@ WEBSITE_DEPS +=	\
 endif
 
 # CSS based simulated frames layout.
-LAYOUT = web-layout
+#LAYOUT = web-layout
+LAYOUT = bootstrap
+
+#	--backend=xhtml11
 
 ADOC_PARAMS_COMMON =	\
-	--backend=xhtml11	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
+	--backend=html5	\
+	--attribute lang=en	\
+	--attribute totop!	\
+	--attribute brand="Network UPS Tools"	\
+	--attribute brandref=./	\
+	--attribute stylesdir=css	\
+	--attribute navbar=fixed	\
+	--attribute navinfo1	\
+	--attribute favicon	\
+	--attribute script=nut.js \
+	--attribute bootstrapdir=. \
 	--attribute icons	\
 	--attribute linkcss	\
 	--attribute=badges	\
@@ -107,6 +145,7 @@ ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
 	--attribute iconsdir=$(srcdir)/images	\
 	--attribute scriptsdir=$(srcdir)/scripts
+
 
 OUTDIR_BASE = @OUTDIR_BASE@
 NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
@@ -232,11 +271,15 @@ $(OUTDIR): all-files
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)/css
 	cp -f $(LAYOUT_FILES) $(OUTDIR)/css/
+	cp -f $(BOOTSTRAP_LAYOUT_FILES) $(OUTDIR)/css/
+	$(MKDIR_P) $(OUTDIR)/fonts
+	cp -f $(WEBSITE_FONTS) $(OUTDIR)/fonts/
 	$(MKDIR_P) $(OUTDIR)/docs/man
 	cp -fR $(WEBSITE_DEPS) $(OUTDIR)/docs/
 	cp -f nut/docs/man/*.html $(OUTDIR)/docs/man/
 	$(MKDIR_P) $(OUTDIR)/scripts
 	cp -f $(SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
+	cp -f $(BOOTSTRAP_SCRIPT_FILES) scripts/ups_data.js $(OUTDIR)/scripts/
 	$(MKDIR_P) $(OUTDIR)/protocols
 	cp -f protocols/*.html $(OUTDIR)/protocols/
 	cp -fR protocols/images $(OUTDIR)/protocols
@@ -328,18 +371,18 @@ ups-html.txt scripts/ups_data.js: prerequisites_hcl
 	test -s "$(@)"
 
 # Report each rebuild by depending on the Makefile
-index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only $<
+index.html: index.txt news.txt Makefile $(LAYOUT).conf historic-release.txt  index-jumboinfo.html
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a index-only -a jumbotron -a jumboinfo $<
 
 acknowledgements.html: nut/docs/acknowledgements.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 cables.html: nut/docs/cables.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@  -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 # React to newly published sources
 download.html: nut/docs/download.txt source/*/*.tar.gz* $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 documentation.html: nut/docs/documentation.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
@@ -351,7 +394,7 @@ nut-qa.html: nut/docs/nut-qa.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 projects.html: projects.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a toc $<
+	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@  -a toc2 -a toc-placement=right -a toclevels=3 $<
 
 stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ -a hcl $<
@@ -462,6 +505,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,
 MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
 
@@ -503,11 +547,13 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 	$(call file,>> $@,include::$(notdir $<)[])
 
 # Compiled asciidoc page (.html)
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
 ###
 
+# FIXME: may need " -a toc2 -a toc-placement=right -a toclevels=3" instead of "-a toc"
 $(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
 
@@ -599,7 +645,7 @@ FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)
 
 SPELLCHECK_SRC = \
 	README.asciidoc \
-	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt \
+	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  index.txt \
 	protocols/sec.txt \
 	protocols/us9003.txt \
 	protocols/sec-protocol.txt \

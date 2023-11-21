@@ -1,0 +1,36 @@
+
+//////////////////////////////////
+TODO: Automate the number above with Makefile magic and asciidoc variables
+or a .in style template parsing
+
+# Manufacturers:
+:; grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2}' | sort | uniq | wc -l
+
+# Models:
+:; grep -E '^"' nut/data/driver.list.in | awk -F'"' '{print $2" "$8" "$10}' | sort | uniq -c | wc -l
+//////////////////////////////////
+
+[NOTE]
+.Two NUT websites
+====
+The link:https://networkupstools.org/[main NUT site] should closely follow
+current development, with documentation most relevant for users who build NUT
+from link:https://github.com/networkupstools/nut/[source code].
+
+link:https://networkupstools.org/historic/[Sub-sites] are available for some
+historic releases for users of NUT packaged with their operating system
+distributions. Such packages are typically based on official releases of
+NUT at the time of distribution, and may lag behind current development
+in terms of features, capabilities, bug-fixes and supported devices.
+
+Some data, such as devices with known support at the time of release, are
+published to reflect both current development and historic releases; other
+data such as the NUT DDL or source archives are release-agnostic and only
+published once and for all.
+====
+
+include::historic-release.txt[]
+
+News
+----
+include::news.txt[]
