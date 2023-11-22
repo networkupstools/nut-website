@@ -599,7 +599,7 @@ FILTER_DIRONCE = awk 'BEGIN {o=""} ; { if ($(DOLLAR)0 == o"/") { print $(DOLLAR)
 
 SPELLCHECK_SRC = \
 	README.asciidoc \
-	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt \
+	news.txt  old-news.txt  projects.txt  stable-hcl.txt  ups-protocols.txt  website.txt.in \
 	protocols/sec.txt \
 	protocols/us9003.txt \
 	protocols/sec-protocol.txt \
