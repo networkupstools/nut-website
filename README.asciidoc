@@ -47,7 +47,7 @@ other scripts, or change system-wide default symlink to `python` once:
 
 ----
 :; sudo apt-get install python3-pip
-:; pip3 install lxml simplejson pycparser
+:; pip3 install lxml simplejson pycparser pathlib
 ----
 
 and then either system-wide:
