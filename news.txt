@@ -1,3 +1,4 @@
+- Apr 1, 2024: NUT v2.8.2 released
 - Nov 15, 2023: following up with link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting after some hiatus on the NUT CI side (too many plans, too little time)
 - Nov 9, 2023: the PyNUT module provided in NUT sources is now published as `PyNUTClient` by CI to https://pypi.org/project/PyNUTClient (release snapshots) and https://test.pypi.org/project/PyNUTClient/ (rolling master-branch revisions). Hopefully, `pip` would have easier time finding it now to help create NUT clients.
 - Oct 31, 2023: NUT 2.8.1 released
