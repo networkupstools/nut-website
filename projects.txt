@@ -323,6 +323,14 @@ An API wrapper that outputs the `upsc` command as a JSON output. This is a
 small HTTP server written in JavaScript which relays HTTP request parameters
 to `upsc` command line arguments, and neatly wraps the result as JSON.
 
+link:https://github.com/Brandawg93/PeaNUT[PeaNUT]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A tiny dashboard for Network UPS Tools.
+
+Written in NodeJS, can serve as a Docker container or as a Homepage widget,
+includes Web-UI and a REST API for queries.
+
 link:https://github.com/nslythe/NUTService[NUTService and C# NUTClient]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
