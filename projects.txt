@@ -444,6 +444,19 @@ A sample
 link:https://github.com/DRuggeri/nut_exporter/blob/master/dashboard/dashboard.json[dashboard]
 for Grafana is also available.
 
+link:https://github.com/ArthurMitchell42/nutcase/[NUTCase]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Network UPS Tools (NUT) and APC daemon exporter to pass data
+to Prometheus and any JSON compatible applications.
+
+Beside data conversion for other systems, provides a neat dashboard
+UI of its own.
+
+Implemented as a Python application (with its own NUT client code
+in `nut_server_handler.py`), which can run as a server in a Docker
+container.
+
 
 Legacy and discontinued projects
 --------------------------------
