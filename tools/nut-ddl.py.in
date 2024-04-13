@@ -45,6 +45,19 @@ PEDANTIC_DECLARATIONS = os.getenv("NUT_DDL_PEDANTIC_DECLARATIONS", "False")
 # Booleanize this:
 PEDANTIC_DECLARATIONS = (PEDANTIC_DECLARATIONS in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
 
+# This is not fatal, some documents do have layman comments,
+# notably "# :; upsc output" before the data dump (such pattern
+# is ignored to reduce noise when reviewing content). This feature
+# just allows to track down comments that could be structured
+# but were overlooked previously. Note however that this may
+# also see issues with mis-typed structured comments if their
+# lines are excluded by initial regex filter, e.g. like this one:
+#   DEVICE:URL:REPORT: http://some.site/ and more text
+# where the filter requires a single token or it is a plain comment.
+# The important thing here is that such entries would not be rendered!
+PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS = os.getenv("NUT_DDL_PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS", "False")
+PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS = (PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
+
 ###
 
 # Old (no longer available in NUT) -> new (currently available) drivers map
@@ -288,7 +301,7 @@ def nds_dev_comment(raw):
     # '# DEVICE:EOC\n'
 
     if len(devComment):
-        msg = "Redeclaration of device comment"
+        msg = "Redeclaration of device comment (only one un-typed block is allowed)"
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -300,7 +313,7 @@ def nds_dev_comment(raw):
 
     # Not a valid device comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = "Invalid device comment"
+        msg = ("Invalid device comment: %s" % ("seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -380,7 +393,7 @@ def nds_dev_comment_block(raw):
 
     # Not a valid device block comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = "Invalid device block comment"
+        msg = ("Invalid device block comment: %s" % ("seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -409,27 +422,40 @@ def nds_dev_comment_block(raw):
         # single-token title is UPS name, multi-token is pasted as a starting comment
         bGotSection = False
         bTitleComment = True
+        upsname = None
         if len(title):
             if not " " in title:
                 # ...else: multi-token, use as comment anyway
                 # Below, we strip possible markup (so far don't care about proper nesting)
                 upsname = re.sub(r"(^[\"'`[]*|[\"'`[]*$)", '', title)
-                if len(upsname):
-                    for line in raw:
-                        line = line[2:].strip()
-                        # No dollar, trailing comment syntactically possible:
-                        matcher = re.match(r'^\[([^ ]+)\]', line)
-                        if matcher:
-                            bGotSection = True
-                            if matcher.group(1) == upsname:
-                                bTitleComment = False
-                            break
-                    if not bGotSection:
-                        blk.append("[%s]" % upsname)
-                        bTitleComment = False
+                if not len(upsname):
+                    upsname = None
 
-            if bTitleComment:
-                blk.append("# %s" % title)
+        for line in raw:
+            line = line[2:].strip()
+            # No dollar, trailing comment syntactically possible:
+            matcher = re.match(r'^\[([^ ]+)\]', line)
+            if matcher:
+                bGotSection = True
+                if upsname is not None and matcher.group(1) == upsname:
+                    bTitleComment = False
+                break
+
+        if not bGotSection:
+            if upsname is None:
+                msg = "Driver configuraton example lacks a section name for the device"
+                if verbose:
+                    print (msg)
+                if PEDANTIC_DECLARATIONS:
+                    raise RuntimeWarning (msg)
+                # else: ugh, whatever
+                blk.append("[ups]")
+            else:
+                blk.append("[%s]" % upsname)
+                bTitleComment = False
+
+        if len(title) and bTitleComment:
+            blk.append("# %s" % title)
 
         # if not len(title):
         title = "Driver configuration"
@@ -565,7 +591,7 @@ def nds_var_cmd_comments(raw):
 
     # Not a valid comment, don't do anything with it
     if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
-        msg = ("Invalid comment for '%s'" % itemName)
+        msg = ("Invalid comment for '%s': %s" % (itemName, "seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -1020,7 +1046,10 @@ def parseFile(inputFile):
     comments = []
     nonComments = []
 
+    linenum = 0
     for line in file:
+        linenum = linenum + 1
+
         # Whether to bail out
         bailout = False
 
@@ -1067,7 +1096,7 @@ def parseFile(inputFile):
                 break
         if bailout:
             if not ignoreNonComments:
-                msg = ("NUT's 'EOF' found, ignoring remaining non-comment lines")
+                msg = ("NUT's 'EOF' found, ignoring remaining non-comment lines: linenum=%s line: %s" % (linenum, str(line)))
                 if verbose:
                     print (msg)
                 # if PEDANTIC_DECLARATIONS:
@@ -1078,7 +1107,10 @@ def parseFile(inputFile):
 
         # Ignore empty lines, comments without the required leading space after the hash ('#<text>') and lines with spaces preceeding a hash, e.g. '   # comment ...\n'
         # note: an empty/'non-valid comment'/'indented comment' line 'breaks' a comment while an empty commented line ('#') doesn't
+        # note: special markup lines like "#RW:...", "#RO:..." and "#CMD:..." are handled above as "known non-comments"
         if re.match("^(\s*|\s+#.*|#[^ \n\r].*)$", line):
+            if PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS and "#" in line:
+                print ("[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
             commentContinuation = False
             continue
 
@@ -1104,11 +1136,14 @@ def parseFile(inputFile):
                     if re.match(pattern, line):
                         commentContinuation = False
                         break
+            else:
+                if PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS and not "upsc" in line:
+                    print ("[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
 
             continue
 
-        # Something unexepected
-        print ("Unexepected line '%s'" % line[:-1])
+        # Something unexpected
+        print ("[%s#%d] Unexpected line: '%s'" % (inputFile, linenum, str(line[:-1])))
         exit(1)
 
     return comments, nonComments

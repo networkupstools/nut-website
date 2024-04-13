@@ -12,10 +12,12 @@ link:https://github.com/networkupstools/nut/wiki/[NUT GitHub wiki].
 Graphical desktop clients
 -------------------------
 
-link:http://knut.prynych.cz[KNutClient]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://sites.google.com/a/prynych.cz/knutclient[KNutClient]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 KNutClient is a visual client for NUT.
+
+See also: http://knut.prynych.cz/
 
 link:http://www.lestat.st/en/informatique/projets/nut-monitor[NUT-Monitor]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,7 +54,8 @@ initiate safe shutdowns.
 link:http://csociety.ecn.purdue.edu/~delpha/winnut/[WinNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-WinNUT is a partial port of the client side of Network UPS Tools (NUT) to Windows.
+WinNUT is a partial port of the client side of Network UPS Tools (NUT) to
+Windows.
 
 The URL mentioned above seems currently defunct. It was last archived at
 link:https://web.archive.org/web/20161222060711/http://csociety.ecn.purdue.edu/~delpha/winnut/[The
@@ -65,7 +68,8 @@ Tracing the breadcrumbs, seems the project was initially abandoned in 2006
 at version 2.0.0b and then re-hosted at Google Code in 2010 and abandoned
 in 2011.
 
-Curiously, there are recent articles on the name (actually describing WinNUT-Client):
+Curiously, there are recent articles on the name (actually describing
+WinNUT-Client):
 https://www.gadgetvictims.com/2022/02/configuring-winnut-2x-on-windows-to.html
 as a follow-up to earlier post on that site of
 https://www.gadgetvictims.com/2010/02/battery-backup-solution-for-home.html
@@ -76,11 +80,26 @@ NOTE: WinNUT is currently being replaced by a full port to Windows, part of the
 official NUT distribution. link:download.html#_binary_packages[MSI packages]
 are available too.
 
-link:https://github.com/networkupstools/wmnut/[WMNUT]
+link:https://github.com/networkupstools/wmnut/[WMNut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
 (Network UPS Tools) framework on Linux and other systems.
+
+
+Mobile desktop clients
+----------------------
+
+link:https://github.com/norkator/apcupsd-monitor[apcupsd-monitor]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "apcupsd-monitor" Android app actually supports several server protocols
+for monitoring power devices, including `apcupsd`, NUT, Eaton IPM (XML/HTTP)
+and commands over SSH.
+
+Pre-built application package is available on Google Play at
+https://play.google.com/store/apps/details?id=com.nitramite.apcupsdmonitor
+
 
 Network Management Systems (NMS) integration
 --------------------------------------------
@@ -123,7 +142,9 @@ A plugin to return UPS status to the MonAMI universal sensor framework.
 link:http://munin-monitoring.org[Munin NUT plugin]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A link:http://muninexchange.projects.linpro.no/?search&cid=0&pid=136&phid=279[NUT plugin] is available.
+A
+link:http://muninexchange.projects.linpro.no/?search&cid=0&pid=136&phid=279[NUT
+plugin for Munin] is available.
 
 link:http://www.nagios.org/[Nagios plugin]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,13 +152,50 @@ link:http://www.nagios.org/[Nagios plugin]
 The link:http://sourceforge.net/projects/nagiosplug/[check_ups] plugin returns
 UPS status to the Nagios monitoring system using NUT.
 
+
+MQTT
+----
+
+link:https://mqtt.org/[MQTT] is an OASIS standard messaging protocol for
+IoT Messaging. For a quick overview of the protocol and its history, see also
+link:https://en.wikipedia.org/wiki/MQTT[Wikipedia article about MQTT].
+
+It is typically used for monitoring and management systems, so projects which
+provide MQTT data streams with NUT information (and vice versa) do not fall
+flat into either category and are listed here.
+
+They may also be of interest to developers, being NUT clients written in
+different programming languages which use different available projects for
+binding to NUT Networking API.
+
+link:https://github.com/rburkholder/nut2mqtt[nut2mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Communication between Network UPS Tools (NUT) and MQTT, uses NUT's own
+C++ library (`libnutclient`).
+
+link:https://github.com/jnovack/nut-to-mqtt[nut-to-mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Written in Go, `nut-to-mqtt` is a data converter for exporting information
+from Network UPS Tools, and streaming to an MQTT broker.
+
+link:https://github.com/dniklewicz/ups-mqtt[ups-mqtt]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Simple python tool for fetching data from NUT server and publishing output
+to MQTT server. Can be used for UPS connected to Synology NAS with UPS Network
+Server enabled.
+
 Configuration GUIs
 ------------------
 
-link:http://www.knut.noveradsl.cz/knutsetting/index.html[KNutSetting]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+link:https://sites.google.com/a/prynych.cz/knutsetting[KNutSetting]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 KNutSetting is a visual KDE tool for configuring NUT - Network UPS Tools.
+
+See also: http://knut.prynych.cz/
 
 Other software projects
 -----------------------
@@ -166,10 +224,11 @@ link:https://github.com/6XGate/ntUPSd[Network UPS Tools Services for Windows]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Network UPS Tools Services for Windows provides tools and services to run an
-`upsd`-compatible server to report the status of UPS devices connected to a system
-or server in master mode. It allows other Network UPS Tools slave daemons and
-monitoring clients access to UPS information using standard Windows programming
-interfaces for easier setup.
+`upsd`-compatible server to report the status of UPS devices connected to a
+system or server in primary (aka "master") mode. It allows other systems,
+e.g. Network UPS Tools secondary (aka "slave") daemons and monitoring clients,
+access to UPS information using standard Windows programming interfaces for
+easier setup.
 
 [[nut-snmpagent]]
 link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
@@ -204,28 +263,33 @@ protocol.
 
 NOTE: (A reference copy of) PyNUT is part of NUT since NUT v2.4.1, see
 https://github.com/networkupstools/nut/tree/master/scripts/python/module/
+and is published as `PyNUTClient` by CI to
+https://pypi.org/project/PyNUTClient (release snapshots) and
+https://test.pypi.org/project/PyNUTClient/ (rolling master-branch revisions).
+Hopefully, `pip` would find it to help create NUT clients.
 
 link:http://bugs.debian.org/343530[RRDtool logging support]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This patch adds link:http://oss.oetiker.ch/rrdtool[RRDtool] logging support to
-NUT. (See also <<collectd>>.)
+This patch adds link:http://oss.oetiker.ch/rrdtool[RRDtool] logging support
+to NUT. (See also <<collectd>>.)
 
 link:http://elrik75.free.fr/ups_control/[ups_control]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A developing Python wrapper to `upsc` which can generate email and shutdown the
-machine.
+A developing Python wrapper to `upsc` which can generate email and shutdown
+the machine.
 
 link:https://github.com/rshipp/python-nut2/[python-nut2]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A fork and complete API overhaul of PyNUT, a Python library to allow communication
-with Network UPS Tools servers.
+A fork and complete API overhaul of PyNUT, a Python library to allow
+communication with Network UPS Tools servers.
 
 * Originally developed at https://github.com/george2/python-nut2/
 
-* A link:https://pypi.org/project/nut2/[PyPI] is available, to install with just `pip install nut2`
+* A link:https://pypi.org/project/nut2/[PyPI] is available,
+  to install with just `pip install nut2`
 
 link:https://github.com/rshipp/webNUT/[webNUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -234,9 +298,13 @@ A simple web interface for Network UPS Tools servers.
 
 * Originally developed at https://github.com/george2/webNUT/
 
-* A link:https://pypi.org/project/webNUT/[PyPI] is available, to install with just `pip install webNUT`
+* A link:https://pypi.org/project/webNUT/[PyPI] is available,
+  to install with just `pip install webNUT`
 
-* A link:https://github.com/teknologist/docker-webnut[dockerized version of webNUT] is available at link:https://hub.docker.com/r/teknologist/webnut[DockerHub] to install with just `docker pull teknologist/webnut`
+* A link:https://github.com/teknologist/docker-webnut[dockerized version
+  of webNUT] is available at
+  link:https://hub.docker.com/r/teknologist/webnut[DockerHub]
+  to install with just `docker pull teknologist/webnut`
 
 link:https://github.com/robbiet480/go.nut/[go.nut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -247,6 +315,21 @@ link:https://github.com/skarcha/node-nut/[Node-NUT]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A NodeJS module that implements a NUT (Network UPS Tools) client.
+
+link:https://github.com/dietah/nut-http[NUT HTTP API]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An API wrapper that outputs the `upsc` command as a JSON output. This is a
+small HTTP server written in JavaScript which relays HTTP request parameters
+to `upsc` command line arguments, and neatly wraps the result as JSON.
+
+link:https://github.com/Brandawg93/PeaNUT[PeaNUT]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A tiny dashboard for Network UPS Tools.
+
+Written in NodeJS, can serve as a Docker container or as a Homepage widget,
+includes Web-UI and a REST API for queries.
 
 link:https://github.com/nslythe/NUTService[NUTService and C# NUTClient]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,8 +356,8 @@ link:http://www.opengear.com/UPS.html[OpenGear]
 
 Opengear provides an advanced NUT integration into many models.
 There is also a
-link:http://www.opengear.com/Videos/Network-UPS-Tools/Network-UPS-Tools.html[video presentation]
-of the NUT integration.
+link:http://www.opengear.com/Videos/Network-UPS-Tools/Network-UPS-Tools.html[video
+presentation] of the NUT integration.
 
 For more information on Opengear's contributions to NUT, have a look at the
 link:acknowledgements.html[acknowledgements information].
@@ -282,14 +365,15 @@ link:acknowledgements.html[acknowledgements information].
 Synology
 ~~~~~~~~
 
-link:http://www.synology.com[Synology] has worked closely with Arnaud to integrate
-link:http://www.synology.com/support/faq_show.php?lang=enu&q_id=300[UPS support] on all
-its devices.
+link:http://www.synology.com[Synology] has worked closely with Arnaud Quette
+to integrate
+link:http://www.synology.com/support/faq_show.php?lang=enu&q_id=300[UPS support]
+on all its devices.
 
 Alcatel Lucent IPBX
 ~~~~~~~~~~~~~~~~~~~
 
-Alcatel has been working for years with us (Patrick Agrain and Arnaud) to
+Alcatel has been working for years with us (Patrick Agrain and Arnaud Quette) to
 improve NUT integration into some of their IPBX.
 
 link:http://www.readynas.com/?page_id=92[Netgear ReadyNAS]
@@ -302,8 +386,8 @@ link:http://www.thecus.com[Thecus NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Thecus NAS firmware includes NUT for UPS support. The
-link:http://www.thecus.com/Downloads/DOM/Compatible_List/UPS_List_v1.0_ALL.pdf[following list of devices] is known to be supported.
-
+link:http://www.thecus.com/Downloads/DOM/Compatible_List/UPS_List_v1.0_ALL.pdf[following
+list of devices] is known to be supported.
 
 link:http://www.buffalotech.com[Buffalo NAS]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -314,10 +398,10 @@ Eaton - Intelligent Power Controller
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 link:http://www.eaton.eu/ipminfrastructure[Eaton Intelligent Power Controller]
-provides easy infrastructure monitoring solution, using the link:http://42ity.org[42ITy(TM)]
+provides easy infrastructure monitoring solution, using the
+link:http://42ity.org[42ITy(TM)]
 Open Source data center monitoring software stack, which relies on NUT for
 power devices monitoring.
-
 
 link:https://www.home-assistant.io/integrations/nut/[Home Assistant NUT integration]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -332,7 +416,6 @@ git sources were contributed by community and posted at NUT GitHub wiki:
 
 * https://github.com/networkupstools/nut/wiki/Building-NUT-integration-for-Home-Assistant
 
-
 link:https://github.com/vectronic/homebridge-nut/[Homebridge NUT integration by vectronic]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -345,20 +428,34 @@ home automation project (for monitoring with HomeKit) includes a NUT plugin.
 
 Instructions are in the project README file.
 
-
 link:https://github.com/DRuggeri/nut_exporter/[Network UPS Tools (NUT) Prometheus Exporter]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A link:https://prometheus.io/[Prometheus] exporter for the Network UPS Tools server.
-This exporter utilizes the link:https://github.com/robbiet480/go.nut[go.nut] project
-as a network client of the NUT platform. The exporter is written in a way to permit
-an administrator to scrape one or many UPS devices visible to a NUT client as well
-as one or all NUT variables. A single instance of this exporter can scrape one or
-many NUT servers as well.
+A link:https://prometheus.io/[Prometheus] exporter for the Network UPS Tools
+data server.
+
+This exporter utilizes the link:https://github.com/robbiet480/go.nut[go.nut]
+project as a network client of the NUT platform. The exporter is written in
+such a way as to permit an administrator to scrape one or many UPS devices
+visible to a NUT client as well as one or all NUT variables. A single instance
+of this exporter can scrape one or many NUT servers as well.
 
 A sample
 link:https://github.com/DRuggeri/nut_exporter/blob/master/dashboard/dashboard.json[dashboard]
 for Grafana is also available.
+
+link:https://github.com/ArthurMitchell42/nutcase/[NUTCase]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Network UPS Tools (NUT) and APC daemon exporter to pass data
+to Prometheus and any JSON compatible applications.
+
+Beside data conversion for other systems, provides a neat dashboard
+UI of its own.
+
+Implemented as a Python application (with its own NUT client code
+in `nut_server_handler.py`), which can run as a server in a Docker
+container.
 
 
 Legacy and discontinued projects

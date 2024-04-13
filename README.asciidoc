@@ -37,30 +37,29 @@ Python module (the json module that comes with Python 2.7 will work) and the
 `lxml` module. You will also need `autoconf` and `automake`, and possibly
 `libtool` since the NUT module uses it.
 
-NOTE
-----
+[NOTE]
+======
 With recent Ubuntu/Debian releases, Python2 is deprecated so much that `pip2`
 tool seems to be no longer packaged. If you have both `python2` and `python3`
 installed, you may have install modules by `pip3` and to either declare the
 preference via environment variables for NUT and NUT-Website `configure` and
 other scripts, or change system-wide default symlink to `python` once:
 
-------
+----
 :; sudo apt-get install python3-pip
-:; pip3 install lxml simplejson pycparser
-------
+:; pip3 install lxml simplejson pycparser pathlib
+----
 
 and then either system-wide:
-------
+----
 :; sudo apt-get install python-is-python3
-------
+----
 
 or constrain the preference to nut-website builds:
-------
-:; PYTHON='/usr/bin/env python3' ./ci_build.sh
-------
-
 ----
+:; PYTHON='/usr/bin/env python3' ./ci_build.sh
+----
+======
 
 The `source-highlight` package is optional, but if available, will be used by
 AsciiDoc for syntax highlighting of examples.
@@ -96,6 +95,23 @@ envvars may be useful to commit changes locally, and to push index upwards:
 # Optionally - for the rare historic-release sub-sites (by NUT tag), e.g.:
 :;   export NUT_HISTORIC_RELEASE=v2.7.4
 ----
+
+Also, to make sure that syntax of `nut-ddl` data dump files is not ambiguous,
+you can tell their parser to abort in case of doubts:
+
+----
+:;   export NUT_DDL_PEDANTIC_DECLARATIONS=True
+
+:; ... make ...
+Traceback (most recent call last):
+  File "/home/jim/nut-website/./tools/nut-ddl.py", line 1532, in <module>
+    commentsMap[pattern](comment)
+  File "/home/jim/nut-website/./tools/nut-ddl.py", line 400, in nds_dev_comment_block
+    raise RuntimeWarning (msg)
+RuntimeWarning: Invalid device block comment: does not end with DEVICE:EOC (blank non-comment lines mid-block?)
+make: *** [Makefile:1012: ddl/PowerWalker/PowerWalker__VI_2200_SH__usbhid-ups__2.7.4__01.dev.txt] Error 1
+----
+
 
 Manual building in detail
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,7 +168,7 @@ to refer to such officially published snapshots. This index is currently
 maintained manually, to ensure human decision about publishing (or hiding) an
 historic release (especially a release candidate) vs. experimenting with that.
 
-NOTE: NUT v2.8.0 release and earlier used a `LAYOUT=web-layout` design, while
+NOTE: NUT v2.8.2 release and earlier used a `LAYOUT=web-layout` design, while
 newer releases use `LAYOUT=bootstrap`; these may have to be nudged into `make`
 arguments above (note also renaming of `website.txt` to `index.txt` and less
 content inside -- some paragraphs were evicted to `index-jumboinfo.html` as

@@ -4,6 +4,8 @@
 #   export CI_AUTOCOMMIT=true
 #   export CI_AUTOPUSH=true
 #   export CI_AVOID_RESPIN=true
+# Also consider:
+#   export NUT_DDL_PEDANTIC_DECLARATIONS=True
 # By default we do spellcheck so manually prepared site updates are nice and
 # clean (as much as nut/docs/nut.dict file in checked-out version permits)
 # but for CI we want that as a separately diagnosed (and non-prohibitive)

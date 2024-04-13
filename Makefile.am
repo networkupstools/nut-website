@@ -110,6 +110,16 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.chunked	\
 	nut/docs/user-manual.pdf
 
+if WITH_NUT_HISTORIC_RELEASE
+else
+# Since run-up to NUT v2.8.1 [#1953]
+WEBSITE_DEPS +=	\
+	nut/docs/release-notes.chunked	\
+	nut/docs/release-notes.pdf	\
+	nut/docs/ChangeLog.chunked	\
+	nut/docs/ChangeLog.pdf
+endif
+
 BOOTSTRAP_WEBSITE_DEPS = \
 	navinfo.html
 
@@ -225,6 +235,7 @@ release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
 prerequisites:
+	cd nut && rm -f ChangeLog && $(MAKE) ChangeLog
 	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
@@ -245,14 +256,30 @@ $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sha256 $(SOURCE_DIR)/@TREE_VERSION@/
 	cd $(SOURCE_DIR)/@TREE_VERSION@/ && md5sum -c nut-@TARBALL_VERSION@.tar.gz.md5
 	cd $(SOURCE_DIR)/@TREE_VERSION@/ && sha256sum -c nut-@TARBALL_VERSION@.tar.gz.sha256
-	cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt
+	if test -s nut/NEWS.adoc ; then \
+	    cp -f nut/NEWS.adoc $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt ; \
+	else \
+	    cp -f nut/NEWS $(SOURCE_DIR)/@TREE_VERSION@/new-$(PACKAGE_VERSION).txt ; \
+	fi
 	cp -f nut/ChangeLog $(SOURCE_DIR)/@TREE_VERSION@/
+	if test -s nut/docs/release-notes.pdf ; then \
+	    cp -f nut/docs/release-notes.pdf $(SOURCE_DIR)/@TREE_VERSION@/release-notes-$(PACKAGE_VERSION).pdf ; \
+	fi
+	if test -s nut/docs/ChangeLog.pdf ; then \
+	    cp -f nut/docs/ChangeLog.pdf $(SOURCE_DIR)/@TREE_VERSION@/ChangeLog-$(PACKAGE_VERSION).pdf ; \
+	fi
 
 # Separate chore for maintainers with a key
 $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
 	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
-	gpg --export -a 0x55CA5976 > $(SOURCE_DIR)/nut-key.gpg
+
+# Requires that local system keychain has the needed keys
+# TODO: Update with current set of identifiers?
+# NOTE: Since 2023 the file in probably maintained manually,
+# including older used release keys and ones introduced by JK.
+$(SOURCE_DIR)/nut-key.gpg:
+	gpg --export -a 0x55CA5976 > $@
 
 $(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt
 

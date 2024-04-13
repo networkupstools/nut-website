@@ -19,6 +19,7 @@ ups-html.txt
 historic-release.txt
 .git-commit-website
 *.txt-spellchecked
+*.txt.in-spellchecked
 *.asciidoc-spellchecked
 /images/
 /output/
@@ -38,3 +39,9 @@ ups-protocols.html
 
 # Auto-published site
 /networkupstools.github.io
+
+# IDEs
+nbproject
+.idea
+.vscode
+*.iml

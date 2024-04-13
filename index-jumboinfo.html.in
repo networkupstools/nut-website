@@ -22,3 +22,29 @@
         <!-- p>
           <a class="btn btn-lg btn-primary" href="about.html" role="button">About &raquo;</a>
         </p -->
+<div class="title">GitHub Stars Matter!</div>
+<div class="paragraph"><p>Potential institutional sponsors remind that having a high "GitHub Star" count
+helps with formal considerations for supporting FOSS projects, so please feel
+welcome to leave yours at <a href="https://github.com/networkupstools/nut/">https://github.com/networkupstools/nut/</a></p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="./images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>The <a href="https://networkupstools.org/">main NUT site</a> should closely follow
+current development, with documentation most relevant for users who build NUT
+from <a href="https://github.com/networkupstools/nut/">source code</a>.</p></div>
+<div class="paragraph"><p><a href="https://networkupstools.org/historic/">Sub-sites</a> are available for some
+historic releases for users of NUT packaged with their operating system
+distributions. Such packages are typically based on official releases of
+NUT at the time of distribution, and may lag behind current development
+in terms of features, capabilities, bug-fixes and supported devices.</p></div>
+<div class="paragraph"><p>Some data, such as devices with known support at the time of release, are
+published to reflect both current development and historic releases; other
+data such as the NUT DDL or source archives are release-agnostic and only
+published once and for all.</p></div>
+</td>
+</tr></table>
+</div>
