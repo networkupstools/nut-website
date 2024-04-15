@@ -166,9 +166,9 @@ release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
 prerequisites:
-	cd nut && rm -f ChangeLog && $(MAKE) ChangeLog
-	cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
-	cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
+	+cd nut && rm -f ChangeLog && $(MAKE) $(AM_MAKEFLAGS) ChangeLog
+	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
+	+cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
 # Generate distribution files and GPG fingerprint (really needed?)
 # and copy them in source dir, once (keep old published releases
@@ -180,7 +180,7 @@ dist-sig-files: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig
 
 $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 	cd nut && rm -f nut-*.tar.gz*
-	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash
+	+cd nut && $(MAKE) $(AM_MAKEFLAGS) dist dist-hash
 	$(MKDIR_P) $(SOURCE_DIR)/@TREE_VERSION@
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz $(SOURCE_DIR)/@TREE_VERSION@/
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.md5 $(SOURCE_DIR)/@TREE_VERSION@/
@@ -202,7 +202,7 @@ $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz:
 
 # Separate chore for maintainers with a key
 $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz.sig: $(SOURCE_DIR)/@TREE_VERSION@/nut-@TARBALL_VERSION@.tar.gz
-	cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
+	+cd nut && $(MAKE) $(AM_MAKEFLAGS) dist-sig
 	cp -f nut/nut-@TARBALL_VERSION@.tar.gz.sig $(SOURCE_DIR)/@TREE_VERSION@/
 
 # Requires that local system keychain has the needed keys
@@ -270,7 +270,7 @@ $(OUTDIR): all-files
 	fi
 
 clean-local:
-	cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
+	+cd nut && $(MAKE) $(AM_MAKEFLAGS) clean
 	ddlfiles="$(MFR_TARGETS)	\
 		$(subst \%,%,$(MODELS_TARGETS))	\
 		$(subst \%,%,$(MODELS_TARGETS_RAW))	\
@@ -304,7 +304,7 @@ clean-local:
 # Using one intermediate target to avoid two builds of same files
 # (and use of corrupted intermediate data) when running parallel:
 prerequisites_hcl: nut/data/driver.list.in $(srcdir)/tools/nut-hclinfo.py $(MFR_TARGETS) | prerequisites
-	cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list
+	+cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list
 	@if \
 	    python3 -c "import json,lxml"	\
 	 || python -c "import simplejson,lxml"	\
@@ -628,6 +628,6 @@ SPELLCHECK_SRC = \
 #NUT_SPELL_DICT = nut.dict
 
 spellcheck spellcheck-interactive spellcheck-sortdict:
-	$(MAKE) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+	+$(MAKE) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
 
 ###
