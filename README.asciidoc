@@ -248,3 +248,7 @@ https://ci.networkupstools.org/view/InfraTasks/job/nut-website/
    NUT_HISTORIC_RELEASE=v2.8.0-rc3 LAYOUT=web-layout \
    ./ci_build.sh
 ------
+
+* The `nut-website` specific spell-checking is handled with a dynamic mix of
+  original `nut/docs/nut.dict` and custom `nut-website.dict.addon` with key
+  words specific to files in the website (including HTML and asciidoc markup).
