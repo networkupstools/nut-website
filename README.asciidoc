@@ -41,13 +41,17 @@ Python module (the json module that comes with Python 2.7 will work) and the
 ======
 With recent Ubuntu/Debian releases, Python2 is deprecated so much that `pip2`
 tool seems to be no longer packaged. If you have both `python2` and `python3`
-installed, you may have install modules by `pip3` and to either declare the
-preference via environment variables for NUT and NUT-Website `configure` and
-other scripts, or change system-wide default symlink to `python` once:
+installed, you may have install modules by `pip3` or APT and to either declare
+the preference via environment variables for NUT and NUT-Website `configure`
+and other scripts, or change system-wide default symlink to `python` once:
 
 ----
 :; sudo apt-get install python3-pip
 :; pip3 install lxml simplejson pycparser pathlib
+
+### Note: Newer Python releases can suggest to use APT packages for modules
+### too; in this case:
+:; sudo apt-get install python3-{lxml,simplejson,pycparser}
 ----
 
 and then either system-wide:
