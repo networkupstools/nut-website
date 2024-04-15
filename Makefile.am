@@ -291,7 +291,8 @@ clean-local:
 		ups-html.txt	\
 		scripts/ups_data.js
 	git checkout -f images || true
-	rm -f *-spellchecked protocols/*-spellchecked
+	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict
+	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
 	rm -f .git-commit-website
@@ -617,17 +618,69 @@ SPELLCHECK_SRC = \
 	protocols/minicol.txt \
 	protocols/oneac.txt
 
-### Note: currently the NUT makefiles' implementation of spellcheck rules
-### assumes use of its own nut.dict. When it becomes possible to split it
-### out, consider adding  NUT_SPELL_DICT="$(NUT_SPELL_DICT)"  to command
-### and uncommenting the line below. If you use spellcheck-interactive and
-### add some more exceptions, be ready to commit a pull request from the
-### "nut" submodule as well (and do revise the changed dictionary so you
-### only add words and roll back anything your aspell might remove) and
+### Note: historically the NUT makefiles' implementation of spellcheck rules
+### assumes use of its own nut.dict. When it became possible to split it
+### out, we can add NUT_SPELL_DICT="$(NUT_SPELL_DICT)" to the sub-"make"
+### commands below.
+### If you use spellcheck-interactive and add some more exceptions, be ready
+### to commit a pull request from the "nut" submodule as well (if the custom
+### nut-website.dict is not used), and do revise the changed dictionary so
+### you only add words and roll back anything your aspell might remove) and
 ### to promote the submodule reference from nut-website later on.
-#NUT_SPELL_DICT = nut.dict
+NUT_SPELL_DICT =
 
-spellcheck spellcheck-interactive spellcheck-sortdict:
-	+$(MAKE) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+if WITH_NUT_HISTORIC_RELEASE
+# Indented GNUmake "if/else/endif"
+ if $(or $(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE)), $(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
+# No-op for older releases, use only NUT dict of that era
+# (set in stone for old releases anyway)
+#
+# FIXME: Might check if 2.8.0 is already capable for this
+#  purpose? Not pressing since its nut.dict sufficed at
+#  the time of historic website build...
+#
+# NOTE: Nut source recipes have the variable for quite a
+# while, so maybe even older releases can be covered here:
+#  20149af7fc (Arnaud Quette   2012-10-10 21:23:15 +0000  91) NUT_SPELL_DICT = nut.dict
+ else
+# This historic NUT source (2.8.x or newer) is assumed modern enough
+# Practically tested since the NUT v2.8.2 release
+NUT_SPELL_DICT += nut-website.dict
+ endif
+else !WITH_NUT_HISTORIC_RELEASE
+# Current NUT source is assumed modern enough
+NUT_SPELL_DICT += nut-website.dict
+endif !WITH_NUT_HISTORIC_RELEASE
+
+nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
+	cat $^ > "$@"
+	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
+
+# Indented GNUmake "if/else/endif"
+ ifneq (,$(strip NUT_SPELL_DICT))
+export NUT_SPELL_DICT
+NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
+
+# Find unique words in the sorted merged dictionary here vs. (pre-)sorted
+# dictionary file in NUT source - this difference is the sorted nut-website
+# specific dictionary.
+spellcheck-sortdict: nut-website.dict.addon nut-website.dict
+	@echo "$@ for NUT_SPELL_DICT=$<" >&2
+	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
+		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
+		> nut-website.dict.addon.sorted
+	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
+	@mv -f nut-website.dict.addon.sorted nut-website.dict.addon
+
+ else
+# Pass to original NUT recipe and its dict file alone
+NUT_SPELL_DICT_OPTION =
+spellcheck-sortdict:
+	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+ endif
+
+# Whether we have a custom dictionary or not:
+spellcheck spellcheck-interactive: $(NUT_SPELL_DICT)
+	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
 
 ###
