@@ -291,7 +291,7 @@ clean-local:
 		ups-html.txt	\
 		scripts/ups_data.js
 	git checkout -f images || true
-	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict
+	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict *.usage-report
 	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
@@ -680,7 +680,7 @@ spellcheck-sortdict:
  endif
 
 # Whether we have a custom dictionary or not:
-spellcheck spellcheck-interactive: $(NUT_SPELL_DICT)
+spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
 
 ###
