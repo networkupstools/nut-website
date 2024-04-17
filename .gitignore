@@ -22,6 +22,7 @@ historic-release.txt
 *.txt.in-spellchecked
 *.asciidoc-spellchecked
 *.html.in-spellchecked
+*.usage-report
 /nut-website.dict
 /nut-website.dict.bak-pre-sorting
 /nut-website.dict.sorted
