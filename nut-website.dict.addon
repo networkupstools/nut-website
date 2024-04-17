@@ -227,12 +227,15 @@ highfrequency
 ibattery
 identifymessage
 idm
+ifeval
 invcontdelay
 invcontpolarity
 inverterlog
 inverterminutes
 invertervolts
 jpgraph
+jumboinfo
+jumbotron
 keyclick
 linesensitivity
 listdef
@@ -255,6 +258,7 @@ minutalk
 minvi
 mmddyyyy
 mqtt
+nbsp
 ndcv
 nearlowbattery
 nomacvoltsin
@@ -288,6 +292,7 @@ qfs
 qgs
 qpi
 rackmount
+raquo
 ratedva
 ratedwatts
 receivexhs
@@ -320,6 +325,7 @@ vod
 von
 webNUT
 webnut
+websitelayout
 wordformat
 xferdelay
 xfmrresistance
