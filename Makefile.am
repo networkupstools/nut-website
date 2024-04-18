@@ -687,7 +687,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $@
 # HIDE FROM AUTOMAKE # else
 # HIDE FROM AUTOMAKE #export NUT_SPELL_DICT
-# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
+# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(notdir $(strip $(NUT_SPELL_DICT)))" NUT_SPELL_DICT_ABS="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
 # HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE ## Find unique words in the sorted merged dictionary here vs. (pre-)sorted
 # HIDE FROM AUTOMAKE ## dictionary file in NUT source - this difference is the sorted nut-website
