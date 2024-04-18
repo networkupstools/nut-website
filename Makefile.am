@@ -657,7 +657,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
 
 # Indented GNUmake "if/else/endif"
- ifneq (,$(strip NUT_SPELL_DICT))
+ ifneq (,$(strip $(NUT_SPELL_DICT)))
 export NUT_SPELL_DICT
 NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
 
