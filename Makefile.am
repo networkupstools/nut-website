@@ -678,7 +678,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION =
 # HIDE FROM AUTOMAKE #spellcheck-sortdict:
 # HIDE FROM AUTOMAKE #	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-# HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $@
+# HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $@
 # HIDE FROM AUTOMAKE # else
 # HIDE FROM AUTOMAKE #export NUT_SPELL_DICT
 # HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
@@ -698,7 +698,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
 	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
+	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
 
 # Just sort the addon file, e.g. after dumping key words into it - ported from main NUT
 spellcheck-sortdict-addon: nut-website.dict.addon
