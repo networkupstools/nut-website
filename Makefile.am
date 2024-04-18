@@ -1,4 +1,10 @@
 # NOTE: Syntax relies on GNU Make; YMMV with other implementations
+#
+# WARNING: Due to lines which "# HIDE FROM AUTOMAKE #" some GNU syntax which
+# conflicts with automake syntax, you must use autogen.sh to re-generate the
+# Makefile during development cycles. If you rely on automatic regeneration
+# of Makefile.am->Makefile.in->Makefile the resulting file can have crucial
+# parts commented away.
 
 # Also relies on GNU `ln -fsr` options, for historic sub-site publication
 LN = ln
