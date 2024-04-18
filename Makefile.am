@@ -670,7 +670,7 @@ spellcheck-sortdict: nut-website.dict.addon nut-website.dict
 		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
 		> nut-website.dict.addon.sorted
 	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
-	@mv -f nut-website.dict.addon.sorted nut-website.dict.addon
+	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
 
  else
 # Pass to original NUT recipe and its dict file alone
