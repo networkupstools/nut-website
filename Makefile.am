@@ -1,4 +1,10 @@
 # NOTE: Syntax relies on GNU Make; YMMV with other implementations
+#
+# WARNING: Due to lines which "# HIDE FROM AUTOMAKE #" some GNU syntax which
+# conflicts with automake syntax, you must use autogen.sh to re-generate the
+# Makefile during development cycles. If you rely on automatic regeneration
+# of Makefile.am->Makefile.in->Makefile the resulting file can have crucial
+# parts commented away. Alternately, `make unhide-from-automake` after edits.
 
 # CSS based simulated frames layout. The "web-layout" is old design
 # used for NUT releases 2.8.0 and before. The "bootstrap" is newer.
@@ -366,7 +372,7 @@ clean-local:
 		scripts/ups_data.js
 	git checkout -f images || true
 	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict *.usage-report
-	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted
+	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted nut-website.dict.tmp
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
 	rm -f .git-commit-website
@@ -727,12 +733,13 @@ SPELLCHECK_SRC += index-jumboinfo.html.in
 ### you only add words and roll back anything your aspell might remove) and
 ### to promote the submodule reference from nut-website later on.
 NUT_SPELL_DICT =
+NUT_SPELL_DICT_DEBUGTAG =
 
-if WITH_NUT_HISTORIC_RELEASE
-# Indented GNUmake "if/else/endif"
- if $(or $(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE)), $(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
 # No-op for older releases, use only NUT dict of that era
 # (set in stone for old releases anyway)
+#
+# WARNING: It seems the spellcheck rules were too uncapable
+# in NUT v2.7.4 (and the dictionary was just starting)!
 #
 # FIXME: Might check if 2.8.0 is already capable for this
 #  purpose? Not pressing since its nut.dict sufficed at
@@ -741,45 +748,70 @@ if WITH_NUT_HISTORIC_RELEASE
 # NOTE: Nut source recipes have the variable for quite a
 # while, so maybe even older releases can be covered here:
 #  20149af7fc (Arnaud Quette   2012-10-10 21:23:15 +0000  91) NUT_SPELL_DICT = nut.dict
- else
-# This historic NUT source (2.8.x or newer) is assumed modern enough
-# Practically tested since the NUT v2.8.2 release
-NUT_SPELL_DICT += nut-website.dict
- endif
-else !WITH_NUT_HISTORIC_RELEASE
-# Current NUT source is assumed modern enough
-NUT_SPELL_DICT += nut-website.dict
-endif !WITH_NUT_HISTORIC_RELEASE
+#
+# GNUmake "if/else/endif" indented to not conflict with automake;
+# assignments should be indented too but not with TAB characters!
 
+# HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
+# HIDE FROM AUTOMAKE #    # Current NUT source du-jour is assumed modern enough
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=no-release-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=2.7.x-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=2.8.0-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else
+# HIDE FROM AUTOMAKE #    # ...else this historic NUT source (2.8.x or newer) is assumed modern enough
+# HIDE FROM AUTOMAKE #    # Practically tested since the NUT v2.8.2 release
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=modern-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # endif
+
+# NOTE: Relies on NUT source modern enough to have "spellcheck-sortdict"
+# or uses the fallback below upon failure.
+# Make rules in many NUT releases included explicit path to NUT sources,
+# so we use relative path here and can use absolute for actual aspell calls.
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	cat $^ > "$@"
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
+	+(cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict) \
+		|| ( grep -vE '^personal_ws' < "$@" | sort -n | uniq > "$@.tmp" \
+			&& ( (echo "personal_ws-1.1 en `wc -l < "$@.tmp"` utf-8"; cat "$@.tmp"; ) > "$@" ) )
 
 # Indented GNUmake "if/else/endif"
- ifneq (,$(strip NUT_SPELL_DICT))
-export NUT_SPELL_DICT
-NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
-
-# Find unique words in the sorted merged dictionary here vs. (pre-)sorted
-# dictionary file in NUT source - this difference is the sorted nut-website
-# specific dictionary.
-spellcheck-sortdict: nut-website.dict.addon nut-website.dict
-	@echo "$@ for NUT_SPELL_DICT=$<" >&2
-	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
-		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
-		> nut-website.dict.addon.sorted
-	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
-	@mv -f nut-website.dict.addon.sorted nut-website.dict.addon
-
- else
-# Pass to original NUT recipe and its dict file alone
-NUT_SPELL_DICT_OPTION =
-spellcheck-sortdict:
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
- endif
+# HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_SPELL_DICT)))
+# HIDE FROM AUTOMAKE ## Pass to original NUT recipe and its dict file alone
+# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION =
+# HIDE FROM AUTOMAKE #spellcheck-sortdict:
+# HIDE FROM AUTOMAKE #	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+# HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $@
+# HIDE FROM AUTOMAKE # else
+# HIDE FROM AUTOMAKE #export NUT_SPELL_DICT
+# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(notdir $(strip $(NUT_SPELL_DICT)))" NUT_SPELL_DICT_ABS="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE ## Find unique words in the sorted merged dictionary here vs. (pre-)sorted
+# HIDE FROM AUTOMAKE ## dictionary file in NUT source - this difference is the sorted nut-website
+# HIDE FROM AUTOMAKE ## specific dictionary.
+# HIDE FROM AUTOMAKE #spellcheck-sortdict: nut-website.dict.addon nut-website.dict
+# HIDE FROM AUTOMAKE #	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+# HIDE FROM AUTOMAKE #	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
+# HIDE FROM AUTOMAKE #		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
+# HIDE FROM AUTOMAKE #		> nut-website.dict.addon.sorted
+# HIDE FROM AUTOMAKE #	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
+# HIDE FROM AUTOMAKE #	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
+# HIDE FROM AUTOMAKE # endif
 
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
+	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
+
+# Just sort the addon file, e.g. after dumping key words into it - ported from main NUT
+spellcheck-sortdict-addon: nut-website.dict.addon
+	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+	@LANG=C LC_ALL=C sort -n < "$(abs_top_srcdir)/nut-website.dict.addon" > nut-website.dict.addon.sorted
+	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
 
 ###
+
+unhide-from-automake: Makefile
+	sed -e 's/^# HIDE FROM AUTOMAKE #//' < "$<" > "$<.tmp" && mv -f "$<.tmp" "$<"

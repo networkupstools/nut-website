@@ -263,14 +263,16 @@ echo "Readying NUT Website"
 echo_spacer
 echo "Calling autoreconf..."
 autoreconf -ifv || quit
+
 # Trick borrowed from https://gitlab.gnome.org/luzpaz/gimp-help/-/blob/master/autogen.sh
+# Dittoed as `make unhide-from-automake` in the recipe itself
 if [ -e Makefile.in ]; then
-    sed -e 's/^# HIDE FROM AUTOMAKE #//' \
-       Makefile.in > Makefile.in.tmp &&
-    mv Makefile.in.tmp Makefile.in
+	sed -e 's/^# HIDE FROM AUTOMAKE #//' \
+		Makefile.in > Makefile.in.tmp &&
+	mv Makefile.in.tmp Makefile.in
 else
-    echo >&2 "Error: cannot find Makefile.in"
-    exit 1
+	echo "Error: cannot find Makefile.in" >&2
+	exit 1
 fi
 
 echo_spacer
