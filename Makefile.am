@@ -292,7 +292,7 @@ clean-local:
 		scripts/ups_data.js
 	git checkout -f images || true
 	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict *.usage-report
-	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted
+	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted nut-website.dict.tmp
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
 	rm -f .git-commit-website
@@ -657,9 +657,14 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
 
 # Indented GNUmake "if/else/endif"
- ifneq (,$(strip NUT_SPELL_DICT))
+ ifeq (,$(strip $(NUT_SPELL_DICT)))
+# Pass to original NUT recipe and its dict file alone
+NUT_SPELL_DICT_OPTION =
+spellcheck-sortdict:
+	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+ else
 export NUT_SPELL_DICT
-NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
+NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(strip $(NUT_SPELL_DICT))"
 
 # Find unique words in the sorted merged dictionary here vs. (pre-)sorted
 # dictionary file in NUT source - this difference is the sorted nut-website
@@ -670,17 +675,18 @@ spellcheck-sortdict: nut-website.dict.addon nut-website.dict
 		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
 		> nut-website.dict.addon.sorted
 	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
-	@mv -f nut-website.dict.addon.sorted nut-website.dict.addon
-
- else
-# Pass to original NUT recipe and its dict file alone
-NUT_SPELL_DICT_OPTION =
-spellcheck-sortdict:
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
  endif
 
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
+	@echo "$@ for NUT_SPELL_DICT=$<" >&2
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
+
+# Just sort the addon file, e.g. after dumping key words into it - ported from main NUT
+spellcheck-sortdict-addon: nut-website.dict.addon
+	@echo "$@ for NUT_SPELL_DICT=$<" >&2
+	@LANG=C LC_ALL=C sort -n < "$(abs_top_srcdir)/nut-website.dict.addon" > nut-website.dict.addon.sorted
+	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
 
 ###
