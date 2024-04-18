@@ -630,7 +630,6 @@ SPELLCHECK_SRC = \
 NUT_SPELL_DICT =
 NUT_SPELL_DICT_DEBUGTAG =
 
-if WITH_NUT_HISTORIC_RELEASE
 # No-op for older releases, use only NUT dict of that era
 # (set in stone for old releases anyway)
 #
@@ -644,12 +643,11 @@ if WITH_NUT_HISTORIC_RELEASE
 #
 # GNUmake "if/else/endif" indented to not conflict with automake;
 # assignments should be indented too but not with TAB characters!
-# HIDE FROM AUTOMAKE #
+
 # HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
-# HIDE FROM AUTOMAKE #    # Should not happen thanks to automake, but just in case - handle non-historic build
-# HIDE FROM AUTOMAKE #    # (e.g. configured with historic, then called "make" with empty var value explicitly)
+# HIDE FROM AUTOMAKE #    # Current NUT source du-jour is assumed modern enough
 # HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
-# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=no-release-bogus-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=no-release-$(NUT_HISTORIC_RELEASE)
 # HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
 # HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=2.7.x-$(NUT_HISTORIC_RELEASE)
 # HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
@@ -660,15 +658,8 @@ if WITH_NUT_HISTORIC_RELEASE
 # HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
 # HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=modern-$(NUT_HISTORIC_RELEASE)
 # HIDE FROM AUTOMAKE # endif
-# HIDE FROM AUTOMAKE #
-else !WITH_NUT_HISTORIC_RELEASE
 
-# Current NUT source du-jour is assumed modern enough
-    NUT_SPELL_DICT +=nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG +=no-release-configured-$(NUT_HISTORIC_RELEASE)
-
-endif !WITH_NUT_HISTORIC_RELEASE
-
+# NOTE: Relies on NUT source modern enough to have "spellcheck-sortdict"
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	cat $^ > "$@"
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
