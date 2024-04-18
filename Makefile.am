@@ -662,7 +662,9 @@ NUT_SPELL_DICT_DEBUGTAG =
 # NOTE: Relies on NUT source modern enough to have "spellcheck-sortdict"
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	cat $^ > "$@"
-	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
+	+(cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict) \
+		|| ( grep -vE '^personal_ws' < "$@" | sort -n | uniq > "$@.tmp" \
+			&& ( (echo "personal_ws-1.1 en `wc -l < "$@.tmp"` utf-8"; cat "$@.tmp"; ) > "$@" ) )
 
 # Indented GNUmake "if/else/endif"
  ifeq (,$(strip $(NUT_SPELL_DICT)))
