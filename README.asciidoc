@@ -75,6 +75,22 @@ non-portable constructs in the Makefiles, please let us know.
 Building
 --------
 
+Editing the Makefile.am source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+WARNING: Due to lines which `# HIDE FROM AUTOMAKE #` some GNU syntax which
+conflicts with automake syntax, you *MUST* use `autogen.sh` to re-generate
+the practical `Makefile` during development cycles. If you rely on automatic
+typical regeneration of `Makefile.am` -> `Makefile.in` -> `Makefile`, the
+resulting file can have crucial parts commented away.
+
+Alternately, `make unhide-from-automake` after edits, e.g. to fiddle with
+spell checker Makefile recipes for historic releases:
+
+----
+:; make unhide-from-automake ; make spellcheck NUT_SPELL_DICT=nut-website.dict
+----
+
 Quick builds for CI and developer iterations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
