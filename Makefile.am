@@ -647,24 +647,24 @@ if WITH_NUT_HISTORIC_RELEASE
  ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
     # Should not happen thanks to automake, but just in case - handle non-historic build
     # (e.g. configured with historic, then called "make" with empty var value explicitly)
-    NUT_SPELL_DICT += nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG += no-release-bogus-$(NUT_HISTORIC_RELEASE)
+    NUT_SPELL_DICT +=nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG +=no-release-bogus-$(NUT_HISTORIC_RELEASE)
  else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
-    NUT_SPELL_DICT_DEBUGTAG += 2.7.x-$(NUT_HISTORIC_RELEASE)
+    NUT_SPELL_DICT_DEBUGTAG +=2.7.x-$(NUT_HISTORIC_RELEASE)
  else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
-    NUT_SPELL_DICT_DEBUGTAG += 2.8.0-$(NUT_HISTORIC_RELEASE)
+    NUT_SPELL_DICT_DEBUGTAG +=2.8.0-$(NUT_HISTORIC_RELEASE)
  else
     # ...else this historic NUT source (2.8.x or newer) is assumed modern enough
     # Practically tested since the NUT v2.8.2 release
-    NUT_SPELL_DICT += nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG += modern-$(NUT_HISTORIC_RELEASE)
+    NUT_SPELL_DICT +=nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG +=modern-$(NUT_HISTORIC_RELEASE)
  endif
 
 else !WITH_NUT_HISTORIC_RELEASE
 
 # Current NUT source du-jour is assumed modern enough
-    NUT_SPELL_DICT += nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG += no-release-$(NUT_HISTORIC_RELEASE)
+    NUT_SPELL_DICT +=nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG +=no-release-configured-$(NUT_HISTORIC_RELEASE)
 
 endif !WITH_NUT_HISTORIC_RELEASE
 
