@@ -263,6 +263,17 @@ echo "Readying NUT Website"
 echo_spacer
 echo "Calling autoreconf..."
 autoreconf -ifv || quit
+
+# Trick borrowed from https://gitlab.gnome.org/luzpaz/gimp-help/-/blob/master/autogen.sh
+if [ -e Makefile.in ]; then
+	sed -e 's/^# HIDE FROM AUTOMAKE #//' \
+		Makefile.in > Makefile.in.tmp &&
+	mv Makefile.in.tmp Makefile.in
+else
+	echo "Error: cannot find Makefile.in" >&2
+	exit 1
+fi
+
 echo_spacer
 
 # Some autoconf versions may leave "/bin/sh" regardless of CONFIG_SHELL
