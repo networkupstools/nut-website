@@ -660,6 +660,9 @@ NUT_SPELL_DICT_DEBUGTAG =
 # HIDE FROM AUTOMAKE # endif
 
 # NOTE: Relies on NUT source modern enough to have "spellcheck-sortdict"
+# or uses the fallback below upon failure.
+# Make rules in many NUT releases included explicit path to NUT sources,
+# so we use relative path here and can use absolute for actual aspell calls.
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	cat $^ > "$@"
 	+(cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict) \
@@ -675,7 +678,7 @@ spellcheck-sortdict:
 	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $@
  else
 export NUT_SPELL_DICT
-NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(strip $(NUT_SPELL_DICT))"
+NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
 
 # Find unique words in the sorted merged dictionary here vs. (pre-)sorted
 # dictionary file in NUT source - this difference is the sorted nut-website
