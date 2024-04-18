@@ -662,7 +662,7 @@ NUT_SPELL_DICT_DEBUGTAG =
 # NOTE: Relies on NUT source modern enough to have "spellcheck-sortdict"
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	cat $^ > "$@"
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
+	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
 
 # Indented GNUmake "if/else/endif"
  ifeq (,$(strip $(NUT_SPELL_DICT)))
@@ -670,7 +670,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 NUT_SPELL_DICT_OPTION =
 spellcheck-sortdict:
 	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $@
  else
 export NUT_SPELL_DICT
 NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(strip $(NUT_SPELL_DICT))"
@@ -690,7 +690,7 @@ spellcheck-sortdict: nut-website.dict.addon nut-website.dict
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
 	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
+	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
 
 # Just sort the addon file, e.g. after dumping key words into it - ported from main NUT
 spellcheck-sortdict-addon: nut-website.dict.addon
