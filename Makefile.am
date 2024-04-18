@@ -670,27 +670,27 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 			&& ( (echo "personal_ws-1.1 en `wc -l < "$@.tmp"` utf-8"; cat "$@.tmp"; ) > "$@" ) )
 
 # Indented GNUmake "if/else/endif"
- ifeq (,$(strip $(NUT_SPELL_DICT)))
-# Pass to original NUT recipe and its dict file alone
-NUT_SPELL_DICT_OPTION =
-spellcheck-sortdict:
-	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $@
- else
-export NUT_SPELL_DICT
-NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
-
-# Find unique words in the sorted merged dictionary here vs. (pre-)sorted
-# dictionary file in NUT source - this difference is the sorted nut-website
-# specific dictionary.
-spellcheck-sortdict: nut-website.dict.addon nut-website.dict
-	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
-	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
-		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
-		> nut-website.dict.addon.sorted
-	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
-	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
- endif
+# HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_SPELL_DICT)))
+# HIDE FROM AUTOMAKE ## Pass to original NUT recipe and its dict file alone
+# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION =
+# HIDE FROM AUTOMAKE #spellcheck-sortdict:
+# HIDE FROM AUTOMAKE #	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+# HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix $(abs_top_srcdir)/,$(SPELLCHECK_SRC))" $@
+# HIDE FROM AUTOMAKE # else
+# HIDE FROM AUTOMAKE #export NUT_SPELL_DICT
+# HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE ## Find unique words in the sorted merged dictionary here vs. (pre-)sorted
+# HIDE FROM AUTOMAKE ## dictionary file in NUT source - this difference is the sorted nut-website
+# HIDE FROM AUTOMAKE ## specific dictionary.
+# HIDE FROM AUTOMAKE #spellcheck-sortdict: nut-website.dict.addon nut-website.dict
+# HIDE FROM AUTOMAKE #	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+# HIDE FROM AUTOMAKE #	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
+# HIDE FROM AUTOMAKE #		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
+# HIDE FROM AUTOMAKE #		> nut-website.dict.addon.sorted
+# HIDE FROM AUTOMAKE #	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
+# HIDE FROM AUTOMAKE #	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
+# HIDE FROM AUTOMAKE # endif
 
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
