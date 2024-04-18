@@ -628,6 +628,7 @@ SPELLCHECK_SRC = \
 ### you only add words and roll back anything your aspell might remove) and
 ### to promote the submodule reference from nut-website later on.
 NUT_SPELL_DICT =
+NUT_SPELL_DICT_DEBUGTAG =
 
 if WITH_NUT_HISTORIC_RELEASE
 # No-op for older releases, use only NUT dict of that era
@@ -641,14 +642,30 @@ if WITH_NUT_HISTORIC_RELEASE
 # while, so maybe even older releases can be covered here:
 #  20149af7fc (Arnaud Quette   2012-10-10 21:23:15 +0000  91) NUT_SPELL_DICT = nut.dict
 #
-# GNUmake "if/else/endif" as a function to not conflict with automake:
-$(if $(or $(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))), $(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE)))),,NUT_SPELL_DICT += nut-website.dict)
-# ...else this historic NUT source (2.8.x or newer) is assumed modern enough
-# Practically tested since the NUT v2.8.2 release
+# GNUmake "if/else/endif" indented to not conflict with automake;
+# assignments should be indented too but not with TAB characters!
+ ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
+    # Should not happen thanks to automake, but just in case - handle non-historic build
+    # (e.g. configured with historic, then called "make" with empty var value explicitly)
+    NUT_SPELL_DICT += nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG += no-release-bogus-$(NUT_HISTORIC_RELEASE)
+ else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
+    NUT_SPELL_DICT_DEBUGTAG += 2.7.x-$(NUT_HISTORIC_RELEASE)
+ else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
+    NUT_SPELL_DICT_DEBUGTAG += 2.8.0-$(NUT_HISTORIC_RELEASE)
+ else
+    # ...else this historic NUT source (2.8.x or newer) is assumed modern enough
+    # Practically tested since the NUT v2.8.2 release
+    NUT_SPELL_DICT += nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG += modern-$(NUT_HISTORIC_RELEASE)
+ endif
 
 else !WITH_NUT_HISTORIC_RELEASE
+
 # Current NUT source du-jour is assumed modern enough
-NUT_SPELL_DICT += nut-website.dict
+    NUT_SPELL_DICT += nut-website.dict
+    NUT_SPELL_DICT_DEBUGTAG += no-release-$(NUT_HISTORIC_RELEASE)
+
 endif !WITH_NUT_HISTORIC_RELEASE
 
 nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
@@ -660,6 +677,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # Pass to original NUT recipe and its dict file alone
 NUT_SPELL_DICT_OPTION =
 spellcheck-sortdict:
+	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
  else
 export NUT_SPELL_DICT
@@ -669,7 +687,7 @@ NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(strip $(NUT_SPELL_DICT))"
 # dictionary file in NUT source - this difference is the sorted nut-website
 # specific dictionary.
 spellcheck-sortdict: nut-website.dict.addon nut-website.dict
-	@echo "$@ for NUT_SPELL_DICT=$<" >&2
+	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 	LANG=C LC_ALL=C diff -bu nut-website.dict $(top_builddir)/nut/docs/nut.dict \
 		| grep -E '^-' | grep -Ev '^-(-- |personal_ws)' | sed 's/^-//' \
 		> nut-website.dict.addon.sorted
@@ -679,12 +697,12 @@ spellcheck-sortdict: nut-website.dict.addon nut-website.dict
 
 # Whether we have a custom dictionary or not:
 spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
-	@echo "$@ for NUT_SPELL_DICT=$<" >&2
+	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $(NUT_SPELL_DICT_OPTION) $@
 
 # Just sort the addon file, e.g. after dumping key words into it - ported from main NUT
 spellcheck-sortdict-addon: nut-website.dict.addon
-	@echo "$@ for NUT_SPELL_DICT=$<" >&2
+	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 	@LANG=C LC_ALL=C sort -n < "$(abs_top_srcdir)/nut-website.dict.addon" > nut-website.dict.addon.sorted
 	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
 
