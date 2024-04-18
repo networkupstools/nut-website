@@ -633,6 +633,9 @@ NUT_SPELL_DICT_DEBUGTAG =
 # No-op for older releases, use only NUT dict of that era
 # (set in stone for old releases anyway)
 #
+# WARNING: It seems the spellcheck rules were too uncapable
+# in NUT v2.7.4 (and the dictionary was just starting)!
+#
 # FIXME: Might check if 2.8.0 is already capable for this
 #  purpose? Not pressing since its nut.dict sufficed at
 #  the time of historic website build...
