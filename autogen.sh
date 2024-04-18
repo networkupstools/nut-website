@@ -265,6 +265,7 @@ echo "Calling autoreconf..."
 autoreconf -ifv || quit
 
 # Trick borrowed from https://gitlab.gnome.org/luzpaz/gimp-help/-/blob/master/autogen.sh
+# Dittoed as `make unhide-from-automake` in the recipe itself
 if [ -e Makefile.in ]; then
 	sed -e 's/^# HIDE FROM AUTOMAKE #//' \
 		Makefile.in > Makefile.in.tmp &&

@@ -4,7 +4,7 @@
 # conflicts with automake syntax, you must use autogen.sh to re-generate the
 # Makefile during development cycles. If you rely on automatic regeneration
 # of Makefile.am->Makefile.in->Makefile the resulting file can have crucial
-# parts commented away.
+# parts commented away. Alternately, `make unhide-from-automake` after edits.
 
 # Also relies on GNU `ln -fsr` options, for historic sub-site publication
 LN = ln
@@ -713,3 +713,6 @@ spellcheck-sortdict-addon: nut-website.dict.addon
 	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
 
 ###
+
+unhide-from-automake: Makefile
+	sed -e 's/^# HIDE FROM AUTOMAKE #//' < "$<" > "$<.tmp" && mv -f "$<.tmp" "$<"
