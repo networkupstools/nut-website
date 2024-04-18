@@ -664,7 +664,7 @@ spellcheck-sortdict:
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
  else
 export NUT_SPELL_DICT
-NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
+NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(strip $(NUT_SPELL_DICT))"
 
 # Find unique words in the sorted merged dictionary here vs. (pre-)sorted
 # dictionary file in NUT source - this difference is the sorted nut-website
