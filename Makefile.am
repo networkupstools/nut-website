@@ -644,22 +644,23 @@ if WITH_NUT_HISTORIC_RELEASE
 #
 # GNUmake "if/else/endif" indented to not conflict with automake;
 # assignments should be indented too but not with TAB characters!
- ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
-    # Should not happen thanks to automake, but just in case - handle non-historic build
-    # (e.g. configured with historic, then called "make" with empty var value explicitly)
-    NUT_SPELL_DICT +=nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG +=no-release-bogus-$(NUT_HISTORIC_RELEASE)
- else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
-    NUT_SPELL_DICT_DEBUGTAG +=2.7.x-$(NUT_HISTORIC_RELEASE)
- else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
-    NUT_SPELL_DICT_DEBUGTAG +=2.8.0-$(NUT_HISTORIC_RELEASE)
- else
-    # ...else this historic NUT source (2.8.x or newer) is assumed modern enough
-    # Practically tested since the NUT v2.8.2 release
-    NUT_SPELL_DICT +=nut-website.dict
-    NUT_SPELL_DICT_DEBUGTAG +=modern-$(NUT_HISTORIC_RELEASE)
- endif
-
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_HISTORIC_RELEASE)))
+# HIDE FROM AUTOMAKE #    # Should not happen thanks to automake, but just in case - handle non-historic build
+# HIDE FROM AUTOMAKE #    # (e.g. configured with historic, then called "make" with empty var value explicitly)
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=no-release-bogus-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))))
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=2.7.x-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else ifneq (,$(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=2.8.0-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # else
+# HIDE FROM AUTOMAKE #    # ...else this historic NUT source (2.8.x or newer) is assumed modern enough
+# HIDE FROM AUTOMAKE #    # Practically tested since the NUT v2.8.2 release
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT +=nut-website.dict
+# HIDE FROM AUTOMAKE #    NUT_SPELL_DICT_DEBUGTAG +=modern-$(NUT_HISTORIC_RELEASE)
+# HIDE FROM AUTOMAKE # endif
+# HIDE FROM AUTOMAKE #
 else !WITH_NUT_HISTORIC_RELEASE
 
 # Current NUT source du-jour is assumed modern enough
