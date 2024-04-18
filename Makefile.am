@@ -292,7 +292,7 @@ clean-local:
 		scripts/ups_data.js
 	git checkout -f images || true
 	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict *.usage-report
-	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted
+	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted nut-website.dict.tmp
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
 	rm -f .git-commit-website
