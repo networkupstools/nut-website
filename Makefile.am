@@ -630,8 +630,6 @@ SPELLCHECK_SRC = \
 NUT_SPELL_DICT =
 
 if WITH_NUT_HISTORIC_RELEASE
-# Indented GNUmake "if/else/endif"
- if $(or $(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE)), $(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE))))
 # No-op for older releases, use only NUT dict of that era
 # (set in stone for old releases anyway)
 #
@@ -642,13 +640,14 @@ if WITH_NUT_HISTORIC_RELEASE
 # NOTE: Nut source recipes have the variable for quite a
 # while, so maybe even older releases can be covered here:
 #  20149af7fc (Arnaud Quette   2012-10-10 21:23:15 +0000  91) NUT_SPELL_DICT = nut.dict
- else
-# This historic NUT source (2.8.x or newer) is assumed modern enough
+#
+# GNUmake "if/else/endif" as a function to not conflict with automake:
+$(if $(or $(findstring 2.7.,$(strip $(NUT_HISTORIC_RELEASE))), $(findstring 2.8.0,$(strip $(NUT_HISTORIC_RELEASE)))),,NUT_SPELL_DICT += nut-website.dict)
+# ...else this historic NUT source (2.8.x or newer) is assumed modern enough
 # Practically tested since the NUT v2.8.2 release
-NUT_SPELL_DICT += nut-website.dict
- endif
+
 else !WITH_NUT_HISTORIC_RELEASE
-# Current NUT source is assumed modern enough
+# Current NUT source du-jour is assumed modern enough
 NUT_SPELL_DICT += nut-website.dict
 endif !WITH_NUT_HISTORIC_RELEASE
 
