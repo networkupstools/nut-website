@@ -657,7 +657,12 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile NUT_SPELL_DICT="../../$(@F)" spellcheck-sortdict
 
 # Indented GNUmake "if/else/endif"
- ifneq (,$(strip $(NUT_SPELL_DICT)))
+ ifeq (,$(strip $(NUT_SPELL_DICT)))
+# Pass to original NUT recipe and its dict file alone
+NUT_SPELL_DICT_OPTION =
+spellcheck-sortdict:
+	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
+ else
 export NUT_SPELL_DICT
 NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="$(NUT_SPELL_DICT)"
 
@@ -671,11 +676,6 @@ spellcheck-sortdict: nut-website.dict.addon nut-website.dict
 		> nut-website.dict.addon.sorted
 	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
 	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
- else
-# Pass to original NUT recipe and its dict file alone
-NUT_SPELL_DICT_OPTION =
-spellcheck-sortdict:
-	+$(MAKE) $(AM_MAKEFLAGS) -f $(top_builddir)/nut/docs/Makefile SPELLCHECK_SRC="$(SPELLCHECK_SRC)" $@
  endif
 
 # Whether we have a custom dictionary or not:
