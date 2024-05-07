@@ -84,7 +84,7 @@ esac
 
 if [ x"$CI_TRY_HTMLPROOFER" != xfalse ] ; then
 	echo "=== Sanity-checking the generated output directory..." >&2
-	make check-htmlproofer || if [ x"$CI_TRY_HTMLPROOFER" = xrequire ] ; then exit 1 ; fi
+	time make check-htmlproofer || if [ x"$CI_TRY_HTMLPROOFER" = xrequire ] ; then exit 1 ; fi
 fi
 
 # If we are here, there should be a populated "output" directory
