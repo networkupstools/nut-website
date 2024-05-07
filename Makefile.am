@@ -27,6 +27,10 @@ IMAGE_FILES =	\
 	images/simple.png	\
 	images/warning.png
 
+# Copied below from asciidoc resource location, if available
+IMAGE_FILES_ASCIIDOC_ICONS =	\
+	images/tip.png
+
 CABLE_IMAGE_FILES =	\
 	images/cables/73-0724.png	\
 	images/cables/940-0024C.jpg	\
@@ -149,6 +153,7 @@ all-files:	\
 	$(WEBSITE_FILES)	\
 	$(FAVICON_FILES)	\
 	$(IMAGE_FILES)	\
+	$(IMAGE_FILES_ASCIIDOC_ICONS)	\
 	$(CABLE_IMAGE_FILES)	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
@@ -222,6 +227,15 @@ $(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt
 
 images/:
 	$(MKDIR_P) images
+
+# FIXME: Detect location via configure script?
+# The file would be published at least once to the ultimate site...
+$(IMAGE_FILES_ASCIIDOC_ICONS): images/
+	if [ -d /usr/share/asciidoc ]; then \
+		find /usr/share/asciidoc -name "$(@F)" -exec cp -f '{}' images/ \; ; \
+	else \
+		echo "Can not find ASCIIDOC resource location, skipped $@" ; \
+	fi
 
 $(IMAGE_FILES): images/
 	cp -f nut/docs/$@ images/
