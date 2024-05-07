@@ -86,6 +86,27 @@ AC_PATH_PROGS([A2X], [a2x], [none])
 
 dnl ----------------------------------------------------------------------
 
+AC_PATH_PROGS([HTMLPROOFER], [htmlproofer html-proofer], [none])
+AC_ARG_WITH(htmlproofer,
+	[AS_HELP_STRING([--with-htmlproofer=PATH], [program location for htmlproofer (default: auto-detect)])],
+	[AS_CASE(["${withval}"],
+		[no|none], [
+			AS_IF([test x"${HTMLPROOFER}" != xnone], [AC_MSG_WARN([HTMLPROOFER='${HTMLPROOFER}' was detected, but we are explicitly configured to not use it])])
+			HTMLPROOFER="none"],
+		[''|auto|yes], [],
+		[HTMLPROOFER="${withval}"]
+	)],
+	[]
+)
+AM_CONDITIONAL([WITH_HTMLPROOFER], [test x"$HTMLPROOFER" != x -a x"$HTMLPROOFER" != xnone])
+AM_COND_IF([WITH_HTMLPROOFER], [
+	AC_MSG_CHECKING([if provided/detected HTMLPROOFER='${HTMLPROOFER}' is what it says it is])
+	LANG=C LC_ALL=C ${HTMLPROOFER} --help | grep -iE '^htmlproofer *@<:@0-9@:>@' || AC_MSG_ERROR([no])
+	AC_MSG_RESULT([yes])
+])
+
+dnl ----------------------------------------------------------------------
+
 dnl Note AC_INIT defines a constrained PACKAGE_VERSION based on last tag
 dnl in NUT codebase, not its configure.ac version or detailed revision.
 dnl For the rolling web-site we want to track origins more precisely:

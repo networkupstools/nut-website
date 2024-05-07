@@ -173,6 +173,26 @@ all:	\
 	@cat .git-commit-website
 # Regenerate site 2020-12-21 vs nut commit 46c7da76 and nut-website commit f1992f6f
 
+if WITH_HTMLPROOFER
+check-htmlproofer: all
+	+@case "$(OUTDIR)" in \
+		"$(OUTDIR_BASE)"|"$(OUTDIR_BASE)/"*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE ;; \
+		*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE check-htmlproofer-OUTDIR ;; \
+	  esac
+
+check-htmlproofer-OUTDIR: $(OUTDIR)
+	$(HTMLPROOFER) $(OUTDIR)
+
+check-htmlproofer-OUTDIR_BASE: $(OUTDIR_BASE)
+	$(HTMLPROOFER) $(OUTDIR_BASE)
+
+else !WITH_HTMLPROOFER
+
+check-htmlproofer check-htmlproofer-OUTDIR check-htmlproofer-OUTDIR_BASE:
+	@echo "Do not have HTMLPROOFER on this system, skipped make target $@" >&2
+
+endif !WITH_HTMLPROOFER
+
 release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages

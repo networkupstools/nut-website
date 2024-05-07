@@ -657,6 +657,7 @@ hcl
 highbattery
 highfrequency
 html
+htmlproofer
 ib
 ibattery
 icd
@@ -791,6 +792,7 @@ poweronmode
 powerontime
 powerouts
 pre
+proofer
 psu
 pulizzi
 pw
