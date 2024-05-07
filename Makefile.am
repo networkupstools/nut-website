@@ -27,6 +27,10 @@ IMAGE_FILES =	\
 	images/simple.png	\
 	images/warning.png
 
+# Copied below from asciidoc resource location, if available
+IMAGE_FILES_ASCIIDOC_ICONS =	\
+	images/tip.png
+
 CABLE_IMAGE_FILES =	\
 	images/cables/73-0724.png	\
 	images/cables/940-0024C.jpg	\
@@ -149,6 +153,7 @@ all-files:	\
 	$(WEBSITE_FILES)	\
 	$(FAVICON_FILES)	\
 	$(IMAGE_FILES)	\
+	$(IMAGE_FILES_ASCIIDOC_ICONS)	\
 	$(CABLE_IMAGE_FILES)	\
 	$(LAYOUT_FILES)	\
 	$(SCRIPT_FILES)	\
@@ -222,6 +227,15 @@ $(WEBSITE_FILES): $(LAYOUT).conf historic-release.txt
 
 images/:
 	$(MKDIR_P) images
+
+# FIXME: Detect location via configure script?
+# The file would be published at least once to the ultimate site...
+$(IMAGE_FILES_ASCIIDOC_ICONS): images/
+	if [ -d /usr/share/asciidoc ]; then \
+		find /usr/share/asciidoc -name "$(@F)" -exec cp -f '{}' images/ \; ; \
+	else \
+		echo "Can not find ASCIIDOC resource location, skipped $@" ; \
+	fi
 
 $(IMAGE_FILES): images/
 	cp -f nut/docs/$@ images/
@@ -298,7 +312,7 @@ clean-local:
 		scripts/ups_data.js
 	git checkout -f images || true
 	rm -f *-spellchecked protocols/*-spellchecked nut-website.dict *.usage-report
-	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted nut-website.dict.tmp
+	rm -f nut-website.dict.bak-pre-sorting nut-website.dict.sorted .nut-website.dict.sorted nut-website.dict.tmp nut-website.bak-pre-interactive
 	rm -f tools/nut-ddl.py tools/nut-hclinfo.py
 	rm -f historic-release.txt
 	rm -f .git-commit-website
@@ -680,12 +694,15 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 
 # Indented GNUmake "if/else/endif"
 # HIDE FROM AUTOMAKE # ifeq (,$(strip $(NUT_SPELL_DICT)))
+# HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE ## Pass to original NUT recipe and its dict file alone
 # HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION =
-# HIDE FROM AUTOMAKE #spellcheck-sortdict:
+# HIDE FROM AUTOMAKE #spellcheck-sortdict spellcheck-interactive:
 # HIDE FROM AUTOMAKE #	@echo "$@ for NUT-source-only NUT_SPELL_DICT (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 # HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $@
+# HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE # else
+# HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE #export NUT_SPELL_DICT
 # HIDE FROM AUTOMAKE #NUT_SPELL_DICT_OPTION = NUT_SPELL_DICT="../../$(notdir $(strip $(NUT_SPELL_DICT)))" NUT_SPELL_DICT_ABS="$(abs_top_builddir)/$(notdir $(strip $(NUT_SPELL_DICT)))"
 # HIDE FROM AUTOMAKE #
@@ -699,10 +716,19 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # HIDE FROM AUTOMAKE #		> nut-website.dict.addon.sorted
 # HIDE FROM AUTOMAKE #	@test -s nut-website.dict.addon.sorted || { echo "ERROR: $@ for NUT_SPELL_DICT=$< yielded an empty file; we expect some unique words here!" >&2; exit 1; }
 # HIDE FROM AUTOMAKE #	@mv -f nut-website.dict.addon.sorted "$(abs_top_srcdir)/nut-website.dict.addon"
+# HIDE FROM AUTOMAKE #
+# HIDE FROM AUTOMAKE #spellcheck-interactive: $(NUT_SPELL_DICT)
+# HIDE FROM AUTOMAKE #	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
+# HIDE FROM AUTOMAKE #	cp -f "$(NUT_SPELL_DICT)" "$(NUT_SPELL_DICT).bak-pre-interactive"
+# HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
+# HIDE FROM AUTOMAKE #	diff -bu "$(NUT_SPELL_DICT).bak-pre-interactive" "$(NUT_SPELL_DICT)" | grep -E '^\+[^\+]' | sed 's/^\+//' | grep -vE '^personal_ws' >> "$(abs_top_srcdir)/nut-website.dict.addon"
+# HIDE FROM AUTOMAKE #	rm -f "$(NUT_SPELL_DICT).bak-pre-interactive"
+# HIDE FROM AUTOMAKE #	+$(MAKE) $(AM_MAKEFLAGS) spellcheck-sortdict-addon
+# HIDE FROM AUTOMAKE #
 # HIDE FROM AUTOMAKE # endif
 
 # Whether we have a custom dictionary or not:
-spellcheck spellcheck-interactive spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
+spellcheck spellcheck-report-dict-usage: $(NUT_SPELL_DICT)
 	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
 
