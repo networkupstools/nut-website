@@ -174,16 +174,23 @@ all:	\
 # Regenerate site 2020-12-21 vs nut commit 46c7da76 and nut-website commit f1992f6f
 
 if WITH_HTMLPROOFER
-check-htmlproofer: all
+
+# NOTE: We do not depend below on "all" or "OUTDIR" because that begins
+# rebuilds of the site we have possibly just made. Instead, these rules
+# just check whatever exists in the filesystem.
+
+check-htmlproofer:
 	+@case "$(OUTDIR)" in \
 		"$(OUTDIR_BASE)"|"$(OUTDIR_BASE)/"*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE ;; \
 		*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE check-htmlproofer-OUTDIR ;; \
 	  esac
 
-check-htmlproofer-OUTDIR: $(OUTDIR)
+check-htmlproofer-OUTDIR:
+	test -d $(OUTDIR)
 	$(HTMLPROOFER) $(OUTDIR)
 
-check-htmlproofer-OUTDIR_BASE: $(OUTDIR_BASE)
+check-htmlproofer-OUTDIR_BASE:
+	test -d $(OUTDIR_BASE)
 	$(HTMLPROOFER) $(OUTDIR_BASE)
 
 else !WITH_HTMLPROOFER
