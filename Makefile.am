@@ -193,6 +193,12 @@ check-htmlproofer-OUTDIR_BASE:
 	test -d $(OUTDIR_BASE)
 	$(HTMLPROOFER) $(OUTDIR_BASE)
 
+# Fetched/updated via git checkout, e.g. by ci_build.sh
+OUTDIR_PUBLISHED = networkupstools.github.io
+check-htmlproofer-OUTDIR_PUBLISHED:
+	test -d $(OUTDIR_PUBLISHED)
+	$(HTMLPROOFER) $(OUTDIR_PUBLISHED)
+
 else !WITH_HTMLPROOFER
 
 check-htmlproofer check-htmlproofer-OUTDIR check-htmlproofer-OUTDIR_BASE:
