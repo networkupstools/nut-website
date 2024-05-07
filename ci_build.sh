@@ -21,6 +21,16 @@
 [ x"${NUT_HISTORIC_RELEASE-}" != x ] || NUT_HISTORIC_RELEASE=""
 export CI_AUTOCOMMIT CI_AUTOPUSH CI_AVOID_RESPIN NUT_HISTORIC_RELEASE
 
+# FIXME: Initially "false" to boot-strap development on
+# https://github.com/networkupstools/nut-website/issues/52
+# and then should become "true" or "require" depending on
+# achievements.
+case x"${CI_TRY_HTMLPROOFER-}" in
+	xtrue|xfalse|xrequire) ;;
+	*) CI_TRY_HTMLPROOFER=false ;;
+esac
+export CI_TRY_HTMLPROOFER
+
 LANG=C
 LC_ALL=C
 TZ=UTC
@@ -71,6 +81,11 @@ case "${NUT_HISTORIC_RELEASE-}" in
 	{ make -k -j 8 ; echo "===== Finalize make:" >&2; make -s ; } || exit
 	;;
 esac
+
+if [ x"$CI_TRY_HTMLPROOFER" != xfalse ] ; then
+	echo "=== Sanity-checking the generated output directory..." >&2
+	make check-htmlproofer || if [ x"$CI_TRY_HTMLPROOFER" = xrequire ] ; then exit 1 ; fi
+fi
 
 # If we are here, there should be a populated "output" directory
 # and there were no build issues
