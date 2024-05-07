@@ -221,6 +221,7 @@ location for that repository, if not using the scripted default).
 
 Note that this check can take about 10 minutes (especially if not disabling
 the referenced external site availability), so it is not done by default.
+You can pass custom `HTMLPROOFER_OPTIONS` to the `make` operation, if desired.
 
 Publishing
 ----------
