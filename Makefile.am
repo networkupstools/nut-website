@@ -199,8 +199,13 @@ HTMLPROOFER_OPTIONS_DEFAULT = \
 #   Temporarily allow empty alt tags on images
 # HTMLPROOFER_OPTIONS_DEFAULT += --empty_alt_ignore
 
+# Hide possible externally-rendered references to our own site (treat
+# them as relative starting with the slash):
+HTMLPROOFER_OPTIONS_URLSWAP = --url-swap='https?\://networkupstools\.github\.io:,https?\://networkupstools\.org:,https?\://www\.networkupstools\.org:'
+### HTMLPROOFER_OPTIONS_URLSWAP +=',https?\://[a-zA-Z0-9_.-]+\.networkupstools\.org:'
+
 # Allow the caller an easy override:
-HTMLPROOFER_OPTIONS = $(HTMLPROOFER_OPTIONS_DEFAULT)
+HTMLPROOFER_OPTIONS = $(HTMLPROOFER_OPTIONS_DEFAULT) $(HTMLPROOFER_OPTIONS_URLSWAP)
 
 check-htmlproofer:
 	+@case "$(OUTDIR)" in \
