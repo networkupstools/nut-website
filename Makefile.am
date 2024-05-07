@@ -173,6 +173,67 @@ all:	\
 	@cat .git-commit-website
 # Regenerate site 2020-12-21 vs nut commit 46c7da76 and nut-website commit f1992f6f
 
+if WITH_HTMLPROOFER
+
+# NOTE: We do not depend below on "all" or "OUTDIR" because that begins
+# rebuilds of the site we have possibly just made. Instead, these rules
+# just check whatever exists in the filesystem.
+
+# * --disable_external
+#   By default, we avoid looking at remote website availability.
+#   This is something we may want to do occasionally (replace dead links
+#   by references to new incarnations or archive.org) but not take the
+#   performance hit (and annoy others) for every CI run - in that case
+#   consider a run with --external_only option to explicitly test that.
+# * --allow_hash_href
+#   We also allow <a href="#" ...> commonly used in javascript etc.
+# * --assume_extension
+#   allow extensionles urls (Jekyll3)
+HTMLPROOFER_OPTIONS_DEFAULT = \
+	--disable_external \
+	--allow_hash_href \
+	--assume_extension
+
+# CONSIDER:
+# * --empty_alt_ignore
+#   Temporarily allow empty alt tags on images
+# HTMLPROOFER_OPTIONS_DEFAULT += --empty_alt_ignore
+
+# Hide possible externally-rendered references to our own site (treat
+# them as relative starting with the slash):
+HTMLPROOFER_OPTIONS_URLSWAP = --url-swap='https?\://networkupstools\.github\.io:,https?\://networkupstools\.org:,https?\://www\.networkupstools\.org:'
+### HTMLPROOFER_OPTIONS_URLSWAP +=',https?\://[a-zA-Z0-9_.-]+\.networkupstools\.org:'
+
+# Allow the caller an easy override:
+HTMLPROOFER_OPTIONS = $(HTMLPROOFER_OPTIONS_DEFAULT) $(HTMLPROOFER_OPTIONS_URLSWAP)
+
+check-htmlproofer:
+	+@case "$(OUTDIR)" in \
+		"$(OUTDIR_BASE)"|"$(OUTDIR_BASE)/"*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE ;; \
+		*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE check-htmlproofer-OUTDIR ;; \
+	  esac
+
+check-htmlproofer-OUTDIR:
+	test -d $(OUTDIR)
+	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR)
+
+check-htmlproofer-OUTDIR_BASE:
+	test -d $(OUTDIR_BASE)
+	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_BASE)
+
+# Fetched/updated via git checkout, e.g. by ci_build.sh
+OUTDIR_PUBLISHED = $(abs_top_builddir)/networkupstools.github.io
+check-htmlproofer-OUTDIR_PUBLISHED:
+	test -d $(OUTDIR_PUBLISHED)
+	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_PUBLISHED)
+
+else !WITH_HTMLPROOFER
+
+check-htmlproofer check-htmlproofer-OUTDIR check-htmlproofer-OUTDIR_BASE:
+	@echo "Do not have HTMLPROOFER on this system, skipped make target $@" >&2
+
+endif !WITH_HTMLPROOFER
+
 release: dist-files all
 
 # Generate WEBSITE_DEPS & HTML versions of man pages

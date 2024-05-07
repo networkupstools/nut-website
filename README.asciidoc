@@ -69,6 +69,14 @@ or constrain the preference to nut-website builds:
 The `source-highlight` package is optional, but if available, will be used by
 AsciiDoc for syntax highlighting of examples.
 
+The optional `htmlproofer` tool from https://github.com/gjtorikian/html-proofer
+project can be used to sanity-check links and similar aspects of the markup in
+generated HTML pages. On Debian/Ubuntu systems you can install it as a package:
+
+----
+:; sudo apt-get install ruby-html-proofer
+----
+
 GNU `make` and GNU `coreutils` are recommended, but if you see any remaining
 non-portable constructs in the Makefiles, please let us know.
 
@@ -195,6 +203,26 @@ there. You probably need to commit that back to "source" github repository.
 
 NOTE: For hardcore maintainers, there should be a PGP/GPG key to also sign the
 release tarball, calling `make dist-sig-files` (would fail without a key).
+
+Sanity-checking the generated HTML files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If the `htmlproofer` tool is installed (see above) and detected by the
+`configure` script (automatically for presence in `PATH`), you can explicitly
+call `make check-htmlproofer` to validate the files present in `OUTDIR_BASE`
+and/or `OUTDIR` (if stored separately from the base for custom or historic
+website builds).
+
+You can also validate the published website repository (into which you would
+upload the generated `OUTDIR` contents) as e.g. prepared by the `ci_build.sh`
+using `make check-htmlproofer-OUTDIR_PUBLISHED` (optionally customize the
+`OUTDIR_PUBLISHED` environment or `make` variable to point to the checkout
+location for that repository, if not using the scripted default).
+
+Note that this check can take about 10 minutes (especially if not disabling
+the referenced external site availability), so it is not done by default.
+You can pass custom `HTMLPROOFER_OPTIONS` to the `make` operation, if desired;
+consider pasting the `HTMLPROOFER_OPTIONS_URLSWAP` in that case.
 
 Publishing
 ----------
