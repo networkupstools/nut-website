@@ -74,9 +74,9 @@ AX_COMPARE_VERSION([${DBLATEX_VERSION}], [ge], [0.2.5], [
 	AC_MSG_ERROR(["Unable to build website: check dblatex!"])
 ])
 ], [AC_MSG_NOTICE([Newer NUT sources are in use and suitability of asciidoc and other tools was already tested])
-    AS_IF([test "${nut_have_asciidoc}" = "no"],[
-	AC_MSG_ERROR(["Unable to build website: check asciidoc and other tools versions!"])
-    ])
+	AS_IF([test "${nut_have_asciidoc}" = "no"], [
+		AC_MSG_ERROR(["Unable to build website: check asciidoc and other tools versions!"])
+	])
 ])
 
 dnl ----------------------------------------------------------------------
