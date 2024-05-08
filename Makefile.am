@@ -178,9 +178,11 @@ CLEANFILES += .all-files.started .all-files
 all-files:
 	touch .all-files.started
 	+$(MAKE) $(AM_MAKEFLAGS) all-files-deps
-	@if [ ! -e .all-files ] || \
-	    [ x != x"`find $(abs_top_srcdir) $(abs_top_builddir) -type f -newer .all-files.started`" ] \
+	@FOUND="`find '$(abs_top_srcdir)' '$(abs_top_builddir)' -type f -newer .all-files.started | grep -v '$(abs_top_builddir)/output/' | sort | uniq`" || exit ; \
+	 if [ ! -e .all-files ] || \
+	    [ x"$${FOUND}" != x ] \
 	 ; then \
+		echo "Touching .all-files: FOUND=$${FOUND}" | tr '\n' ' ' ; echo "" ; \
 		touch .all-files ; \
 	 fi
 	rm -f .all-files.started
