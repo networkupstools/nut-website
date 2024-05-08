@@ -150,7 +150,8 @@ else
 	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'" > .git-commit-website
 endif
 
-all-files:	\
+# NOTE: These targets are evaluated every time we "make all-files-deps"!
+all-files-deps:	\
 	.prerequisites_nut_ManHtmlPdf	\
 	$(WEBSITE_FILES)	\
 	$(FAVICON_FILES)	\
@@ -163,6 +164,26 @@ all-files:	\
 	$(HISTORIC_DIR)/index.html	\
 	scripts/ups_data.js	\
 	ups-html.txt
+
+# ".all-files" is a touch-file used to evaluate if something changed due to a
+# run of "make all-files-deps" (or it was a first run since configure/clean).
+# A "make .all-files" should always process "make all-files(-deps)" by chain
+# of dependencies, but the file itself is not necessarily updated if there
+# was in fact nothing new to do in the workspace.
+# NOTE: It does expect to be the only writing process running in the workspace
+# FIXME: Ensure sequentiality for rules that call this to avoid misfires; but
+# impact is low - should not be worse than before this setup was introduced.
+CLEANFILES += .all-files.started .all-files
+.all-files: | all-files
+all-files:
+	touch .all-files.started
+	+$(MAKE) $(AM_MAKEFLAGS) all-files-deps
+	@if [ ! -e .all-files ] || \
+	    [ x != x"`find $(abs_top_srcdir) $(abs_top_builddir) -type f -newer .all-files.started`" ] \
+	 ; then \
+		touch .all-files ; \
+	 fi
+	rm -f .all-files.started
 
 # NOTE: OUTDIR depends on "all-files" above, so no extra dependency here
 all:	\
@@ -338,7 +359,7 @@ images/cables/:
 $(CABLE_IMAGE_FILES): images/cables/
 	cp -f nut/docs/$@ images/cables/
 
-$(OUTDIR): all-files
+$(OUTDIR): .all-files
 	$(RM) -r $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
