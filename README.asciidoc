@@ -77,6 +77,24 @@ generated HTML pages. On Debian/Ubuntu systems you can install it as a package:
 :; sudo apt-get install ruby-html-proofer
 ----
 
+[NOTE]
+======
+If your `htmlproofer` runs complain like this:
+
+----
+htmlproofer 3.19.2 | Error:  "\xC3" on US-ASCII
+  /usr/lib/.../nokogiri/html5.rb:389:in `encode': "\\xC3" on US-ASCII (Encoding::InvalidByteSequenceError)
+----
+
+Try exporting `LANG` and `LC_ALL` environment variables to use UTF-8 capable
+locales (already handled in the `Makefile.am` targets by `HTMLPROOFER_ENV`);
+this may further require installing some or all locale packages, e.g.:
+
+----
+:; sudo apt-get install locales-all
+----
+======
+
 GNU `make` and GNU `coreutils` are recommended, but if you see any remaining
 non-portable constructs in the Makefiles, please let us know.
 

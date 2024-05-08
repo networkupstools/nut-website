@@ -13,6 +13,8 @@ LN = ln
 # Tell aclocal in what directory it should look for macros
 ACLOCAL_AMFLAGS = -I nut/m4
 
+CLEANFILES =
+
 SUBDIRS = protocols
 
 IMAGE_FILES =	\
@@ -148,8 +150,9 @@ else
 	@echo ":; git commit -m 'Regenerate site `date -u +%Y%m%dT%H%M%SZ` vs nut commit `(cd nut && git log -1 --format=%h)`, nut-ddl commit `(cd ddl && git log -1 --format=%h)` and nut-website commit `(git log -1 --format=%h)`'" > .git-commit-website
 endif
 
-all-files:	\
-	prerequisites	\
+# NOTE: These targets are evaluated every time we "make all-files-deps"!
+all-files-deps:	\
+	.prerequisites_nut_ManHtmlPdf	\
 	$(WEBSITE_FILES)	\
 	$(FAVICON_FILES)	\
 	$(IMAGE_FILES)	\
@@ -161,6 +164,28 @@ all-files:	\
 	$(HISTORIC_DIR)/index.html	\
 	scripts/ups_data.js	\
 	ups-html.txt
+
+# ".all-files" is a touch-file used to evaluate if something changed due to a
+# run of "make all-files-deps" (or it was a first run since configure/clean).
+# A "make .all-files" should always process "make all-files(-deps)" by chain
+# of dependencies, but the file itself is not necessarily updated if there
+# was in fact nothing new to do in the workspace.
+# NOTE: It does expect to be the only writing process running in the workspace
+# FIXME: Ensure sequentiality for rules that call this to avoid misfires; but
+# impact is low - should not be worse than before this setup was introduced.
+CLEANFILES += .all-files.started .all-files
+.all-files: | all-files
+all-files:
+	touch .all-files.started
+	+$(MAKE) $(AM_MAKEFLAGS) all-files-deps
+	@FOUND="`find '$(abs_top_srcdir)' '$(abs_top_builddir)' -type f -newer .all-files.started | grep -v '$(abs_top_builddir)/output/' | sort | uniq`" || exit ; \
+	 if [ ! -e .all-files ] || \
+	    [ x"$${FOUND}" != x ] \
+	 ; then \
+		echo "Touching .all-files: FOUND=$${FOUND}" | tr '\n' ' ' ; echo "" ; \
+		touch .all-files ; \
+	 fi
+	rm -f .all-files.started
 
 # NOTE: OUTDIR depends on "all-files" above, so no extra dependency here
 all:	\
@@ -207,6 +232,9 @@ HTMLPROOFER_OPTIONS_URLSWAP = --url-swap='https?\://networkupstools\.github\.io:
 # Allow the caller an easy override:
 HTMLPROOFER_OPTIONS = $(HTMLPROOFER_OPTIONS_DEFAULT) $(HTMLPROOFER_OPTIONS_URLSWAP)
 
+# In newer versions, the nokogiri library complains about US-ASCII locale
+HTMLPROOFER_ENV = LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
 check-htmlproofer:
 	+@case "$(OUTDIR)" in \
 		"$(OUTDIR_BASE)"|"$(OUTDIR_BASE)/"*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE ;; \
@@ -215,17 +243,17 @@ check-htmlproofer:
 
 check-htmlproofer-OUTDIR:
 	test -d $(OUTDIR)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR)
 
 check-htmlproofer-OUTDIR_BASE:
 	test -d $(OUTDIR_BASE)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_BASE)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_BASE)
 
 # Fetched/updated via git checkout, e.g. by ci_build.sh
 OUTDIR_PUBLISHED = $(abs_top_builddir)/networkupstools.github.io
 check-htmlproofer-OUTDIR_PUBLISHED:
 	test -d $(OUTDIR_PUBLISHED)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_PUBLISHED)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_PUBLISHED)
 
 else !WITH_HTMLPROOFER
 
@@ -244,7 +272,7 @@ if WITH_NUT_HISTORIC_RELEASE
 # due to time cost of rendering the huge PDF file (perhaps needlessly when
 # we "Finalize make" in the end) of 2-10 minutes depending on how busy the
 # NUT CI farm agent is.
-prerequisites_ChangeLog:
+.prerequisites_nut_ChangeLog_raw:
 	+cd nut && \
 	    rm -f ChangeLog.bak-nut-website || true ; \
 	    if [ -d .git -a -s .git/HEAD ] ; then rm -f `find ChangeLog -not -newer .git/HEAD` || true ; fi && { \
@@ -259,12 +287,12 @@ prerequisites_ChangeLog:
 else
 # Current NUT sources are expected to be smart enough to decide on update
 # of the ChangeLog file or its reuse as part of "pdf" etc. targets below.
-prerequisites_ChangeLog:
+.prerequisites_nut_ChangeLog_raw:
 	@echo "SKIP $@ trickery for current NUT codebase"
 endif
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
-prerequisites: prerequisites_ChangeLog
+.prerequisites_nut_ManHtmlPdf: .prerequisites_nut_ChangeLog_raw
 	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 	+cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
@@ -333,7 +361,7 @@ images/cables/:
 $(CABLE_IMAGE_FILES): images/cables/
 	cp -f nut/docs/$@ images/cables/
 
-$(OUTDIR): all-files
+$(OUTDIR): .all-files
 	$(RM) -r $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)
 	cp -fR $(WEBSITE_FILES) images $(FAVICON_FILES) $(OUTDIR)
@@ -407,33 +435,59 @@ clean-local:
 # HCL depends on:
 # - NUT's data/driver.list.in
 # - HCL generation tool
-# - NUT's manpages
+# - NUT's manpages => .prerequisites_nut_ManHtmlPdf
 # - DDL manufacturers and models
 # Using one intermediate target to avoid two builds of same files
-# (and use of corrupted intermediate data) when running parallel:
-prerequisites_hcl: nut/data/driver.list.in $(srcdir)/tools/nut-hclinfo.py $(MFR_TARGETS) | prerequisites
-	+cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list
-	@if \
-	    python3 -c "import json,lxml"	\
-	 || python -c "import simplejson,lxml"	\
-	 || python -c "import json,lxml"	\
-	 || python2 -c "import simplejson,lxml"	\
-	 || python2 -c "import json,lxml"	\
-	; then	\
-		echo "Regenerating the HTML and JSON formated HCL tables.";	\
-		cd tools/ && ./nut-hclinfo.py;	\
-	else	\
-		echo "----------------------------------------------------------------------";	\
-		echo "Warning: either Python, or a required module (json, simplejson, lxml) ";	\
-		echo "is not available.";	\
-		echo "Skipping the HTML and JSON formated HCL tables regeneration.";	\
-		echo "----------------------------------------------------------------------";	\
+# (and use of corrupted intermediate data) when running parallel.
+# The touch-files are used to ensure updates only if something *really* changed
+# in the filesystem (always-running a .prerequisites_nut_ManHtmlPdf evaluation
+# causes always-running this target too):
+CLEANFILES += .prerequisites_hcl .prerequisites_hcl.start
+.prerequisites_hcl: nut/data/driver.list.in $(srcdir)/tools/nut-hclinfo.py $(MFR_TARGETS) Makefile | .prerequisites_nut_ManHtmlPdf
+	@touch "$@.start"
+	@if [ -e .prerequisites_hcl ] ; then \
+		FOUND="`find $? nut/docs/man/*.html -newer .prerequisites_hcl -ls`" || exit 0 ; \
+		if [ -z "$${FOUND}" ] ; then \
+			rm -f "$@.start" ; \
+		else \
+			echo "Touching $@.start: FOUND=$${FOUND}" | tr '\n' ' ' ; echo "" ; \
+		fi ; \
+	 fi
+	@+if [ -e "$@.start" ] ; then \
+		( cd nut/data && $(MAKE) $(AM_MAKEFLAGS) driver.list ) || exit ; \
+		if \
+		   python3 -c "import json,lxml"	\
+		|| python  -c "import simplejson,lxml"	\
+		|| python  -c "import json,lxml"	\
+		|| python2 -c "import simplejson,lxml"	\
+		|| python2 -c "import json,lxml"	\
+		; then	\
+			echo "Regenerating the HTML and JSON formated HCL tables.";	\
+			cd tools/ && ./nut-hclinfo.py;	\
+		else	\
+			echo "----------------------------------------------------------------------";	\
+			echo "Warning: either Python, or a required module (json, simplejson, lxml) ";	\
+			echo "is not available.";	\
+			echo "Skipping the HTML and JSON formated HCL tables regeneration.";	\
+			echo "----------------------------------------------------------------------";	\
+		fi ; \
+	else \
+		echo "SKIP $@: no input files are actually newer than the existing .prerequisites_hcl" >&2 ; \
 	fi
 
 # These should be actually generated by nut-hclinfo.py above
-# so here we only check they appeared and seem valid:
-ups-html.txt scripts/ups_data.js: prerequisites_hcl
+# so here we only check they appeared and seem valid (not empty).
+# The touch-file ".prerequisites_hcl" would appear AFTER the
+# first check for existence and generation of these files, with
+# a filesystem timestamp of a moment before they were made (so
+# not causing their further re-generation on subsequent runs as
+# long as they still exist, or the input files were not updated):
+ups-html.txt scripts/ups_data.js: .prerequisites_hcl
 	test -s "$(@)"
+	@if [ -f .prerequisites_hcl.start ] ; then \
+		mv -f .prerequisites_hcl.start .prerequisites_hcl 2>/dev/null || true ; \
+	 fi
+#touch "$@"
 
 # Report each rebuild by depending on the Makefile
 index.html: website.txt news.txt Makefile $(LAYOUT).conf historic-release.txt
@@ -473,8 +527,8 @@ SUFFIXES = .txt .html
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
 
 .PHONY:	\
-	prerequisites	\
-	prerequisites_hcl	\
+	.prerequisites_nut_ManHtmlPdf	\
+	.prerequisites_hcl	\
 	$(OUTDIR)
 
 ### Devices Dumps Library
@@ -535,8 +589,8 @@ MANUFACTURERS := $(shell export LC_ALL=C && printf "%s\n" $(patsubst %,"%",$(fil
 REPORTS_TARGETS := $(subst %,\%,$(addsuffix .txt,$(wildcard $(DDL_DIR)/*/*.dev $(DDL_DIR)/*/*.nds)))
 
 # For .dev files, take in consideration also .seq files with the same name, if available
-# For both .dev and .nds files, also consider manpages ('prerequisites')
-$(REPORTS_TARGETS): $$(patsubst %.txt,%,$$@) $$(wildcard $$(patsubst %.dev.txt,%.seq,$$(filter %.dev.txt,$$@))) $(srcdir)/tools/nut-ddl.py | prerequisites
+# For both .dev and .nds files, also consider manpages ('.prerequisites_nut_ManHtmlPdf')
+$(REPORTS_TARGETS): $$(patsubst %.txt,%,$$@) $$(wildcard $$(patsubst %.dev.txt,%.seq,$$(filter %.dev.txt,$$@))) $(srcdir)/tools/nut-ddl.py | .prerequisites_nut_ManHtmlPdf
 	$(srcdir)/tools/nut-ddl.py "$<" "$@"
 
 ## Pages to build for each model
