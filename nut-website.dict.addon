@@ -168,6 +168,7 @@ IZ
 InvCDly
 InvCPol
 InvMin
+InvalidByteSequenceError
 Invensys
 InverterV
 Invter
@@ -919,6 +920,7 @@ webnut
 wf
 winnutclient
 wordformat
+xC
 xCC
 xD
 xa

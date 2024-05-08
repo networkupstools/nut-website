@@ -207,6 +207,9 @@ HTMLPROOFER_OPTIONS_URLSWAP = --url-swap='https?\://networkupstools\.github\.io:
 # Allow the caller an easy override:
 HTMLPROOFER_OPTIONS = $(HTMLPROOFER_OPTIONS_DEFAULT) $(HTMLPROOFER_OPTIONS_URLSWAP)
 
+# In newer versions, the nokogiri library complains about US-ASCII locale
+HTMLPROOFER_ENV = LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
 check-htmlproofer:
 	+@case "$(OUTDIR)" in \
 		"$(OUTDIR_BASE)"|"$(OUTDIR_BASE)/"*) $(MAKE) $(AM_MAKEFLAGS) check-htmlproofer-OUTDIR_BASE ;; \
@@ -215,17 +218,17 @@ check-htmlproofer:
 
 check-htmlproofer-OUTDIR:
 	test -d $(OUTDIR)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR)
 
 check-htmlproofer-OUTDIR_BASE:
 	test -d $(OUTDIR_BASE)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_BASE)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_BASE)
 
 # Fetched/updated via git checkout, e.g. by ci_build.sh
 OUTDIR_PUBLISHED = $(abs_top_builddir)/networkupstools.github.io
 check-htmlproofer-OUTDIR_PUBLISHED:
 	test -d $(OUTDIR_PUBLISHED)
-	$(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_PUBLISHED)
+	$(HTMLPROOFER_ENV) $(HTMLPROOFER) $(HTMLPROOFER_OPTIONS) $(OUTDIR_PUBLISHED)
 
 else !WITH_HTMLPROOFER
 
