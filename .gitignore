@@ -32,6 +32,8 @@ historic-release.txt
 /images/
 /output/
 /*.html
+/.prerequisites_hcl
+/.prerequisites_hcl.started
 
 # Auto-published site
 /networkupstools.github.io
