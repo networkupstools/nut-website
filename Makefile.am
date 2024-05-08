@@ -236,9 +236,35 @@ endif !WITH_HTMLPROOFER
 
 release: dist-files all
 
+if WITH_NUT_HISTORIC_RELEASE
+# Only recycle ChangeLog forcefully if an existing file is older than .git
+# (leave it up to checked-out version of NUT sources to "make" it or skip
+# otherwise). Anyhow, avoid further work if the newly generated ChangeLog
+# is identical to the (retained) previous one. The difference is important
+# due to time cost of rendering the huge PDF file (perhaps needlessly when
+# we "Finalize make" in the end) of 2-10 minutes depending on how busy the
+# NUT CI farm agent is.
+prerequisites_ChangeLog:
+	+cd nut && \
+	    rm -f ChangeLog.bak-nut-website || true ; \
+	    if [ -d .git -a -s .git/HEAD ] ; then rm -f `find ChangeLog -not -newer .git/HEAD` || true ; fi && { \
+	        if [ -s ChangeLog ] ; then cp -pf ChangeLog ChangeLog.bak-nut-website ; fi ; \
+	        $(MAKE) $(AM_MAKEFLAGS) ChangeLog || { rm -f ChangeLog.bak-nut-website ; exit 1 ; } ; \
+	        if [ -s ChangeLog.bak-nut-website ] ; then \
+	            diff -q ChangeLog ChangeLog.bak-nut-website 2>/dev/null >/dev/null \
+	            && mv -f ChangeLog.bak-nut-website ChangeLog \
+	            || rm -f ChangeLog.bak-nut-website ; \
+	        fi ; \
+	    }
+else
+# Current NUT sources are expected to be smart enough to decide on update
+# of the ChangeLog file or its reuse as part of "pdf" etc. targets below.
+prerequisites_ChangeLog:
+	@echo "SKIP $@ trickery for current NUT codebase"
+endif
+
 # Generate WEBSITE_DEPS & HTML versions of man pages
-prerequisites:
-	+cd nut && rm -f ChangeLog && $(MAKE) $(AM_MAKEFLAGS) ChangeLog
+prerequisites: prerequisites_ChangeLog
 	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 	+cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
