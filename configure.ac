@@ -74,9 +74,9 @@ AX_COMPARE_VERSION([${DBLATEX_VERSION}], [ge], [0.2.5], [
 	AC_MSG_ERROR(["Unable to build website: check dblatex!"])
 ])
 ], [AC_MSG_NOTICE([Newer NUT sources are in use and suitability of asciidoc and other tools was already tested])
-    AS_IF([test "${nut_have_asciidoc}" = "no"],[
-	AC_MSG_ERROR(["Unable to build website: check asciidoc and other tools versions!"])
-    ])
+	AS_IF([test "${nut_have_asciidoc}" = "no"], [
+		AC_MSG_ERROR(["Unable to build website: check asciidoc and other tools versions!"])
+	])
 ])
 
 dnl ----------------------------------------------------------------------
@@ -86,12 +86,33 @@ AC_PATH_PROGS([A2X], [a2x], [none])
 
 dnl ----------------------------------------------------------------------
 
+AC_PATH_PROGS([HTMLPROOFER], [htmlproofer html-proofer], [none])
+AC_ARG_WITH(htmlproofer,
+	[AS_HELP_STRING([--with-htmlproofer=PATH], [program location for htmlproofer (default: auto-detect)])],
+	[AS_CASE(["${withval}"],
+		[no|none], [
+			AS_IF([test x"${HTMLPROOFER}" != xnone], [AC_MSG_WARN([HTMLPROOFER='${HTMLPROOFER}' was detected, but we are explicitly configured to not use it])])
+			HTMLPROOFER="none"],
+		[''|auto|yes], [],
+		[HTMLPROOFER="${withval}"]
+	)],
+	[]
+)
+AM_CONDITIONAL([WITH_HTMLPROOFER], [test x"$HTMLPROOFER" != x -a x"$HTMLPROOFER" != xnone])
+AM_COND_IF([WITH_HTMLPROOFER], [
+	AC_MSG_CHECKING([if provided/detected HTMLPROOFER='${HTMLPROOFER}' is what it says it is])
+	LANG=C LC_ALL=C ${HTMLPROOFER} --help | grep -iE '^htmlproofer *@<:@0-9@:>@' || AC_MSG_ERROR([no])
+	AC_MSG_RESULT([yes])
+])
+
+dnl ----------------------------------------------------------------------
+
 dnl Note AC_INIT defines a constrained PACKAGE_VERSION based on last tag
 dnl in NUT codebase, not its configure.ac version or detailed revision.
 dnl For the rolling web-site we want to track origins more precisely:
-NUT_VERSION="$(cd nut && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
-DDL_VERSION="$(cd ddl && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
-WEB_VERSION="$( (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+NUT_VERSION="$(cd nut && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+DDL_VERSION="$(cd ddl && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+WEB_VERSION="$( (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
 WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],

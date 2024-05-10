@@ -15,8 +15,9 @@ Makefile.in
 missing
 
 # NUT Website-specific
-ups-html.txt
-historic-release.txt
+/ups-html.txt
+/historic-release.txt
+/website.txt
 .git-commit-website
 *.txt-spellchecked
 *.txt.in-spellchecked
@@ -25,24 +26,29 @@ historic-release.txt
 *.usage-report
 /nut-website.dict
 /nut-website.dict.bak-pre-sorting
+/nut-website.dict.bak-pre-interactive
 /nut-website.dict.sorted
 /.nut-website.dict.sorted
 /nut-website.dict.tmp
 /images/
 /output/
-acknowledgements.html
-cables.html
-documentation.html
-download.html
-features.html
-index.html
-index-jumboinfo.html
-nut-qa.html
-old-news.html
-projects.html
-stable-hcl.html
-support.html
-ups-protocols.html
+/acknowledgements.html
+/cables.html
+/documentation.html
+/download.html
+/features.html
+/index.html
+/index-jumboinfo.html
+/nut-qa.html
+/old-news.html
+/projects.html
+/stable-hcl.html
+/support.html
+/ups-protocols.html
+/.prerequisites_hcl
+/.prerequisites_hcl.started
+/.all-files
+/.all-files.started
 
 # Auto-published site
 /networkupstools.github.io
