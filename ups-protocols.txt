@@ -68,6 +68,13 @@ Documents in this section are provided courtesy of Eaton.
 - link:protocols/sola.html[SOLA/Best Power protocol (Phoenixtec)] - courtesy of Invensys Energy Systems
 
 
+Huawei
+------
+
+- link:protocols/huawei-ups2000-modbus.html[Support of Huawei UPS2000 1/2/3KRT (Modbus RTU)] --
+  based on link:https://support.huawei.com/enterprise/en/doc/EDOC1000110696[Huawei UPS2000 (1 kVA-3 kVA) Modbus Protocol Development Guide]
+
+
 Legrand
 -------
 

@@ -1,0 +1,356 @@
+= Support of Huawei UPS2000 1/2/3KRT (Modbus RTU)
+
+Based on link:https://support.huawei.com/enterprise/en/doc/EDOC1000110696[Huawei UPS2000 (1 kVA-3 kVA) Modbus Protocol Development Guide]
+and link:https://github.com/networkupstools/nut/issues/1066#issuecomment-879262463[NUT issue #1066]
+
+== Querying Registers
+
+[NOTE]
+======
+* All values are stored as `U16`
+* Gain: the value read out must divide this value
+* Type: the data type AFTER applying the gain
+* Example:
+  - Voltage reading from the register is `2262`
+  - Gain is `10`
+  - Type is `Real`
+  - => actual Voltage = 226.2
+* All register address may add UPS ID multiplied by 10000.
+  However when using on-device serial port, the UPS ID is *1* fixed.
+  *Querying only with register address without the UPS ID also works
+  when there is only one device.*
+  - e.g. Address of Input Voltage register is 1000
+  - UPS ID is 1
+  - => Register ID used to send request is 11000 (0x2AF8), or 1000 (0x03E8)
+* All reserved bits in bit flags shall be 0 unless noticed otherwise.
+======
+
+|===
+| Name | Gain | Type | Unit / Range | Address | Length (in U16) | R/W
+
+| Input Voltage
+| 10
+| Float
+| V
+| 1000
+| 1
+| R
+
+| Input Frequency
+| 10
+| Float
+| Hz
+| 1003
+| 1
+| R
+
+| Bypass Voltage
+| 10
+| Float
+| V
+| 1004
+| 1
+| R
+
+| Bypass Frequency
+| 10
+| Float
+| Hz
+| 1007
+| 1
+| R
+
+| Output Voltage
+| 10
+| Float
+| V
+| 1008
+| 1
+| R
+
+| Output Current
+| 10
+| Float
+| A
+| 1011
+| 1
+| R
+
+| Output Frequency
+| 10
+| Float
+| Hz
+| 1014
+| 1
+| R
+
+| Output Active Power
+| 10
+| Float
+| kW
+| 1015
+| 1
+| R
+
+| Output Apparent Power
+| 10
+| Float
+| kVA
+| 1018
+| 1
+| R
+
+| Output Load Percentage
+| 10
+| Float
+| %
+| 1021
+| 1
+| R
+
+| Output Route State
+| 1
+| Enum
+| 0=No Power +
+1=On Bypass +
+2=On Mains +
+3=On Battery +
+5=On Mains ECO
+| 1024
+| 1
+| R
+
+| Input Method
+| 1
+| Enum
+| 0=Single Phase
+| 1025
+| 1
+| R
+
+| Output Method
+| 1
+| Enum
+| 0=Single Phase
+| 1026
+| 1
+| R
+
+| Temperature
+| 10
+| Float
+| ℃
+| 1027
+| 1
+| R
+
+| UPS Status
+| 1
+| Bit Flag
+| Bit 7=Mains Abnormal (0=Normal/*OL* 1=Abnormal/*OB*) +
+ +
+Bit 6=Low Battery (0=Normal 1=Low/*LB*) +
+ +
+Bit 5=Reserved +
+ +
+Bit 4=Internal Error (0=Normal 1=Error) +
+ +
+Bit 3=UPS Type (0=Offline/Backup 1=Online/Double Conversion) +
+ +
+Bit 2=Battery Self-Checking (0=Not checking 1=Self checking) +
+ +
+Bit 1=Reserved +
+ +
+Bit 0=Reserved +
+ +
+Other Bits=Reserved
+| 1043
+| 1
+| R
+
+| Battery Voltage
+| 10
+| Float
+| V
+| 2000
+| 1
+| R
+
+| Battery Status
+| 1
+| Enum
+| 2=Sleeping +
+3=Trickle Charging +
+4=Balanced Charging +
+5=Discharging
+| 2002
+| 1
+| R
+
+| Battery Remaining Capacity
+| 1
+| U16
+| %
+| 2003
+| 1
+| R
+
+| Battery Estimated Remaining Time
+| 1
+| U32
+| Seconds
+| 2004
+| 2
+| R
+
+| Battery Cells
+| 1
+| U16
+| Cells
+| 2007
+| 1
+| R
+
+| Battery Capacity
+| 1
+| U16
+| Ah
+| 2033
+| 1
+| R
+
+| UPS Rated Power
+| 10
+| Float
+| kVA
+| 9009
+| 1
+| R
+|===
+
+== Controlling Registers
+
+[NOTE]
+======
+* Type *Bool* means write 0 to disable the function and write 1 to enable unless noticed otherwise.
+* Type *Exec* means write 1 to execute the function unless noticed otherwise.
+======
+
+|===
+| Name | Gain | Type | Unit / Range | Address | Length (in U16) | R/W
+
+| Startup State
+| 1
+| Enum
+| 0=Powered Off (Can be turned on) +
+1=Powering On (processing, front control panel is blocked) +
+2=Power On Failed (Can be turned on) +
+3=Powered On (Can be turned off)
+| 1028
+| 1
+| R
+
+| Power On
+| 1
+| Exec
+|
+| 1029
+| 1
+| W
+
+| Power Off
+| 1
+| Exec
+|
+| 1030
+| 1
+| W
+
+| ECO Mode
+| 1
+| Bool
+|
+| 1030
+| 1
+| W
+
+| Auto Power On After Mains Attached
+| 1
+| Bool
+|
+| 1044
+| 1
+| R/W
+
+| Bypass Output
+| 1
+| Bool
+|
+| 1045
+| 1
+| R/W
+
+| Mute Buzzer
+| 1
+| Bool
+|
+| 1046
+| 1
+| R/W
+
+| Delayed Restart (By 0.1 minutes)
+| 10
+| Float
+| 0.1 minutes (0.1min ~ 99.0min)
+| 1047
+| 1
+| R/W
+
+| Delayed Restart (By 1 minutes)
+| 1
+| U16
+| 1 minutes (1min ~ 9999min)
+| 1048
+| 1
+| R/W
+
+| Delayed Power Off (By 0.1 minutes)
+| 10
+| Float
+| 0.1 minutes (0.1min ~ 99.0min)
+| 1049
+| 1
+| R/W
+
+| Cancel Delayed Powered Off
+| 1
+| Exec
+|
+| 1050
+| 1
+| W
+
+| Deep Battery Self Check (Until Low Battery)
+| 1
+| Exec
+|
+| 2021
+| 1
+| W
+
+| End Battery Self Check
+| 1
+| Exec
+|
+| 2023
+| 1
+| W
+
+| Shallow Battery Self Check
+| 1
+| Exec
+|
+| 2028
+| 1
+| W
+|===

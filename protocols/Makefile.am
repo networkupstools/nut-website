@@ -4,6 +4,7 @@ PROTOCOLS_FILES =	\
 	belkin-protocol.html	\
 	belkin-universal.html	\
 	fortress.html	\
+	huawei-ups2000-modbus.html	\
 	megatec.html	\
 	minicol.html	\
 	oneac.html	\
