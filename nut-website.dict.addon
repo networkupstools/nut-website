@@ -667,6 +667,7 @@ icp
 ident
 identifymessage
 idm
+ifeval
 im
 inductor
 inh
@@ -683,6 +684,8 @@ jNutWebAPI
 jpg
 jpgraph
 json
+jumboinfo
+jumbotron
 keyclick
 killpower
 len
@@ -739,6 +742,7 @@ modelname
 mqtt
 msg
 mv
+nbsp
 nd
 ndcv
 nds
@@ -807,6 +811,7 @@ qgs
 qpi
 qs
 rackmount
+raquo
 ratedva
 ratedwatts
 rb
@@ -917,6 +922,7 @@ von
 wakeup
 webNUT
 webnut
+websitelayout
 wf
 winnutclient
 wordformat
