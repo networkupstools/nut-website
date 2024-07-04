@@ -862,7 +862,7 @@ nut-website.dict: $(top_builddir)/nut/docs/nut.dict nut-website.dict.addon
 # HIDE FROM AUTOMAKE #	@echo "$@ for NUT_SPELL_DICT=$< (NUT_SPELL_DICT_DEBUGTAG=$(NUT_SPELL_DICT_DEBUGTAG))" >&2
 # HIDE FROM AUTOMAKE #	cp -f "$(NUT_SPELL_DICT)" "$(NUT_SPELL_DICT).bak-pre-interactive"
 # HIDE FROM AUTOMAKE #	+cd "$(abs_top_builddir)/nut/docs/" && $(MAKE) $(AM_MAKEFLAGS) SPELLCHECK_SRC="$(addprefix ../../,$(SPELLCHECK_SRC))" $(NUT_SPELL_DICT_OPTION) $@
-# HIDE FROM AUTOMAKE #	diff -bu "$(NUT_SPELL_DICT).bak-pre-interactive" "$(NUT_SPELL_DICT)" | grep -E '^\+[^\+]' | sed 's/^\+//' | grep -vE '^personal_ws' >> "$(abs_top_srcdir)/nut-website.dict.addon"
+# HIDE FROM AUTOMAKE #	diff -bu "$(NUT_SPELL_DICT).bak-pre-interactive" "$(NUT_SPELL_DICT)" | grep -E '^\+[^\+]' | grep -vE '^\+*personal_ws' | sed 's/^\+//' >> "$(abs_top_srcdir)/nut-website.dict.addon"
 # HIDE FROM AUTOMAKE #	rm -f "$(NUT_SPELL_DICT).bak-pre-interactive"
 # HIDE FROM AUTOMAKE #	+$(MAKE) $(AM_MAKEFLAGS) spellcheck-sortdict-addon
 # HIDE FROM AUTOMAKE #
