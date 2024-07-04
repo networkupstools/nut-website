@@ -1,3 +1,4 @@
+- Mar-Jul, 2024: much work was done about up-streaming code developed by Eaton as part of link:https://42ity.org[42ITy(TM) project] and related efforts, and expanding NUT CI farm testing (and recipe/code abilities) on MacOS with Homebrew (x86, arm), all due to be part of NUT v2.8.3 release
 - Apr 1, 2024: NUT v2.8.2 released
 - Nov 15, 2023: following up with link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting after some hiatus on the NUT CI side (too many plans, too little time)
 - Nov 9, 2023: the PyNUT module provided in NUT sources is now published as `PyNUTClient` by CI to https://pypi.org/project/PyNUTClient (release snapshots) and https://test.pypi.org/project/PyNUTClient/ (rolling master-branch revisions). Hopefully, `pip` would have easier time finding it now to help create NUT clients.
