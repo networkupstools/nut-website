@@ -101,7 +101,11 @@ AC_ARG_WITH(htmlproofer,
 AM_CONDITIONAL([WITH_HTMLPROOFER], [test x"$HTMLPROOFER" != x -a x"$HTMLPROOFER" != xnone])
 AM_COND_IF([WITH_HTMLPROOFER], [
 	AC_MSG_CHECKING([if provided/detected HTMLPROOFER='${HTMLPROOFER}' is what it says it is])
-	LANG=C LC_ALL=C ${HTMLPROOFER} --help | grep -iE '^htmlproofer *@<:@0-9@:>@' || AC_MSG_ERROR([no])
+
+	LANG=C LC_ALL=C ${HTMLPROOFER} --help | grep -iE '^htmlproofer *@<:@0-9@:>@' \
+	|| LANG=C LC_ALL=C ${HTMLPROOFER} --help | grep -iE '^Usage:.*htmlproofer*.*PATH\/LINK' \
+	|| AC_MSG_ERROR([no])
+
 	AC_MSG_RESULT([yes])
 ])
 
