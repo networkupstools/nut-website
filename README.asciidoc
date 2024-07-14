@@ -215,6 +215,12 @@ to refer to such officially published snapshots. This index is currently
 maintained manually, to ensure human decision about publishing (or hiding) an
 historic release (especially a release candidate) vs. experimenting with that.
 
+NOTE: NUT v2.8.2 release and earlier used a `LAYOUT=web-layout` design, while
+newer releases use `LAYOUT=bootstrap`; these may have to be nudged into `make`
+arguments above (note also renaming of `website.txt` to `index.txt` and less
+content inside -- some paragraphs were evicted to `index-jumboinfo.html` as
+"jumbotron integration") or passed as environment variables to `ci_build.sh`.
+
 NOTE: `make dist-files` should update the historic release site source tarballs
 and related ChangeLog, news and checksum files IFF the release data was not yet
 there. You probably need to commit that back to "source" github repository.
@@ -305,7 +311,9 @@ https://ci.networkupstools.org/view/InfraTasks/job/nut-website/
   once per such release with a spell like this:
 +
 ------
-:; CI_AUTOCOMMIT=true CI_AUTOPUSH=true NUT_HISTORIC_RELEASE=v2.8.0-rc3 ./ci_build.sh
+:; CI_AUTOCOMMIT=true CI_AUTOPUSH=true \
+   NUT_HISTORIC_RELEASE=v2.8.0-rc3 LAYOUT=web-layout \
+   ./ci_build.sh
 ------
 
 * The `nut-website` specific spell-checking is handled with a dynamic mix of

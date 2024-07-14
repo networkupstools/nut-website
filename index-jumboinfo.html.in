@@ -1,0 +1,50 @@
+        <p>The primary goal of the Network UPS Tools (NUT) project is to provide support
+          for Power Devices, such as Uninterruptible Power Supplies, Power Distribution
+          Units, Automatic Transfer Switches, Power Supply Units and Solar Controllers.
+          NUT provides a common protocol and set of tools to monitor and manage such
+          devices, and to consistently name equivalent features and data points, across
+          a vast range of vendor-specific protocols and connection media types.</p>
+          <p>
+          NUT provides many control and monitoring <a href="{root=.}/features.html">features</a>,
+          with a uniform control and management interface. If you are just getting acquainted
+          with NUT, <a href="{root=.}/features.html">that page</a> also explains the technical
+          design and some possible set-ups.</p>
+          <p>
+          As of this publication, at least @COUNT_HCL_MANUFACTURERS@ different manufacturers,
+          and @COUNT_HCL_MODELS@ hardware device models are known as
+          <a href="{root=.}/stable-hcl.html">compatible</a>.</p>
+          <p>
+          This software is the combined effort of many
+          <a href="acknowledgements.html">individuals and companies</a> with free and
+          open source code licensed under the terms of GNU Public License
+          (GPL), see <a href="https://github.com/networkupstools/nut/blob/master/COPYING">the
+          NUT license text</a> for specific details.</p>
+        <!-- p>
+          <a class="btn btn-lg btn-primary" href="about.html" role="button">About &raquo;</a>
+        </p -->
+<div class="title">GitHub Stars Matter!</div>
+<div class="paragraph"><p>Potential institutional sponsors remind that having a high "GitHub Star" count
+helps with formal considerations for supporting FOSS projects, so please feel
+welcome to leave yours at <a href="https://github.com/networkupstools/nut/">https://github.com/networkupstools/nut/</a></p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="./images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>The <a href="https://networkupstools.org/">main NUT site</a> should closely follow
+current development, with documentation most relevant for users who build NUT
+from <a href="https://github.com/networkupstools/nut/">source code</a>.</p></div>
+<div class="paragraph"><p><a href="https://networkupstools.org/historic/">Sub-sites</a> are available for some
+historic releases for users of NUT packaged with their operating system
+distributions. Such packages are typically based on official releases of
+NUT at the time of distribution, and may lag behind current development
+in terms of features, capabilities, bug-fixes and supported devices.</p></div>
+<div class="paragraph"><p>Some data, such as devices with known support at the time of release, are
+published to reflect both current development and historic releases; other
+data such as the NUT DDL or source archives are release-agnostic and only
+published once and for all.</p></div>
+</td>
+</tr></table>
+</div>

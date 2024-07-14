@@ -15,13 +15,14 @@ Makefile.in
 missing
 
 # NUT Website-specific
-ups-html.txt
-website.txt
-historic-release.txt
+/ups-html.txt
+/historic-release.txt
+/website.txt
 .git-commit-website
 *.txt-spellchecked
 *.txt.in-spellchecked
 *.asciidoc-spellchecked
+*.html.in-spellchecked
 *.usage-report
 /nut-website.dict
 /nut-website.dict.bak-pre-sorting
@@ -31,7 +32,19 @@ historic-release.txt
 /nut-website.dict.tmp
 /images/
 /output/
-/*.html
+/acknowledgements.html
+/cables.html
+/documentation.html
+/download.html
+/features.html
+/index.html
+/index-jumboinfo.html
+/nut-qa.html
+/old-news.html
+/projects.html
+/stable-hcl.html
+/support.html
+/ups-protocols.html
 /.prerequisites_hcl
 /.prerequisites_hcl.started
 /.all-files
