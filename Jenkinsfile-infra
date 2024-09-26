@@ -1,3 +1,12 @@
+/*
+ * This file uses CSS styles defined in
+ * https://github.com/networkupstools/jenkins-dynamatrix
+ * with addBadge() method from Jenkins Badge plugin v2.x
+ * (supporting cssStyle argument instead of a legacy series
+ * of colors and line thicknesses that end up hard-coded
+ * into messages).
+ */
+
 pipeline {
     // Note: fixed label set from NUT CI farm since the overall
     // checkout workspace is huge and so persistent, as well as
@@ -120,25 +129,35 @@ pipeline {
                         // for git push in shell, using https://www.jenkins.io/blog/2021/07/27/git-credentials-binding-phase-1/
                         shRes = sh (returnStatus: true, script: "./ci_build.sh")
                     }
+                    def cssAdd = ""
                     switch (shRes) {
                         case 0:
                             if ("${env.CI_AUTOPUSH}" == "true") {
                                 msg = "Site updated"
+                                cssAdd = "badge-jenkins-dynamatrix-SlowBuild-SUCCESS"
                             } else {
                                 msg = "Site regenerated successfully, but not pushed"
+                                cssAdd = "badge-jenkins-dynamatrix-SlowBuild-NOT_BUILT"
                             }
                             break
 
                         case 42:
                             msg = "Site already up to date, skipped"
+                            cssAdd = "badge-jenkins-dynamatrix-SlowBuild-NOT_BUILT"
                             break
 
                         default:
                             msg = "FAILED to process site update"
+                            cssAdd = "badge-jenkins-dynamatrix-SlowBuild-FAILURE"
                             break
                     }
 
-                    manager.addShortText(msg)
+                    try {
+                        // Badge v2.x API, with style
+                        addBadge(text: msg, cssClass: "badge-jenkins-dynamatrix-Baseline ${cssAdd}")
+                    } catch (Throwable ignored) {
+                        manager.addShortText(msg)
+                    }
                     echo msg
                     if ( !(shRes in [0, 42]) ) {
                         error msg
@@ -152,13 +171,23 @@ pipeline {
                         switch (shRes) {
                             case 0:
                                 msg = "Spellcheck passed"
-                                manager.addShortText(msg)
+                                try {
+                                    // Badge v2.x API, with style
+                                    addBadge(text: msg, cssClass: "badge-jenkins-dynamatrix-Baseline badge-jenkins-dynamatrix-SlowBuild-SUCCESS")
+                                } catch (Throwable ignored) {
+                                    manager.addShortText(msg)
+                                }
                                 echo msg
                                 break
 
                             default:
                                 msg = "Spellchecker had concerns (code ${shRes})"
-                                manager.addShortText(msg)
+                                try {
+                                    // Badge v2.x API, with style
+                                    addBadge(text: msg, cssClass: "badge-jenkins-dynamatrix-Baseline badge-jenkins-dynamatrix-SlowBuild-UNSTABLE")
+                                } catch (Throwable ignored) {
+                                    manager.addShortText(msg)
+                                }
                                 echo msg
                                 unstable(msg)
                                 break
