@@ -7,6 +7,12 @@
  * into messages).
  */
 
+@Library('jenkins-dynamatrix@master') _
+import org.nut.dynamatrix.dynamatrixGlobalState;
+import org.nut.dynamatrix.*;
+
+reportBuildCause()
+
 pipeline {
     // Note: fixed label set from NUT CI farm since the overall
     // checkout workspace is huge and so persistent, as well as
