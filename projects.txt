@@ -474,6 +474,11 @@ installing and configuring NUT at all.
 
 It offers a good overview of the protocol as well.
 
+link:https://github.com/saper-2/hidups-comm-test[hidups-comm-test]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Exploratory preparation for the above, "slapped together" in C#.
+
 
 Legacy and discontinued projects
 --------------------------------
