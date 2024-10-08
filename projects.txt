@@ -479,6 +479,17 @@ link:https://github.com/saper-2/hidups-comm-test[hidups-comm-test]
 
 Exploratory preparation for the above, "slapped together" in C#.
 
+link:https://github.com/netinvent/usb_resetter[usb_resetter]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Linux-only tool to manipulate USB ports and hubs (note you may be
+unable to power them off completely, some are wired to always provide
+the 5V line, and only pass logical device-reset commands).
+
+For more details, see also the
+link:https://github.com/networkupstools/nut/tree/master/scripts/usb_resetter[NUT
+description of usb_resetter integration].
+
 
 Legacy and discontinued projects
 --------------------------------
