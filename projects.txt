@@ -458,6 +458,23 @@ in `nut_server_handler.py`), which can run as a server in a Docker
 container.
 
 
+Other
+-----
+
+There are also quite a few projects in the same area of UPS monitoring and
+management, which do not use NUT but can be helpful for troubleshooting or
+similar investigations.
+
+link:https://github.com/saper-2/py-upshid-voltqs[py-upshid-voltqs]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This Python script allows to interact with devices which support the
+Voltronic-QS protocol, and send a number of commands to them, without
+installing and configuring NUT at all.
+
+It offers a good overview of the protocol as well.
+
+
 Legacy and discontinued projects
 --------------------------------
 
