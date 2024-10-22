@@ -126,8 +126,8 @@ Opti-UPS
 - link:protocols/optiups.html[Opti-UPS protocol] - more guesswork
 
 
-Powercom
---------
+Powercom (PCM)
+--------------
 
 All these document are officially provided by Powercom
 
@@ -135,6 +135,15 @@ All these document are officially provided by Powercom
 - link:protocols/powercom/Software_USB_communication_controller_IMPERIAL_series_R21.doc[USB information for IMPERIAL series]
 - link:protocols/powercom/Software_USB_communication_controller_SKP_series.doc[USB information for SKP series]
 - link:protocols/powercom/Software_USB_communication_controller_WOW_series.doc[USB information for WOW series]
+
+Some information is also available on their site and mirrored with NUT:
+
+- link:https://www.upspowercom.com/pcm-download/USB-Protocol1.pdf[USB HID
+  protocol implementation]
+  (link:protocols/powercom/USB-Protocol1.pdf[mirror])
+- link:https://www.upspowercom.com/pcm-download/UPS-Protocol.pdf[Serial
+  Megatec Qx variant protocol implementation]
+  (link:protocols/powercom/UPS-Protocol.pdf[mirror])
 
 
 PowerKinetics
