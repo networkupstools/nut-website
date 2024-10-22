@@ -13,6 +13,10 @@ APC
 ---
 
 - link:protocols/apcsmart.html[APC's smart protocol] - unofficial decoding work
+- cross-check with
+  link:https://kirbah.github.io/apc-ups/Smart-protocol/[APC Smart UPS protocol]
+  rendition of the
+  link:https://github.com/kirbah/apc-ups[apc-ups protocol documentation project]
 
 
 Belkin
