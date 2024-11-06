@@ -1,3 +1,4 @@
+- Nov 6, 2024: due to update of NUT CI farm's Jenkins core, numerous build agent configurations and OSes had to be updated to use JDK17+. NUT documentation for build prerequisites and CI setup was accordingly updated.
 - Aug 12, 2024: link:http://wmnut.networkupstools.org[WMNut] 0.70 released, addressing some warnings found by newer compilers and updating code style, documentation and recipes
 - Mar-Jul, 2024: much work was done about up-streaming code developed by Eaton as part of link:https://42ity.org[42ITy(TM) project] and related efforts, and expanding NUT CI farm testing (and recipe/code abilities) on MacOS with Homebrew (x86, arm), all due to be part of NUT v2.8.3 release
 - Apr 1, 2024: NUT v2.8.2 released
