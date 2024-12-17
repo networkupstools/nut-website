@@ -94,7 +94,10 @@ DeepTstFail
 DeltaUPSv
 DiSplay
 Dly
+Drobot
 EAGAIN
+EB
+EBnn
 EE
 EEPROM
 EG
@@ -104,6 +107,7 @@ EPO
 EPS
 ESXi
 EmmmmDnnnnn
+EpbraDokc
 EpbrashcDoegfl
 Eqls
 EqlzInvl
@@ -120,10 +124,12 @@ FREHn
 FRELn
 FTS
 FV
+FW
 FaltSens
 Fosshost
 FreqSens
 FullLoad
+GASV
 GKrellM
 GND
 GPG
@@ -162,7 +168,10 @@ INSTCMD
 INV
 IPBX
 IPC
+IPG
 IPM
+IPN
+IPW
 ITy
 IZ
 InvCDly
@@ -319,6 +328,7 @@ PyGTK
 PyNUT
 PyNUTClient
 QBDR
+QBL
 QBT
 QBV
 QBYF
@@ -328,11 +338,13 @@ QFLAG
 QFRE
 QGR
 QHE
+QI
 QID
 QLDL
 QMD
 QMF
 QMOD
+QOF
 QPAR
 QPD
 QQ
@@ -368,6 +380,7 @@ Runtime
 RuntimeWarning
 RxD
 RxHs
+SASV
 SCR
 SDA
 SDE
@@ -467,6 +480,7 @@ VVV
 Vdc
 Voltronic
 Vout
+WH
 WHAD
 WMNut
 WS
