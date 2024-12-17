@@ -443,114 +443,164 @@ of sub-driver updates for Ippon Innova RT 3/1 series.
 
 NOTE: not all UPSes are able to answer/consume some or all of these commands!
 
+/////////////////
+Maintainer note about table markup: "Command" cells ending with `a|` and
+followed by next cell content WITHOUT LEADING WHITE-SPACE allows those cells
+to be formatted as asciidoc sub-documents, and so define bullet lists.
+Blank lines before/around a paragraph allow it to be separate in cell;
+for paragraphs inside a sub-document, avoid leading space (text would be
+treated as a code block then).
+/////////////////
+
 [cols="^.^1m,.^9",options="header,autowidth",frame="topbot",grid="rows"]
 |=============================================================================
 | Command	| Description
 | `AR?`, `AR0`, `AR1`	| Querying/disabling/enabling auto power-on feature
 			  (known as auto restart for some Ippon UPSes).
-			  Enabled by default (`AR1`). If option is off (`AR0`)
-			  then UPS will stay powered off even after mains
-			  return and should be switched on manually by
-			  using the power button.
+
+			  Enabled by default (`AR1`).
+
+			  If option is off (`AR0`) then UPS will stay powered
+			  "off" even after mains return, and should be switched
+			  "on" manually by using the power button.
 | `AT?`, `AT0`, `AT1`	| Querying/disabling/enabling auto test feature.
 | `BL?`, `BL`	| Battery level (in percents), usually represented as
 		  a 3-digit number with leading zero where needed.
-| `BPS`	| Query bypass status. Typical answer:
-	  `(230.4 000.0 000.0 49.9`.
-	  Fields 1..3 should be `L1-N`, `L2-N` and `L3-N` input bypass voltages;
-	  field 4 is input bypass frequency.
-| `EB?`, `EBnn` | Query/set number of external battery packs
-| `EF?`	| Acceptable frequency deviations for HE/ECO mode (in percents)
-| `EV?`	| Acceptable voltage deviations for HE/ECO mode (in percents)
-| `FW?`	| Firmware version
+| `BPS`	a|Query bypass status. Typical answer:
+----
+(230.4 000.0 000.0 49.9
+----
+
+	  * Fields 1..3 should be `L1-N`, `L2-N` and `L3-N` input bypass
+	    voltages;
+	  * field 4 is input bypass frequency.
+| `EB?`, `EBnn` | Query/set number of external battery packs.
+| `EF?`	| Acceptable frequency deviations for HE/ECO mode (in percents).
+| `EV?`	| Acceptable voltage deviations for HE/ECO mode (in percents).
+| `FW?`	| Firmware version.
 | `GR?`, `GR0`, `GR1` | Query/disable/enable green mode
 			(WinPower provides "Energy Saving" feature to control
-			this mode). Some UPS models switch themselves off
-			after 5 mins without load.
-| `IP?`, `IPN`, `IPW`, `IPG`	| Query/set acceptable deviations for different
-				  modes: normal (`IPN`), wide (`IPW`),
-				  generator (`IPG`). Corresponding LEDs will
-				  be toggled for Smart Winner UPS models.
+			this mode).
+
+			Some UPS models switch themselves off after 5 minutes
+			without load.
+| `IP?`, `IPN`, `IPW`, `IPG`	a|Query/set acceptable deviations for different
+				  modes:
+
+				  * normal (`IPN`);
+				  * wide (`IPW`);
+				  * generator (`IPG`).
+
+Corresponding LEDs will be toggled for Smart Winner UPS models.
 | `M`	| Query protocol type: the answer is usually `P`, `T`, `V`, `C`
 	  and some others rarely.
-| `Q2`	| Query UPS status (analogous to `Q1`). Typical answer:
-	  `(226.6 224.3 228.0 226.6 229.9 000.0 000.0 000 000 000 49.9 327.6 18.0 00000000 999.24 100 02 00 00 00 00 00000000 11`.
-	  As far as I was able to decipher this:
-	  first three fields correspond to the `L1-N`, `L2-N` and `L3-N`
-	  input voltages;
-	  fifth field is output voltage (3/1 Ippon UPS was tested though,
-	  may be fields 5..7 correspond to the `L1-N`, `L2-N` and `L3-N`
-	  output voltages generally);
-	  eleventh field seems to be frequency (don't know, input or output);
-	  twelfth field is battery voltage;
-	  thirteenth field is temperature;
-	  15th field may be estimated runtime (in minutes?) and
-	  16th field is battery level (in percents, with leading zero).
-	  However, I'm not sure about fields 4, 6..11, 14..23.
-| `Q4`	| Yet another UPS status query. Typical answer:
-	  `(MMM.M ???.? ???.? NNN.N PPP.P ??? QQQ RR.R ??? ??? SS.S TT.T flags`.
-	  Some flags:
-	  `E` -- test in progress;
-	  `A` -- mains fault, on battery;
-	  `C` -- bypass/AVR mode
-| `Q6`	| Query UPS status, especially useful for three-phase models.
+| `Q2`	a|Query UPS status (analogous to `Q1`). Typical answer:
+----
+(226.6 224.3 228.0 226.6 229.9 000.0 000.0 000 000 000 49.9 327.6 18.0 00000000 999.24 100 02 00 00 00 00 00000000 11
+----
+
+As far as I was able to decipher this:
+
+	  * first three fields correspond to the `L1-N`, `L2-N` and `L3-N`
+	    input voltages;
+	  * fifth field is output voltage (3/1 Ippon UPS was tested though,
+	    maybe, fields 5..7 correspond to the `L1-N`, `L2-N` and `L3-N`
+	    output voltages generally);
+	  * eleventh field seems to be frequency (don't know, input or output);
+	  * twelfth field is battery voltage;
+	  * thirteenth field is temperature;
+	  * 15th field may be estimated runtime (in minutes?) and
+	  * 16th field is battery level (in percents, with leading zero).
+
+However, I'm not sure about fields 4, 6..11, 14..23.
+| `Q4`	a|Yet another UPS status query. Typical answer:
+----
+(MMM.M ???.? ???.? NNN.N PPP.P ??? QQQ RR.R ??? ??? SS.S TT.T flags
+----
+Some flags:
+
+	  * `E` -- test in progress;
+	  * `A` -- mains fault, on battery;
+	  * `C` -- bypass/AVR mode
+| `Q6`	a|Query UPS status, especially useful for three-phase models.
 	  Typical answer:
-	  `(227.0 225.6 230.0 50.0 229.9 000.0 000.0 49.9 007 000 000 327.8 000.0 23.0 06932 100 32 00000000 00000000 11`.
-	  Fields 1..3 are `L1-N`, `L2-N` and `L3-N` input voltages,
-	  field 4 is input frequency,
-	  fields 5..7 should be `L1-N`, `L2-N` and `L3-N` output voltages,
-	  field 8 is output frequency,
-	  field 9 is load (in percents, with leading zero),
-	  field 12 is battery voltage,
-	  field 14 is temperature,
-	  field 15 is estimated runtime (in seconds),
-	  field 16 is battery level (in percents, with leading zero).
-| `QBL`	| Query battery stats. Typical answer:
-	  `(026.5 02 01 068 255`.
-	  Field 1 is battery voltage;
-	  field 2 is a number of batteries connected in series;
-	  field 3 is a number of batteries connected in parallel;
-	  field 4 is battery level (in percents, with leading zero);
-	  field 5 is estimated runtime (in minutes?).
+----
+(227.0 225.6 230.0 50.0 229.9 000.0 000.0 49.9 007 000 000 327.8 000.0 23.0 06932 100 32 00000000 00000000 11
+----
+	  * Fields 1..3 are `L1-N`, `L2-N` and `L3-N` input voltages,
+	  * field 4 is input frequency,
+	  * fields 5..7 should be `L1-N`, `L2-N` and `L3-N` output voltages,
+	  * field 8 is output frequency,
+	  * field 9 is load (in percents, with leading zero),
+	  * field 12 is battery voltage,
+	  * field 14 is temperature,
+	  * field 15 is estimated runtime (in seconds),
+	  * field 16 is battery level (in percents, with leading zero).
+| `QBL`	a|Query battery stats. Typical answer:
+----
+(026.5 02 01 068 255
+----
+	  * Field 1 is battery voltage;
+	  * field 2 is a number of batteries connected in series;
+	  * field 3 is a number of batteries connected in parallel;
+	  * field 4 is battery level (in percents, with leading zero);
+	  * field 5 is estimated runtime (in minutes?).
 | `QI`	| Query serial number info.
 | `QLDL`	| Query min and max load stats.
 | `QMD`	| Query nominal UPS stats such as power capacity, number of batteries, etc.
 | `QMF`	| Query manufacturer info.
 | `QMOD`	| Query current status code.
 | `QOF`	| Query output frequency info.
-| `QP`	| Query acceptable bypass limits. Typical answer:
-	  `(45.0 55.0 176 264 EpbraDokc`.
-	  Fields 1 and 2 are low and high limits for input bypass frequency,
-	  fields 3 and 4 are the same but for the voltage, field 5 is flags.
+| `QP`	a|Query acceptable bypass limits. Typical answer:
+----
+(45.0 55.0 176 264 EpbraDokc
+----
+	  * Fields 1 and 2 are low and high limits for input bypass frequency;
+	  * fields 3 and 4 are the same but for the voltage;
+	  * field 5 is flags.
 | `QRI`	| Yet another query for nominal UPS stats.
 | `QVFW`	| Yet another firmware version query.
 | `SASV07?`	| Query for serial number.
 		  Typical answer starts with `GASV07D` string.
 | `TC?`	| Query for temperature.
-| `V`	| Query for AVR mode settings. Typical answer: `165 200 220 240 275`.
-	  Field 1 is low limit for battery transition;
-	  field 2 is low limit for engaging AVR boost;
-	  field 3 is nominal voltage;
-	  field 4 is high limit for engaging AVR buck;
-	  field 5 is high limit for battery transition.
+| `V`	a|Query for AVR mode settings. Typical answer:
+----
+165 200 220 240 275
+----
+	  * Field 1 is low limit for battery transition;
+	  * field 2 is low limit for engaging AVR boost;
+	  * field 3 is nominal voltage;
+	  * field 4 is high limit for engaging AVR buck;
+	  * field 5 is high limit for battery transition.
 | `V?`	| Query for output voltage mode.
 | `V220`, `V230`, `V240`	| Set output voltage mode
 				  (corresponding LED may be toggled).
-| `WH`	| Query for model info and nominal specs. Typical answer:
-	  `(00 00.00 00.00 INN3T20K                 2 3/1 6 230 50.00 024 02.00 005.00 015.00 005 00 40 110 276 45.00 55.00`.
-	  Seems to be model code (field 4);
-	  topology (field 6);
-	  nominal voltage (field 8);
-	  nominal frequency (field 9);
-	  number of batteries (field 10).
-| `WA`	| Query for power/load stats. Typical answer:
-	  `(001.4 000.0 000.0 001.4 000.0 000.0 001.4 001.4 006.5 000.0 000.0 007 00000000`.
-	  Fields 1 and 7 seem to be real power measurements on output, while
-	  fields 4 and 8 -- the full one. This example a bit clumsy because
-	  in that case `cos(phi)` was about `1`, but in other measurements I
-	  was able to get differing readings. Not sure why these fields are
-	  in pairs (maybe rolling average?).
-	  Field 9 is current (amps), field 12 is load (percents).
+| `WH`	a|Query for model info and nominal specs. Typical answer:
+----
+(00 00.00 00.00 INN3T20K                 2 3/1 6 230 50.00 024 02.00 005.00 015.00 005 00 40 110 276 45.00 55.00
+----
+Seems to be:
+
+	  * model code (field 4);
+	  * topology (field 6);
+	  * nominal voltage (field 8);
+	  * nominal frequency (field 9);
+	  * number of batteries (field 10).
+| `WA`	a|Query for power/load stats. Typical answer:
+----
+(001.4 000.0 000.0 001.4 000.0 000.0 001.4 001.4 006.5 000.0 000.0 007 00000000
+----
+	  * Fields 1 and 7 seem to be real power measurements on output, while
+	  * fields 4 and 8 -- the full one.
++
+[NOTE]
+======
+This example a bit clumsy because in that case `cos(phi)` was about `1`,
+but in other measurements I was able to get differing readings.
+
+Not sure why these fields are in pairs (maybe rolling average?).
+======
+	  * Field 9 is current (amps), field 12 is load (percents).
 |=============================================================================
 
 
