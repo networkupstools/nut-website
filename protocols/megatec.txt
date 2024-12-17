@@ -567,6 +567,8 @@ Some flags:
 ----
 165 200 220 240 275
 ----
+	  * Note: example is from the notes "as is", but
+	    probably the answer should start with parenthesis
 	  * Field 1 is low limit for battery transition;
 	  * field 2 is low limit for engaging AVR boost;
 	  * field 3 is nominal voltage;
