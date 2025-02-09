@@ -103,22 +103,22 @@ LAYOUT = web-layout
 ADOC_PARAMS_COMMON =	\
 	--backend=xhtml11	\
 	--conf-file="$(srcdir)/$(LAYOUT).conf"	\
-	--attribute icons	\
-	--attribute linkcss	\
+	--attribute=icons	\
+	--attribute=linkcss	\
 	--attribute=badges	\
 	--attribute=website	\
 	--attribute=quirks	\
 	--attribute=revision="$(PACKAGE_VERSION)"	\
 	--attribute=webrevision="$(WEBSITE_VERSION)"	\
-	--attribute tree_version="@TREE_VERSION@"	\
-	--attribute localdate="`TZ=UTC date +%Y-%m-%d`"	\
-	--attribute localtime="`TZ=UTC date +%H:%M:%S`"	\
+	--attribute=tree_version="@TREE_VERSION@"	\
+	--attribute=localdate="`TZ=UTC date +%Y-%m-%d`"	\
+	--attribute=localtime="`TZ=UTC date +%H:%M:%S`"	\
 	--attribute=date="`TZ=UTC date`"
 
 ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
-	--attribute iconsdir=$(srcdir)/images	\
-	--attribute scriptsdir=$(srcdir)/scripts
+	--attribute=iconsdir=$(srcdir)/images	\
+	--attribute=scriptsdir=$(srcdir)/scripts
 
 OUTDIR_BASE = @OUTDIR_BASE@
 NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
@@ -537,18 +537,18 @@ SUFFIXES = .txt .html
 # Docs in DDL dir
 ADOC_PARAMS_DDL_L1 =	\
 	$(ADOC_PARAMS_COMMON)	\
-	--attribute iconsdir=../images	\
-	--attribute scriptsdir=../scripts	\
-	--attribute stylesdir=../css	\
-	--attribute root=../
+	--attribute=iconsdir=../images	\
+	--attribute=scriptsdir=../scripts	\
+	--attribute=stylesdir=../css	\
+	--attribute=root=../
 
 # Docs in children directories of DDL dir
 ADOC_PARAMS_DDL_L2 =	\
 	$(ADOC_PARAMS_COMMON)	\
-	--attribute iconsdir=../../images	\
-	--attribute scriptsdir=../../scripts	\
-	--attribute stylesdir=../../css	\
-	--attribute root=../../
+	--attribute=iconsdir=../../images	\
+	--attribute=scriptsdir=../../scripts	\
+	--attribute=stylesdir=../../css	\
+	--attribute=root=../../
 
 ## Handy things..
 # Empty string
@@ -625,7 +625,7 @@ MODELS_TARGETS := $(patsubst %.txt,%.html,$(MODELS_TARGETS_RAW))
 
 # Compiled asciidoc pages (.html):
 $(MODELS_TARGETS): $$(patsubst %.html,%.txt,$$@) $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute toc -o "$@" "$<"
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L2) --attribute=toc -o "$@" "$<"
 
 ## Pages to build for each manufacturer
 # -> DDL_DIR/mfr_1/index.html ... DDL_DIR/mfr_n/index.html
@@ -666,12 +666,12 @@ $(DDL_DIR)/index.txt: $(DDL_DIR)/README.adoc $(MFR_TARGETS)
 
 # Compiled asciidoc page (.html)
 $(DDL_DIR)/index.html: $(DDL_DIR)/index.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute=toc -o $@ $<
 
 ###
 
 $(HISTORIC_DIR)/index.html: $(HISTORIC_DIR)/index.txt $(LAYOUT).conf historic-release.txt
-	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute toc -o $@ $<
+	$(ASCIIDOC) $(ADOC_PARAMS_DDL_L1) --attribute=toc -o $@ $<
 
 ### Package and source directories indexer
 

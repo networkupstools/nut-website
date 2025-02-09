@@ -24,14 +24,14 @@ LAYOUT = web-layout
 ASCIIDOC_PARAMS =	\
 	--conf-file=$(top_srcdir)/$(LAYOUT).conf \
 	--backend=xhtml11	\
-	--attribute icons	\
-	--attribute iconsdir=../images	\
-	--attribute root=../	\
-	--attribute linkcss	\
-	--attribute scriptsdir=../scripts	\
-	--attribute stylesdir=../css	\
+	--attribute=icons	\
+	--attribute=iconsdir=../images	\
+	--attribute=root=../	\
+	--attribute=linkcss	\
+	--attribute=scriptsdir=../scripts	\
+	--attribute=stylesdir=../css	\
 	--attribute=badges	\
-	--attribute toc
+	--attribute=toc
 
 all: $(PROTOCOLS_FILES)
 
