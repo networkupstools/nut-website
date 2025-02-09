@@ -416,6 +416,18 @@ git sources were contributed by community and posted at NUT GitHub wiki:
 
 * https://github.com/networkupstools/nut/wiki/Building-NUT-integration-for-Home-Assistant
 
+link:https://github.com/desertwitch/NUT-unRAID/[NUT plugin for UNRAID]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The link:https://unraid.net[UNRAID OS] (based on Slackware, one of the oldest
+maintained distributions of Linux) includes a NUT plugin. There were several
+iterations of the plugin, with the torch passing to new enthusiasts with a
+fork. The current maintainer is very active in the NUT community as well.
+
+More information can be found at the UNRAID forum thread:
+
+* https://forums.unraid.net/topic/60217-plugin-nut-v2-network-ups-tools/
+
 link:https://github.com/vectronic/homebridge-nut/[Homebridge NUT integration by vectronic]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
