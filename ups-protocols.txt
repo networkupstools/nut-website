@@ -162,6 +162,20 @@ All these document are officially provided by Riello
 - link:protocols/riello/Riello_UPS_protocol_list.pdf[UPS protocol list]
 
 
+Salicru
+-------
+
+- link:protocols/salicru/IQ01301.pdf[Serial comm protocol used with Twin Pro2 700VA – 3KVA series UPS]
+  (a Megatec Qx dialect)
+
+
+VNATA
+-----
+
+- link:protocols/vnata/vnata-UPS-Communication-Protocol-1K-3K.pdf[vnata UPS Communication Protocol 1K~3K]
+  (a Megatec Qx dialect)
+
+
 Standard protocols
 ------------------
 

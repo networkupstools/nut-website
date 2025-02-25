@@ -458,8 +458,8 @@ UC
 UI
 UID
 UIDA
-UNV
 UNRAID
+UNV
 UPScode
 UPSes
 UPSmon
@@ -474,6 +474,7 @@ VER
 VERFW
 VMIN
 VMware
+VNATA
 VSN
 VTIME
 VV
@@ -927,6 +928,7 @@ vbatt
 vectronic
 vid
 vin
+vnata
 vo
 vod
 voltronic
