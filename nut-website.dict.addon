@@ -408,6 +408,7 @@ STO
 STP
 STR
 SU
+SUBDIRS
 Selinger
 Serv
 ShdnDbnc
@@ -792,6 +793,7 @@ ontiniedays
 optiups
 otherprotocols
 pF
+parallelizable
 paramkeywords
 parsable
 passwordlevel
