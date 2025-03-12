@@ -34,6 +34,17 @@ link:https://github.com/zykh/walNUT[walNUT]
 
 A Gnome Shell extension to monitor/manage NUT-controlled devices.
 
+[[winnutdotnet]]
+link:https://github.com/nutdotnet/WinNUT-Client[WinNUT-Client (.NET WinForms)]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A new iteration of numerous projects that have carried the "WinNUT(-Client)"
+moniker, this is a .NET WinForms based GUI client for NUT on Windows, with
+nearby repositories providing the client and data server models implemented
+in C#.
+
+The project is active, as of 2025.
+
 link:http://sourceforge.net/projects/winnutclient[Windows NUT client]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -45,6 +56,9 @@ however a "WinNUT-Client" fork (below) picked up the torch.
 
 link:https://github.com/gawindx/WinNUT-Client[WinNUT-Client]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NOTE: This repository was archived by the owner on Feb 4, 2025.
+It is now read-only.
 
 WinNUT-Client V2 is a replacement for older WinNUT Client (v1.x) which can use
 its configuration files. It allows a Windows client to monitor UPS state from
@@ -235,6 +249,14 @@ link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 nut-snmpagent is an SNMP wrapper to expose the `upsc` output into Net-SNMP.
+
+[[nutdotnet]]
+https://github.com/nutdotnet/nutdotnet[NUT.Net]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A .Net implementation of NUT client and server state machinery.
+
+Used in the nearby <<winnutdotnet,WinNUT-Client (.Net)>> project.
 
 [[jNut]]
 link:https://github.com/networkupstools/jnut/[jNut]
