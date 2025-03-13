@@ -253,7 +253,7 @@ echo_spacer
 echo "Description of checked-out NUT codebase since latest Git tag, and derived PACKAGE_VERSION:"
 # NOTE: When maintaining, use same definition of NUT_VERSION as configure.ac
 # However keep in mind that the report here is just informative (into build logs)
-NUT_VERSION="$(cd nut && (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
+NUT_VERSION="$(cd nut && ([ -x ./tools/gitlog2version.sh ] && ./tools/gitlog2version.sh || (git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null ))"
 printf "%s => %s\n" "${NUT_VERSION}" "`echo "${NUT_VERSION}" | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*[+-]g.*//'`"
 ( cd nut && ./autogen.sh ) || quit
 echo_spacer
