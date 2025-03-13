@@ -4,7 +4,7 @@ dnl +------------------------------------------------------------------+
 
 dnl Note: funny markup in the next line is m4-escaped square braces
 dnl for glob-expression text in an m4 macro
-AC_INIT(nut_website, m4_esyscmd_s(cd nut && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*-g.*//'))
+AC_INIT(nut_website, m4_esyscmd_s(cd nut && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*@<:@+-@:>@g.*//'))
 dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
 dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
 AC_PREREQ([2.69])
@@ -121,7 +121,7 @@ WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],
 	[''], [AC_MSG_NOTICE(Seems there was a problem getting NUT_VERSION)],
-	[*-*-g*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit
+	[*-*-g*|*-*+g*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit (plus-separated since NUT v2.8.3, at least from its gitlog2version.sh)
 		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
 	],
 	[dnl Default: exact tag hit, e.g. "v2.7.4" or "v2.8.0-rc1" for the release site
