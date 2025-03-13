@@ -120,6 +120,9 @@ WEB_VERSION="$( (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9
 WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
 AS_CASE(["${NUT_VERSION}"],
+	[0*|1*|2*|3*|4*|5*|6*|7*|8*|9*], [NUT_VERSION="v${NUT_VERSION}"]
+)
+AS_CASE(["${NUT_VERSION}"],
 	[''], [AC_MSG_NOTICE(Seems there was a problem getting NUT_VERSION)],
 	[*-*-g*|*-*+g*], [dnl e.g. "v2.7.4-130-g20ff10c2" with last tag, count of commits since it in current branch, and latest commit (plus-separated since NUT v2.8.3, at least from its gitlog2version.sh)
 		WEBSITE_VERSION="nut:${NUT_VERSION} ddl:${DDL_VERSION} web:${WEB_VERSION}-${WEB_BRANCH}"
