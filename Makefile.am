@@ -292,10 +292,12 @@ else
 endif
 
 # Generate WEBSITE_DEPS & HTML versions of man pages
-# index.html depends on NUT source version, not all have the recipe
+# dist-html and index.html goals depend on NUT source version:
+# not all releases have the recipes
 .prerequisites_nut_ManHtmlPdf: .prerequisites_nut_ChangeLog_raw
 	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) html-man
 	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) index.html || true
+	+cd nut/docs/man && $(MAKE) $(AM_MAKEFLAGS) dist-html || true
 	+cd nut/docs && $(MAKE) $(AM_MAKEFLAGS) html-chunked pdf FAQ.html solaris-usb.html
 
 # Generate distribution files and GPG fingerprint (really needed?)
