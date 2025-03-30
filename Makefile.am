@@ -15,6 +15,9 @@ ACLOCAL_AMFLAGS = -I nut/m4
 
 CLEANFILES =
 
+OUTDIR_BASE = @OUTDIR_BASE@
+NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
+
 SUBDIRS = protocols
 
 IMAGE_FILES =	\
@@ -75,7 +78,8 @@ WEBSITE_FILES =	\
 	support.html	\
 	ups-protocols.html
 
-WEBSITE_DEPS =	\
+# Base set of docs as of NUT v2.7.4
+WEBSITE_DEPS_274 =	\
 	nut/docs/solaris-usb.html	\
 	nut/docs/cables.pdf	\
 	nut/docs/developer-guide.chunked	\
@@ -87,15 +91,38 @@ WEBSITE_DEPS =	\
 	nut/docs/user-manual.chunked	\
 	nut/docs/user-manual.pdf
 
-if WITH_NUT_HISTORIC_RELEASE
-else
 # Since run-up to NUT v2.8.1 [#1953]
-WEBSITE_DEPS +=	\
+WEBSITE_DEPS_281 =	\
 	nut/docs/release-notes.chunked	\
 	nut/docs/release-notes.pdf	\
 	nut/docs/ChangeLog.chunked	\
 	nut/docs/ChangeLog.pdf
-endif
+
+# Since run-up to NUT v2.8.3 [#2866]
+WEBSITE_DEPS_283 =	\
+	nut/docs/qa-guide.chunked	\
+	nut/docs/qa-guide.pdf
+
+# Initialize and populate further
+WEBSITE_DEPS =	$(WEBSITE_DEPS_274)
+# HIDE FROM AUTOMAKE # ifneq (,$(strip $(NUT_HISTORIC_RELEASE)))
+#
+# https://stackoverflow.com/a/12034077/4715872
+#   sort and take the first value - if it's the specified tag,
+#   then the version is the same or greater
+# WARNING: Alphanumeric sorting by characters
+# FIXME: may want shell `sort -n` if we mix single/double digits later
+#
+# HIDE FROM AUTOMAKE # ifeq ("v2.8.1",$(word 1,$(sort "v2.8.1" "$(NUT_HISTORIC_RELEASE)")))
+# HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_281)
+# HIDE FROM AUTOMAKE # endif
+# HIDE FROM AUTOMAKE # ifeq ("v2.8.3",$(word 1,$(sort "v2.8.3" "$(NUT_HISTORIC_RELEASE)")))
+# HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_283)
+# HIDE FROM AUTOMAKE # endif
+# HIDE FROM AUTOMAKE # else
+# Current NUT trunk build should be capable of everything
+# HIDE FROM AUTOMAKE # WEBSITE_DEPS +=	$(WEBSITE_DEPS_281) $(WEBSITE_DEPS_283)
+# HIDE FROM AUTOMAKE # endif
 
 # CSS based simulated frames layout.
 LAYOUT = web-layout
@@ -119,9 +146,6 @@ ASCIIDOC_PARAMS =	\
 	$(ADOC_PARAMS_COMMON)	\
 	--attribute=iconsdir=$(srcdir)/images	\
 	--attribute=scriptsdir=$(srcdir)/scripts
-
-OUTDIR_BASE = @OUTDIR_BASE@
-NUT_HISTORIC_RELEASE = @NUT_HISTORIC_RELEASE@
 
 if WITH_NUT_HISTORIC_RELEASE
 # Do not build/publish DDL or the HISTORIC_DIR inside historic sub-sites
