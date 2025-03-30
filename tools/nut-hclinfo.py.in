@@ -106,6 +106,9 @@ def buildData(deviceDataFile):
         # Strip all trailing whitespace chars
         line = re.sub(r"\s+$", "", line)
 
+        # Strip all trailing comments
+        line = re.sub(r"\"\s+#.*$", "\"", line)
+
         # Replace all tabs by commas
         line = re.sub(r"\t", ",", line)
 
@@ -117,7 +120,7 @@ def buildData(deviceDataFile):
         row = re.findall(r'"([^"]*)",?', line)
 
         if len(row) != len(dataFields):
-            print ("Warning: Unexpected number of fields in line: %s" % row)
+            print ("Warning: Unexpected number of fields (%d vs. %d) in line: %s" % (len(row), len(dataFields), row))
             print ("\tLine will be skipped.")
         else:
             deviceData.append(re.findall(r'"([^"]*)",?', line))
