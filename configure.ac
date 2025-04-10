@@ -119,6 +119,14 @@ DDL_VERSION="$(cd ddl && (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@
 WEB_VERSION="$( (git describe --tags --match 'v@<:@0-9@:>@*.@<:@0-9@:>@*.@<:@0-9@:>@' --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' || git describe --tags --exclude '*-signed' --exclude '*rc*' --exclude '*alpha*' --exclude '*beta*' --exclude '*Windows*' --exclude '*IPM*' ) 2>/dev/null )"
 WEB_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 WEBSITE_VERSION="${PACKAGE_VERSION}"
+
+dnl The "{revision}" for "nut::docs/download.txt" for currently served release
+dnl Currently a tripled for latest stable release/tag
+dnl Maybe a longer NUT SEMVER later if we would build serve dist tarballs from
+dnl committed "master" branch iterations:
+RELEASED_TARBALL_VERSION="`echo "${PACKAGE_VERSION}" | sed 's,^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\([^0-9].*\)?$,\1,'`"
+
+dnl Last-moment string fixups
 AS_CASE(["${NUT_VERSION}"],
 	[0*|1*|2*|3*|4*|5*|6*|7*|8*|9*], [NUT_VERSION="v${NUT_VERSION}"]
 )
@@ -134,6 +142,8 @@ AS_CASE(["${NUT_VERSION}"],
 	 ])
 	]
 )
+
+AC_SUBST(RELEASED_TARBALL_VERSION)
 AC_SUBST(WEBSITE_VERSION)
 AC_SUBST(NUT_VERSION)
 AC_SUBST(DDL_VERSION)
