@@ -124,7 +124,7 @@ dnl The "{revision}" for "nut::docs/download.txt" for currently served release
 dnl Currently a tripled for latest stable release/tag
 dnl Maybe a longer NUT SEMVER later if we would build serve dist tarballs from
 dnl committed "master" branch iterations:
-RELEASED_TARBALL_VERSION="`echo "${PACKAGE_VERSION}" | sed 's,^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\([^0-9].*\)?$,\1,'`"
+RELEASED_TARBALL_VERSION="`echo "${PACKAGE_VERSION}" | sed 's,^\(@<:@0-9@:>@@<:@0-9@:>@*\.@<:@0-9@:>@@<:@0-9@:>@*\.@<:@0-9@:>@@<:@0-9@:>@*\)\(@<:@^0-9@:>@.*\)*$,\1,'`"
 
 dnl Last-moment string fixups
 AS_CASE(["${NUT_VERSION}"],
