@@ -325,8 +325,14 @@ A simple web interface for Network UPS Tools servers.
 
 * A link:https://github.com/teknologist/docker-webnut[dockerized version
   of webNUT] is available at
-  link:https://hub.docker.com/r/teknologist/webnut[DockerHub]
+  link:https://hub.docker.com/r/teknologist/webnut[DockerHub webNUT page]
   to install with just `docker pull teknologist/webnut`
+
+link:https://hub.docker.com/r/instantlinux/nut-upsd[nut-upsd on instantlinux]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A popular docker image to monitor and serve (for graphing etc.) one device
+per container.
 
 link:https://github.com/robbiet480/go.nut/[go.nut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
