@@ -1,3 +1,4 @@
+- Apr 21, 2025: NUT v2.8.3 released
 - Apr 7, 2025: Community work has intensified on NUT v2.8.3 release candidates, testing them and making last-minute flaw discoveries on diverse real-life systems. Great thanks to everyone participating.
 - Apr 3, 2025: NUT has been accepted for another year of link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting, for the core of multi-platform NUT CI farm
 - Mar 30, 2025: Are you wondering how link:docs/qa-guide.chunked/index.html[NUT Quality Assurance and Build Automation] happens? Perhaps you want to do similar feats in your project? Well, now I can say "I wrote a book on that!" :)
