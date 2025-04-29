@@ -328,6 +328,20 @@ A simple web interface for Network UPS Tools servers.
   link:https://hub.docker.com/r/teknologist/webnut[DockerHub webNUT page]
   to install with just `docker pull teknologist/webnut`
 
+link:https://github.com/DartSteven/Nutify[Nutify]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Nutify is a comprehensive monitoring system designed to track the health
+and performance of your Uninterruptible Power Supply (UPS) devices.
+It provides real-time insights into critical UPS metrics, allowing you to
+ensure the continuous operation and protection of your valuable equipment.
+
+Nutify collects data, generates detailed reports, and visualizes key parameters
+through interactive charts, all accessible via a user-friendly web interface.
+
+NUT can be configured via web interface, data stored into SQLite, and
+notifications sent to mobile, Discord and other targets.
+
 link:https://hub.docker.com/r/instantlinux/nut-upsd[nut-upsd on instantlinux]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
