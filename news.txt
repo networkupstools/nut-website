@@ -1,6 +1,8 @@
 - Apr 21, 2025: NUT v2.8.3 released, for more details please see
   link:https://github.com/networkupstools/nut/releases/tag/v2.8.3[GitHub release page for NUT v2.8.3]
   and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_3_what_8217_s_new_since_2_8_2[Release notes for NUT 2.8.3 - what's new since 2.8.2].
+  * ERRATA: Please check link:https://github.com/networkupstools/nut/pull/2955[NUT PR #2955] for a possible issue about `usbhid-ups` ignoring instant commands without arguments, breaking default UPS shutdown scenarios
+  * A few "non-critical" issues that should not get triggered in typical builds and end-user environments were also identified, detailed on GitHub
 - Apr 7, 2025: Community work has intensified on NUT v2.8.3 release candidates, testing them and making last-minute flaw discoveries on diverse real-life systems. Great thanks to everyone participating.
 - Apr 3, 2025: NUT has been accepted for another year of link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting, for the core of multi-platform NUT CI farm
 - Mar 30, 2025: Are you wondering how link:docs/qa-guide.chunked/index.html[NUT Quality Assurance and Build Automation] happens? Perhaps you want to do similar feats in your project? Well, now I can say "I wrote a book on that!" :)
