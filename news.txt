@@ -1,4 +1,6 @@
-- Apr 21, 2025: NUT v2.8.3 released
+- Apr 21, 2025: NUT v2.8.3 released, for more details please see
+  link:https://github.com/networkupstools/nut/releases/tag/v2.8.3[GitHub release page for NUT v2.8.3]
+  and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_3_what_8217_s_new_since_2_8_2[Release notes for NUT 2.8.3 - what's new since 2.8.2].
 - Apr 7, 2025: Community work has intensified on NUT v2.8.3 release candidates, testing them and making last-minute flaw discoveries on diverse real-life systems. Great thanks to everyone participating.
 - Apr 3, 2025: NUT has been accepted for another year of link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting, for the core of multi-platform NUT CI farm
 - Mar 30, 2025: Are you wondering how link:docs/qa-guide.chunked/index.html[NUT Quality Assurance and Build Automation] happens? Perhaps you want to do similar feats in your project? Well, now I can say "I wrote a book on that!" :)
@@ -7,10 +9,14 @@
 - Nov 6, 2024: due to update of NUT CI farm's Jenkins core, numerous build agent configurations and OSes had to be updated to use JDK17+. NUT documentation for build prerequisites and CI setup was accordingly updated.
 - Aug 12, 2024: link:http://wmnut.networkupstools.org[WMNut] 0.70 released, addressing some warnings found by newer compilers and updating code style, documentation and recipes
 - Mar-Jul, 2024: much work was done about up-streaming code developed by Eaton as part of link:https://42ity.org[42ITy(TM) project] and related efforts, and expanding NUT CI farm testing (and recipe/code abilities) on MacOS with Homebrew (x86, arm), all due to be part of NUT v2.8.3 release
-- Apr 1, 2024: NUT v2.8.2 released
+- Apr 1, 2024: NUT v2.8.2 released, for more details please see
+  link:https://github.com/networkupstools/nut/releases/tag/v2.8.2[GitHub release page for NUT v2.8.2]
+  and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_2_what_8217_s_new_since_2_8_1[Release notes for NUT 2.8.2 - what's new since 2.8.1].
 - Nov 15, 2023: following up with link:https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge[DigitalOcean] sponsorship for FOSS compute resource hosting after some hiatus on the NUT CI side (too many plans, too little time)
 - Nov 9, 2023: the PyNUT module provided in NUT sources is now published as `PyNUTClient` by CI to https://pypi.org/project/PyNUTClient (release snapshots) and https://test.pypi.org/project/PyNUTClient/ (rolling master-branch revisions). Hopefully, `pip` would have easier time finding it now to help create NUT clients.
-- Oct 31, 2023: NUT 2.8.1 released
+- Oct 31, 2023: NUT 2.8.1 released, for more details please see
+  link:https://github.com/networkupstools/nut/releases/tag/v2.8.1[GitHub release page for NUT v2.8.1]
+  and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_1_what_8217_s_new_since_2_8_0[Release notes for NUT 2.8.1 - what's new since 2.8.0].
   * ERRATA: Please check link:https://github.com/networkupstools/nut/pull/2155[NUT PR #2155] for a possible segmentation fault fix with INSTCMD processing
   * ERRATA: in `nut-scanner` results, `apc_modbus` can be suggested even if you lack a `libmodbus` version with USB support; try `usbhid-ups` instead then
 - Oct 20, 2023: a very long-awaited feature is now delivered, an APC Modbus capable NUT driver `apc_modbus` (due to be part of NUT v2.8.1 release)
@@ -29,7 +35,9 @@
 - Aug 18, 2022: efforts to revive NUT for Windows development (active since spring 2022) have reached the stage of regular CI builds on AppVeyor in semi-native environment (Windows with MSYS2/MinGW x64); regular cross-builds with Linux+MinGW environment were activated earlier
 - Aug 10, 2022: "UPS management protocol", Informational RFC 9271 published by IETF at https://www.rfc-editor.org/info/rfc9271 and the IANA port number registry was updated at https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=3493 (even though this RFC is not formally an Internet Standard)
 - May 10, 2022: added free layer of CircleCI to the ecosystem of NUT builders, to cover MacOS and later maybe Windows
-- Apr 26, 2022: NUT 2.8.0 released
+- Apr 26, 2022: NUT 2.8.0 released, for more details please see
+  link:https://github.com/networkupstools/nut/releases/tag/v2.8.0[GitHub release page for NUT v2.8.0]
+  and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_0_what_8217_s_new_since_2_7_4[Release notes for NUT 2.8.0 - what's new since 2.7.4].
 - Apr 24, 2022: a "dress rehearsal" for new release issuing NUT 2.8.0-rc3, focusing on documentation and API updates to impact the ecosystem just once
 - Apr 10, 2022: preparing for new release by issuing NUT 2.8.0-rc2, fixing found bugs, adding late-coming features, and rehearsing some automation involved
 - Apr 7, 2022: nut-website repository integrated with NUT CI farm to enable regular documentation updates as NUT code development and DDL get refreshed. Users of official "historic" releases which are the basis for distribution packaging have the new sub-sites frozen in time.
