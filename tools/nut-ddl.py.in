@@ -45,6 +45,8 @@ PEDANTIC_DECLARATIONS = os.getenv("NUT_DDL_PEDANTIC_DECLARATIONS", "False")
 # Booleanize this:
 PEDANTIC_DECLARATIONS = (PEDANTIC_DECLARATIONS in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
 
+REQUIRE_NUT_MANPAGES = (os.getenv("NUT_DDL_REQUIRE_MANPAGES", "True") in ["True", "true", "TRUE", "Yes", "yes", "YES", "1"])
+
 # This is not fatal, some documents do have layman comments,
 # notably "# :; upsc output" before the data dump (such pattern
 # is ignored to reduce noise when reviewing content). This feature
@@ -1554,7 +1556,8 @@ try:
         if os.path.isfile(os.path.join(manDir, name)) and name.endswith(".html") and name != "index.html":
             manPages.append(name[:-5])
 except OSError:
-    print ("WARNING: Unable to get manpage list from '%s' while handling '%s'" % (manDir, inputFile))
+    if REQUIRE_NUT_MANPAGES:
+        print ("WARNING: Unable to get manpage list from '%s' while handling '%s'" % (manDir, inputFile))
 
 # Build page
 page = buildPage()
