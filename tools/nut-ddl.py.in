@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 #   Copyright (C) 2014 - Daniele Pezzini <hyouko@gmail.com>
-#   Copyright (C) 2022 - 2023 - Jim Klimov <jimklimov+nut@gmail.com>
+#   Copyright (C) 2022 - 2025 - Jim Klimov <jimklimov+nut@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -1554,7 +1554,7 @@ try:
         if os.path.isfile(os.path.join(manDir, name)) and name.endswith(".html") and name != "index.html":
             manPages.append(name[:-5])
 except OSError:
-    print ("Unable to get manpage list from '%s'" % manDir)
+    print ("WARNING: Unable to get manpage list from '%s' while handling '%s'" % (manDir, inputFile))
 
 # Build page
 page = buildPage()
