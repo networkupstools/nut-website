@@ -815,9 +815,9 @@ def nds_rw_vars(raw):
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match(r"^\".+\"$", buf[3]):
-            msg = (r"Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName) + \
-                  (r"\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'") + \
-                  (r"\tgot: '%s'" % raw["line"])
+            msg = ("Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
 
             if verbose:
                 print (msg)
@@ -836,9 +836,9 @@ def nds_rw_vars(raw):
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match(r"^\"\d+\" \"\d+\"$", buf[3]):
-            msg = (r"Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName) + \
-                  (r"\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'") + \
-                  (r"\tgot: '%s'" % raw["line"])
+            msg = ("Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % varName) + \
+                  ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'") + \
+                  ("\tgot: '%s'" % raw["line"])
 
             if verbose:
                 print (msg)
@@ -848,7 +848,9 @@ def nds_rw_vars(raw):
             if not nutRWs[varName].get("opts"):
                 del nutRWs[varName]
             return
-        rwRange = buf[3].split(r"\"")
+        rwRange = buf[3].split("\"")
+        if verbose:
+            print (r"buf='%s' => rwRange=[%s]\n" % (str(buf), str(rwRange)))
         if not len(rwRange[1]) or not rwRange[1].isdigit() or not len(rwRange[3]) or not rwRange[3].isdigit():
             msg = ("Declaration of RW variable '%s' of type 'RANGE' with a non-numerical range (%s..%s)" % (varName, rwRange[1], rwRange[3]))
 
@@ -1004,11 +1006,11 @@ EOLComments = {
     # Bad vars/commands
     #  '#BAD[: <comment>]\n'
     "bad": {
-        "pattern": r"[ \t]*#BAD:?.*$",
+        "pattern": "[ \t]*#BAD:?.*$",
         "function": nds_bad
     },
     "comment": {
-        "pattern": r"[ \t]*#COMMENT:?.*$",
+        "pattern": "[ \t]*#COMMENT:?.*$",
         "function": nds_comment
     }
 }
@@ -1062,7 +1064,7 @@ def parseFile(inputFile):
         for pattern in nonCommentsMap:
             # Check for End Of Line comments
             for EOLType in EOLComments.values():
-                if re.match(re.sub(r"\$", r"[ \t]*", pattern) + EOLType["pattern"], line):
+                if re.match(re.sub(r"\$", "[ \t]*", pattern) + EOLType["pattern"], line):
                     tempLine = re.sub(EOLType["pattern"], "", line)
                     bailout = True
                     # Just in case this is not the leftmost comment..
@@ -1112,7 +1114,7 @@ def parseFile(inputFile):
         # note: special markup lines like "#RW:...", "#RO:..." and "#CMD:..." are handled above as "known non-comments"
         if re.match(r"^(\s*|\s+#.*|#[^ \n\r].*)$", line):
             if PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS and "#" in line:
-                print (r"[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
+                print ("[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
             commentContinuation = False
             continue
 
@@ -1140,7 +1142,7 @@ def parseFile(inputFile):
                         break
             else:
                 if PEDANTIC_TRACK_UNSTRUCTURED_COMMENTS and not "upsc" in line:
-                    print (r"[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
+                    print ("[%s:%d]\tUNSTRUCTURED COMMENT: %s" % (inputFile, linenum, str(line).strip()))
 
             continue
 
@@ -1172,7 +1174,7 @@ def buildPage():
 
     # New NUT version in page
     if fromFileName["reportNumber"] == 1:
-        page.append(r"\n\n== %s\n" % fromFileName["nutVersion"])
+        page.append("\n\n== %s\n" % fromFileName["nutVersion"])
     else:
         if PEDANTIC_DECLARATIONS:
             # Check that preceding numbers exist. Reminder from our spec:
@@ -1221,7 +1223,7 @@ def buildPage():
 
     # Note: report numbering should be sequential per NUT release
     # and may cover several drivers in it that handle the device:
-    page.append(r"\n=== Report #%d with driver %s%s\n" % (fromFileName["reportNumber"], fromFileName["driverName"],
+    page.append("\n=== Report #%d with driver %s%s\n" % (fromFileName["reportNumber"], fromFileName["driverName"],
         " (detailed comments available)" if haveDetailedComments() else ""
         ))
 
@@ -1269,16 +1271,16 @@ def buildPage():
     # Old .dev/.seq files
     if fromFileName["fileType"] == "dev" and os.path.isfile(os.path.join(fromFileName["filePath"], fromFileName["fileName"] + ".seq")):
         buf += " and a +.seq+ file to simulate power events link:$$raw/%s.seq$$[clicking here]" % (fromFileName["fileName"].replace("%", "%25"))
-    buf += r".\n"
+    buf += ".\n"
     page.append(buf)
 
     if haveDetailedComments():
-        page.append(r"Some more detailed comments are available <<anchor-about-%s-%s,after>> the \"Known supported...\" sections.\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
+        page.append("Some more detailed comments are available <<anchor-about-%s-%s,after>> the \"Known supported...\" sections.\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
 
     # NUT vars
-    page.append(r"\n==== Known supported variables\n")
-    page.append(r"This device is known to support the following variables (values are just examples):\n")
-    page.append(r"[horizontal]")
+    page.append("\n==== Known supported variables\n")
+    page.append("This device is known to support the following variables (values are just examples):\n")
+    page.append("[horizontal]")
 
     for nutVar in sorted(nutVars):
         bad = nutVars[nutVar].get("bad")
@@ -1299,11 +1301,11 @@ def buildPage():
 
         # 'BAD' EOL comment
         if bad is not None and len(bad):
-            page.append(r"+\n[role=\"nut-ddl-bad-var-text\"]\n--\n{sp} %s\n--" % bad)
+            page.append("+\n[role=\"nut-ddl-bad-var-text\"]\n--\n{sp} %s\n--" % bad)
 
         # RW vars
         if nutRWs.get(nutVar):
-            page.append(r"+\n--")
+            page.append("+\n--")
 
             incipit = "This variable can be set through "
             if rwProgName in manPages:
@@ -1314,52 +1316,52 @@ def buildPage():
             if nutRWs[nutVar]["type"] == "STRING":
                 bad = nutRWs[nutVar].get("bad")
                 if bad is not None:
-                    page.append(r"[role=\"nut-ddl-bad-string\"]");
+                    page.append("[role=\"nut-ddl-bad-string\"]");
                 if nutRWs[nutVar]["opts"] != 0:
                     page.append("%s to a string value upto the length of `%d` characters." % (incipit, nutRWs[nutVar]["opts"]))
                 else:
                     page.append("%s to a string value." % incipit)
                 if bad is not None and len(bad):
-                    page.append(r"\n[role=\"nut-ddl-bad-string-text\"]\n{sp} %s" % bad)
+                    page.append("\n[role=\"nut-ddl-bad-string-text\"]\n{sp} %s" % bad)
                 elif nutRWs[nutVar].get("comment") and len(nutRWs[nutVar]["comment"]):
-                    page.append(r"\n{sp} %s" % nutRWs[nutVar]["comment"])
+                    page.append("\n{sp} %s" % nutRWs[nutVar]["comment"])
             elif nutRWs[nutVar]["type"] == "RANGE":
-                page.append(r"%s within the following ranges:\n" % incipit)
+                page.append("%s within the following ranges:\n" % incipit)
                 for rwRange in nutRWs[nutVar]["opts"]:
                     bad = rwRange.get("bad")
                     if bad is not None:
                         page.append("- [nut-ddl-bad-range]#`%d`..`%d`#" % (rwRange["min"], rwRange["max"]))
                         if len(bad):
-                            page.append(r"+\n[role=\"nut-ddl-bad-range-text\"]\n--\n{sp} %s\n--" % bad)
+                            page.append("+\n[role=\"nut-ddl-bad-range-text\"]\n--\n{sp} %s\n--" % bad)
                     else:
                         page.append("- `%d`..`%d`" % (rwRange["min"], rwRange["max"]))
                     comment = rwRange.get("comment")
                     if comment is not None and len(comment):
-                        page.append(r"+\n--\n{sp} %s\n--" % comment)
+                        page.append("+\n--\n{sp} %s\n--" % comment)
             elif nutRWs[nutVar]["type"] == "ENUM":
-                page.append(r"%s to one of the following values:\n" % incipit)
+                page.append("%s to one of the following values:\n" % incipit)
                 for enum in nutRWs[nutVar]["opts"]:
                     bad = enum.get("bad")
                     if bad is not None:
                         page.append("- [nut-ddl-bad-enum]+pass:specialcharacters[%s ]+" % enum["enum"].replace("]", r"\]"))
                         if len(bad):
-                            page.append(r"+\n[role=\"nut-ddl-bad-enum-text\"]\n--\n{sp} %s\n--" % bad)
+                            page.append("+\n[role=\"nut-ddl-bad-enum-text\"]\n--\n{sp} %s\n--" % bad)
                     else:
                         page.append("- +pass:specialcharacters[%s ]+" % enum["enum"].replace("]", r"\]"))
                     comment = enum.get("comment")
                     if comment is not None and len(comment):
-                        page.append(r"+\n--\n{sp} %s\n--" % comment)
+                        page.append("+\n--\n{sp} %s\n--" % comment)
 
             page.append("--")
 
         # End Of Line var comment
         comment = nutVars[nutVar].get("comment")
         if comment is not None and len(comment):
-            page.append(r"+\n--\n{sp} %s\n--" % comment)
+            page.append("+\n--\n{sp} %s\n--" % comment)
 
         # Var comment
         if varCmdComments.get(nutVar):
-            page.append(r"+\n--")
+            page.append("+\n--")
             for commentLine in varCmdComments[nutVar]:
                 page.append(commentLine)
             page.append("--")
@@ -1368,13 +1370,13 @@ def buildPage():
 
     # NUT instant commands
     if len(nutCommands):
-        page.append(r"\n==== Known supported commands\n")
+        page.append("\n==== Known supported commands\n")
 
         buf = "This device is known to support the following "
         if cmdProgName in manPages:
-            buf += r"link:%s%s.html[NUT's instant commands]:\n" % (webManDir, cmdProgName)
+            buf += "link:%s%s.html[NUT's instant commands]:\n" % (webManDir, cmdProgName)
         else:
-            buf += r"NUT's instant commands:\n"
+            buf += "NUT's instant commands:\n"
         page.append(buf)
 
         for nutCommand in sorted(nutCommands):
@@ -1385,14 +1387,14 @@ def buildPage():
                 page.append("- *%s*" % nutCommand)
             # 'BAD' EOL comment
             if bad is not None and len(bad):
-                page.append(r"+\n[role=\"nut-ddl-bad-command-text\"]\n--\n{sp} %s\n--" % bad)
+                page.append("+\n[role=\"nut-ddl-bad-command-text\"]\n--\n{sp} %s\n--" % bad)
             # End Of Line command comment
             comment = nutCommands[nutCommand].get("comment")
             if comment is not None and len(comment):
-                page.append(r"+\n--\n{sp} %s\n--" % comment)
+                page.append("+\n--\n{sp} %s\n--" % comment)
             # Command comment
             if varCmdComments.get(nutCommand):
-                page.append(r"+\n--")
+                page.append("+\n--")
                 for commentLine in varCmdComments[nutCommand]:
                     page.append(commentLine)
                 page.append("--")
@@ -1401,11 +1403,11 @@ def buildPage():
 
     # Device comment/support-level
     if haveDetailedComments() or ndsSL != -1:
-        page.append(r"\n[[anchor-about-%s-%s]]\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
-        page.append(r"==== About this device\n")
+        page.append("\n[[anchor-about-%s-%s]]\n" % (fromFileName["nutVersion"], fromFileName["reportNumber"]))
+        page.append("==== About this device\n")
         # Support level
         if ndsSL != -1:
-            page.append(r"*Support level*: *%d* (out of 10)\n" % ndsSL)
+            page.append("*Support level*: *%d* (out of 10)\n" % ndsSL)
         # Device comment
         if len(devComment):
             for commentLine in devComment:
@@ -1413,46 +1415,46 @@ def buildPage():
         # Device report URL(s)
         if len(devURLs_report):
             # Note: asciidoc list is separated by a blank line
-            page.append(r"\nReported at:\n")
+            page.append("\nReported at:\n")
             for commentLine in devURLs_report:
-                page.append(r"* %s\n" % commentLine)
-            page.append(r"\n")
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
         # Device vendor URL(s)
         if len(devURLs_vendor):
             # Note: asciidoc list is separated by a blank line
-            page.append(r"\nVendor/Manufacturer information:\n")
+            page.append("\nVendor/Manufacturer information:\n")
             for commentLine in devURLs_vendor:
-                page.append(r"* %s\n" % commentLine)
-            page.append(r"\n")
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
         # Device URL(s) (unclassified)
         if len(devURLs):
             # Note: asciidoc list is separated by a blank line
-            page.append(r"\nSee also:\n")
+            page.append("\nSee also:\n")
             for commentLine in devURLs:
-                page.append(r"* %s\n" % commentLine)
-            page.append(r"\n")
+                page.append("* %s\n" % commentLine)
+            page.append("\n")
         # Block-formatted information piece(s) from the report:
         if len(devCommentBlocks):
-            page.append(r"\nFurther system data or configuration example%s:\n" % (
+            page.append("\nFurther system data or configuration example%s:\n" % (
                 "s" if (len(devCommentBlocks) > 1) else ""
                 ))
             for report in devCommentBlocks:
                 if DEV_COMMENT_BLOCKS_AS_LIST:
                     ### Style this as a list with bold text for titles?
-                    page.append(r"* *%s*:\n+\n------" % report['title'])
+                    page.append("* *%s*:\n+\n------" % report['title'])
                 else:
                     ### ...or style this as blocks which include the title
                     ### attribute (can't make them a bulleted list though)?
                     # NOTE: [%%collapsible] is an asciidoctor feature, but not asciidoc:
                     # https://docs.asciidoctor.org/asciidoc/latest/blocks/collapsible/#ex-collapsible
-                    page.append(r".%s%s\n------" % (report['title'],
-                        r"\n[%%collapsible]" if WITH_ASCIIDOCTOR else ""
+                    page.append(".%s%s\n------" % (report['title'],
+                        "\n[%%collapsible]" if WITH_ASCIIDOCTOR else ""
                         ))
 
                 for line in report['content']:
                     page.append(line)
-                page.append(r"------\n")
-            page.append(r"\n")
+                page.append("------\n")
+            page.append("\n")
 
     page.append("")
 
@@ -1474,7 +1476,7 @@ def getInfoFFN():
 
     if fromFileName["fileType"] not in [ "dev", "nds" ]:
         print ("%s: unexpected type of file" % inputFile)
-        print (r"\texpected: .dev/.nds")
+        print ("\texpected: .dev/.nds")
         exit(1)
 
     # <manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>
@@ -1482,7 +1484,7 @@ def getInfoFFN():
 
     if len(infos) < 5:
         print ("%s: unsuitable name; expected:" % inputFile)
-        print (r"\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}")
+        print ("\t<manufacturer>__<model>__<driver_name>__<NUT_version>__<report_number>.{dev,nds}")
         exit(1)
 
     # Info From File Name:
@@ -1542,7 +1544,7 @@ for nonComment in nonComments:
             # The previous function should have cleared the 'eol' comment, if not, the comment was not expected
             if len(nonComment["eol"]) and verbose:
                 print ("Unexpected EOL comment: '%s'" % nonComment["eol"])
-                print (r"\tin line: '%s'" % nonComment["line"])
+                print ("\tin line: '%s'" % nonComment["line"])
             break
 
 # Check if we have some vars
@@ -1574,7 +1576,7 @@ try:
         if verbose:
             print ("Creating new file '%s'" % outputFile)
     file = open(outputFile, "w")
-    file.write(r"\n".join(page))
+    file.write("\n".join(page))
     file.close()
     if verbose:
         print ("'%s' written" % outputFile)
