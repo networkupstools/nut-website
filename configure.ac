@@ -17,7 +17,7 @@ dnl NOTE: Macro seems to have some issues carrying over whitespace after
 dnl the "--with-doc" entry if pretty whitespace is applied to finish the
 dnl code block (end of line, indentations etc). So we use none here!
 AX_SUBDIRS_CONFIGURE([nut],
-		[[--without-all], [--without-dev], [--without-cgi], [--without-ssl], [--with-doc]])
+		[[--without-all], [--without-dev], [--without-cgi], [--without-ssl], [--with-doc], [--enable-docs-man-for-progs-built-only=no]])
 
 dnl ----------------------------------------------------------------------
 
