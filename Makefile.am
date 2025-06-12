@@ -78,6 +78,19 @@ WEBSITE_FILES =	\
 	support.html	\
 	ups-protocols.html
 
+# Special recipes are based on LINKMAN_INCLUDE_GENERATED
+# and LINKMAN_INCLUDE_CONSUMERS in nut/docs/man/Makefile.am
+# (FIXME: Generate the list right from nut checkout?)
+WEBSITE_MAN_FILES =
+
+WEBSITE_MAN_FILES_280 = \
+	docs/man/index.html	\
+	docs/man/upsd.html	\
+	docs/man/nutupsdrv.html
+
+WEBSITE_MAN_FILES_284 = \
+	docs/man/nut.html
+
 # Base set of docs as of NUT v2.7.4
 WEBSITE_DEPS_274 =	\
 	nut/docs/solaris-usb.html	\
@@ -113,15 +126,22 @@ WEBSITE_DEPS =	$(WEBSITE_DEPS_274)
 # WARNING: Alphanumeric sorting by characters
 # FIXME: may want shell `sort -n` if we mix single/double digits later
 #
+# HIDE FROM AUTOMAKE # ifeq ("v2.8.0",$(word 1,$(sort "v2.8.0" "$(NUT_HISTORIC_RELEASE)")))
+# HIDE FROM AUTOMAKE #    WEBSITE_MAN_FILES +=	$(WEBSITE_MAN_FILES_280)
+# HIDE FROM AUTOMAKE # endif
 # HIDE FROM AUTOMAKE # ifeq ("v2.8.1",$(word 1,$(sort "v2.8.1" "$(NUT_HISTORIC_RELEASE)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_281)
 # HIDE FROM AUTOMAKE # endif
 # HIDE FROM AUTOMAKE # ifeq ("v2.8.3",$(word 1,$(sort "v2.8.3" "$(NUT_HISTORIC_RELEASE)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_283)
 # HIDE FROM AUTOMAKE # endif
+# HIDE FROM AUTOMAKE # ifeq ("v2.8.4",$(word 1,$(sort "v2.8.4" "$(NUT_HISTORIC_RELEASE)")))
+# HIDE FROM AUTOMAKE #    WEBSITE_MAN_FILES +=	$(WEBSITE_MAN_FILES_284)
+# HIDE FROM AUTOMAKE # endif
 # HIDE FROM AUTOMAKE # else
 # Current NUT trunk build should be capable of everything
 # HIDE FROM AUTOMAKE # WEBSITE_DEPS +=	$(WEBSITE_DEPS_281) $(WEBSITE_DEPS_283)
+# HIDE FROM AUTOMAKE # WEBSITE_MAN_FILES +=	$(WEBSITE_MAN_FILES_280) $(WEBSITE_MAN_FILES_284)
 # HIDE FROM AUTOMAKE # endif
 
 # CSS based simulated frames layout.
@@ -178,6 +198,7 @@ endif
 all-files-deps:	\
 	.prerequisites_nut_ManHtmlPdf	\
 	$(WEBSITE_FILES)	\
+	$(WEBSITE_MAN_FILES)	\
 	$(FAVICON_FILES)	\
 	$(IMAGE_FILES)	\
 	$(IMAGE_FILES_ASCIIDOC_ICONS)	\
@@ -389,6 +410,8 @@ images/cables/:
 $(CABLE_IMAGE_FILES): images/cables/
 	cp -f nut/docs/$@ images/cables/
 
+# NOTE: WEBSITE_MAN_DEPS are assumed covered by nut/docs/man/*.html below;
+# the definition was to trick "make" into a special build of those files.
 $(OUTDIR): .all-files
 	$(RM) -r $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)
@@ -548,6 +571,34 @@ stable-hcl.html: stable-hcl.txt ups-html.txt $(LAYOUT).conf historic-release.txt
 
 support.html: nut/docs/support.txt $(LAYOUT).conf historic-release.txt
 	$(ASCIIDOC) $(ASCIIDOC_PARAMS) -o $@ $<
+
+# For newer NUT (2.8.x), ensure the LINKMAN_INCLUDE_CONSUMERS are generated
+# as expected for that NUT release, and resulting documents are built with
+# the website attribute (impacts the man page index). Dependency on the
+# .prerequisites_nut_ManHtmlPdf file should ensure needed include files were
+# built. Currently we hack ASCIIDOC_VERBOSE to pass the options we need
+# (the "ifdef::website" handling; keep design etc. as in other man pages).
+SPECIAL_MAN_PAGE = ( \
+	cd nut/docs/man || exit ; \
+	rm -f $(@F) || true ; \
+	ASCIIDOC_VERBOSE="--attribute=website" $(MAKE) $(AM_MAKEFLAGS) $(@F) ; \
+)
+
+# No-op to avoid generation of a common index listing per %/index.txt rule:
+nut/docs/man/index.txt: .prerequisites_nut_ManHtmlPdf
+	@true
+
+docs/man/index.html: .prerequisites_nut_ManHtmlPdf nut/docs/man/index.txt $(LAYOUT).conf historic-release.txt
+	+@$(SPECIAL_MAN_PAGE)
+
+docs/man/nut.html: .prerequisites_nut_ManHtmlPdf nut/docs/man/nut.txt $(LAYOUT).conf historic-release.txt
+	+@$(SPECIAL_MAN_PAGE)
+
+docs/man/upsd.html: .prerequisites_nut_ManHtmlPdf nut/docs/man/upsd.txt $(LAYOUT).conf historic-release.txt
+	+@$(SPECIAL_MAN_PAGE)
+
+docs/man/nutupsdrv.html: .prerequisites_nut_ManHtmlPdf nut/docs/man/nutupsdrv.txt $(LAYOUT).conf historic-release.txt
+	+@$(SPECIAL_MAN_PAGE)
 
 SUFFIXES = .txt .html
 
