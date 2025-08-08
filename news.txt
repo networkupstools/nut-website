@@ -1,3 +1,6 @@
+- Aug 08, 2025: NUT v2.8.4 released, for more details please see
+  link:https://github.com/networkupstools/nut/releases/tag/v2.8.4[GitHub release page for NUT v2.8.4]
+  and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_4_what_8217_s_new_since_2_8_3[Release notes for NUT 2.8.4 - what's new since 2.8.3].
 - Apr 21, 2025: NUT v2.8.3 released, for more details please see
   link:https://github.com/networkupstools/nut/releases/tag/v2.8.3[GitHub release page for NUT v2.8.3]
   and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_3_what_8217_s_new_since_2_8_2[Release notes for NUT 2.8.3 - what's new since 2.8.2].
