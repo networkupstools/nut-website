@@ -441,7 +441,7 @@ kindly curated (picking entries new for NUT) and translated by Viktor Drobot.
 Another part was obtained by his RS232 sniffer as well, during development
 of sub-driver updates for Ippon Innova RT 3/1 series.
 
-NOTE: not all UPSes are able to answer/consume some or all of these commands!
+NOTE: Not all UPSes are able to answer/consume some or all of these commands!
 
 /////////////////
 Maintainer note about table markup: "Command" cells ending with `a|` and

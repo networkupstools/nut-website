@@ -631,10 +631,10 @@ When written, this register triggers the following events:
 My UPS allows this value to be set to any value in the range +0+-+255+.
 For val\<=+2+, the alarm is enabled, for val>=+3+, it is disabled.
 
-NOTE: the alarm can only be disabled when it is already ringing.
+NOTE: The alarm can only be disabled when it is already ringing.
 In other words, the alarm is enabled each time an alarm-worthy event occurs, but can then be disabled during the event.
 
-NOTE: during a critical event (e.g., low battery), the alarm rings faster and cannot be disabled.
+NOTE: During a critical event (e.g., low battery), the alarm rings faster and cannot be disabled.
 
 |12:	|unknown				|1 byte		|RW		|0		.3+|I don't know the function of registers +12+-+14+.
 On my system, they all take value +0+.

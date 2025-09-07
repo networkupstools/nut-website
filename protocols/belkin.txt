@@ -79,7 +79,7 @@ length of data to follow, in bytes (e.g. +004+)
 *+zzz+*::
 optional: data for the command
 +
-NOTE: commands with multiple fields use *+;+* to separate them.
+NOTE: Commands with multiple fields use *+;+* to separate them.
 
 A typical command might look like this:
 
@@ -112,7 +112,7 @@ After using this, the UPS may need to be rebooted before it will start another b
 |~00S004SDT2		|Unsure: may be "shutdown type" - used for shutdown+restore command		|n/a
 |~00S006SDA120		|Shut down the UPS after 120 seconds
 
-NOTE: the only known way to return from this is with the power button!
+NOTE: The only known way to return from this is with the power button!
 
 													|n/a
 |~00S008SDRnnnnn	|Untested, not seen in logs (only seen in 'strings')
@@ -338,7 +338,7 @@ Unsupported: ::
 
 |~00P003RAT	|UPS ratings					a|+~00D053134;612;159;600;525;315;;85;100;90;80;150;140;1;12+
 
-WARNING: this is truncated in my hardware - full decoding impossible
+WARNING: This is truncated in my hardware -- full decoding was impossible!
 
 NOTE: Broken in firmware 001, fixed in firmware 004.
 
