@@ -45,6 +45,10 @@ in C#.
 
 The project is active, as of 2025.
 
+Please note that this is different from the NUT for Windows effort maintained
+in the NUT code base itself to provide native builds of NUT programs and
+services for that platform.
+
 link:http://sourceforge.net/projects/winnutclient[Windows NUT client]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -244,6 +248,10 @@ e.g. Network UPS Tools secondary (aka "slave") daemons and monitoring clients,
 access to UPS information using standard Windows programming interfaces for
 easier setup.
 
+Please note that this is different from the NUT for Windows effort maintained
+in the NUT code base itself to provide native builds of NUT programs and
+services for that platform.
+
 [[nut-snmpagent]]
 link:https://github.com/luizluca/nut-snmpagent[nut-snmpagent]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -381,6 +389,10 @@ when UPS forced shutdown or low battery happens, depending on your settings.
 
 * The `NUTClient.cs` (along with other files) in project sources provides
   a C# implementation of the NUT protocol for the client side.
+
+Please note that this is different from the NUT for Windows effort maintained
+in the NUT code base itself to provide native builds of NUT programs and
+services for that platform.
 
 
 Hardware projects involving NUT
