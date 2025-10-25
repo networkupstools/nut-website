@@ -11,8 +11,10 @@ a vast range of vendor-specific protocols and connection media types.
 NUT provides many control and monitoring link:features.html[features], with a
 uniform control and management interface. If you are just getting acquainted
 with NUT, link:features.html[that page] also explains the technical design
-and some possible set-ups. The link:docs/man/nut.html[NUT Overview (manual
-page)] can be another good starting point.
+and some possible set-ups.
+
+The link:docs/man/nut.html[NUT Overview (manual page)] can be another good
+starting point.
 
 As of this publication, at least @COUNT_HCL_MANUFACTURERS@ different
 manufacturers, and @COUNT_HCL_MODELS@ hardware device models are known as
