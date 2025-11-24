@@ -21,6 +21,16 @@
 [ x"${NUT_HISTORIC_RELEASE-}" != x ] || NUT_HISTORIC_RELEASE=""
 export CI_AUTOCOMMIT CI_AUTOPUSH CI_AVOID_RESPIN NUT_HISTORIC_RELEASE
 
+# Run for a spellcheck?
+DO_SPELLCHECK=false
+while [ $# -gt 0 ] ; do
+	case "$1" in
+		spellcheck) DO_SPELLCHECK=true ; CI_AVOID_SPELLCHECK=false ;;
+		*) echo "Unrecognized option: $1" >&2 ;;
+	esac
+	shift
+done
+
 # FIXME: Initially "false" to boot-strap development on
 # https://github.com/networkupstools/nut-website/issues/52
 # and then should become "true" or "require" depending on
@@ -44,14 +54,26 @@ rm -f .git-commit-website || true
 echo "=== Running autogen.sh" >&2
 ./autogen.sh || exit
 
+NUT_WITH_DOCS=""
+if $DO_SPELLCHECK ; then
+	NUT_WITH_DOCS="--with-doc=all=auto"
+fi
+
 echo "=== Running configure" >&2
 if [ -n "${NUT_HISTORIC_RELEASE}" ]; then
-	./configure --with-NUT_HISTORIC_RELEASE="${NUT_HISTORIC_RELEASE}" || exit
+	./configure --with-NUT_HISTORIC_RELEASE="${NUT_HISTORIC_RELEASE}" $NUT_WITH_DOCS || exit
 else
-	./configure || exit
+	./configure $NUT_WITH_DOCS || exit
 fi
 
 echo "=== Running make" >&2
+if $DO_SPELLCHECK ; then
+	# TOTHINK: Consider historic?..
+	echo "===== Running only the spellcheck" >&2
+	{ make -k -s -j 8 spellcheck 2>/dev/null ; make -sk spellcheck ; }
+	exit
+fi
+
 # NOTE: Initial "make" is not "-s" because it goes silent for too long, uneasy
 case "${NUT_HISTORIC_RELEASE-}" in
 "")

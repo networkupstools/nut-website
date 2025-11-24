@@ -162,7 +162,8 @@ make: *** [Makefile:1012: ddl/PowerWalker/PowerWalker__VI_2200_SH__usbhid-ups__2
 It may also be possible to `configure` a build (not for publication) on an
 agent incapable of rendering PDF documents, e.g. to just spell-check the
 proposed website update (`news.txt` etc.) by passing the `--with-doc=...`
-option (supported values depend on the NUT version being built).
+option (supported values depend on the NUT version being built). You can
+also just call `./ci_build.sh spellcheck` for this.
 
 
 Manual building in detail
