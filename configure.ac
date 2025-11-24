@@ -33,7 +33,7 @@ AC_ARG_WITH(outdir-base,
 AC_SUBST([OUTDIR_BASE])
 AM_CONDITIONAL([WITH_CUSTOM_OUTDIR_BASE], [test x"${OUTDIR_BASE}" != "xoutput"])
 
-# Not defaulting NUT_HISTORIC_RELEASE as it may be just exported by caller
+dnl # Not defaulting NUT_HISTORIC_RELEASE as it may be just exported by caller
 AC_ARG_WITH(NUT_HISTORIC_RELEASE,
 	[AS_HELP_STRING([--with-NUT_HISTORIC_RELEASE=GITTAG], [enable page marking for old release (e.g. 'v2.7.4') and impact actual sub-location for current website build])],
 	[AS_CASE(["${withval}"],
@@ -45,7 +45,7 @@ AC_ARG_WITH(NUT_HISTORIC_RELEASE,
 AC_SUBST([NUT_HISTORIC_RELEASE])
 AM_CONDITIONAL([WITH_NUT_HISTORIC_RELEASE], [test x"${NUT_HISTORIC_RELEASE}" != x])
 
-dnl Check for AsciiDoc
+dnl Check for AsciiDoc (using NUT source's m4 scripts)
 
 NUT_CHECK_ASCIIDOC
 
