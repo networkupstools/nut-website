@@ -20,11 +20,21 @@ AC_CONFIG_MACRO_DIRS([m4 nut/m4])
 echo "Network UPS Tools - Website (most recently tagged NUT version ${PACKAGE_VERSION})"
 AM_INIT_AUTOMAKE([foreign no-dist])
 
+NUT_WITH_DOC="--with-doc"
+AC_ARG_WITH([doc],
+	[AS_HELP_STRING([--with-doc(=...)], [options for documentation generation, passed to NUT sources (should only be constrained for e.g. spellcheck on systems that can not build PDF)])],
+	[AS_CASE(["${withval}"],
+		[''], [],
+			[NUT_WITH_DOC="--with-doc=${withval}"]
+	)],
+	[]
+)
+
 dnl NOTE: Macro seems to have some issues carrying over whitespace after
 dnl the "--with-doc" entry if pretty whitespace is applied to finish the
 dnl code block (end of line, indentations etc). So we use none here!
 AX_SUBDIRS_CONFIGURE([nut],
-		[[--without-all], [--without-dev], [--without-cgi], [--without-ssl], [--with-doc], [--enable-docs-man-for-progs-built-only=no]])
+		[[--without-all], [--without-dev], [--without-cgi], [--without-ssl], [${NUT_WITH_DOC}], [--enable-docs-man-for-progs-built-only=no]])
 
 dnl ----------------------------------------------------------------------
 

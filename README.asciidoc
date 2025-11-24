@@ -159,6 +159,11 @@ RuntimeWarning: Invalid device block comment: does not end with DEVICE:EOC (blan
 make: *** [Makefile:1012: ddl/PowerWalker/PowerWalker__VI_2200_SH__usbhid-ups__2.7.4__01.dev.txt] Error 1
 ----
 
+It may also be possible to `configure` a build (not for publication) on an
+agent incapable of rendering PDF documents, e.g. to just spell-check the
+proposed website update (`news.txt` etc.) by passing the `--with-doc=...`
+option (supported values depend on the NUT version being built).
+
 
 Manual building in detail
 ~~~~~~~~~~~~~~~~~~~~~~~~~
