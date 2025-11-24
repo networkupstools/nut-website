@@ -9,6 +9,13 @@ dnl we use macros like AC_CONFIG_MACRO_DIRS (multiple) introduced in 2.70
 dnl but apparently backported to 2.69 in some distros (with aclocal-1.16)
 AC_PREREQ([2.69])
 
+dnl Detect usable grep and egrep as soon as possible, to let called scripts
+dnl use them. Unfortunately, init must happen before macros that output text,
+dnl so the first call above misses out on the detected values.
+AC_PROG_EGREP
+export GREP
+export EGREP
+
 AC_CONFIG_MACRO_DIRS([m4 nut/m4])
 echo "Network UPS Tools - Website (most recently tagged NUT version ${PACKAGE_VERSION})"
 AM_INIT_AUTOMAKE([foreign no-dist])
