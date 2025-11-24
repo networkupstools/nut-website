@@ -133,8 +133,8 @@ if [ -n "${NUT_HISTORIC_RELEASE-}" ] ; then
 	grep -E "link:.*${NUT_HISTORIC_RELEASE}" historic/index.txt >/dev/null \
 	|| echo "WARNING: Prepared historic release ${NUT_HISTORIC_RELEASE} is not listed in historic/index.txt and would not be publicly exposed on the site!" >&2
 
-	NUT_HISTORIC_RELEASE_NOV="`echo "$NUT_HISTORIC_RELEASE" | sed 's,^v,,'`"
-	PUBSRC="`find ./networkupstools.github.io/source/ -type f -name "*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz*" -o -name "*${NUT_HISTORIC_RELEASE_NOV}*.txt"`" \
+	NUT_HISTORIC_RELEASE_NOV="`echo \"$NUT_HISTORIC_RELEASE\" | sed 's,^v,,'`"
+	PUBSRC="`find ./networkupstools.github.io/source/ -type f -name \"*${NUT_HISTORIC_RELEASE_NOV}*.tar.gz*\" -o -name \"*${NUT_HISTORIC_RELEASE_NOV}*.txt\"`" \
 	&& [ -n "$PUBSRC" ] \
 	&& { echo "INFO: Found published source files:" ; echo "$PUBSRC"; } >&2 \
 	|| {

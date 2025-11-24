@@ -148,8 +148,8 @@ esac
 ( cd tools && \
 	find . -type f -name '*.py.in' | \
 	while read F ; do
-		sed 's,^\(#!/.*pytho\)n$,\1n'"${PYTHON_VER}"',' < "$F" > "`basename "$F" .in`" \
-		&& chmod +x "`basename "$F" .in`" || exit
+		sed 's,^\(#!/.*pytho\)n$,\1n'"${PYTHON_VER}"',' < "$F" > "`basename \"$F\" .in`" \
+		&& chmod +x "`basename \"$F\" .in`" || exit
 	done
 ) || exit
 
@@ -188,7 +188,7 @@ if [ -n "${NUT_HISTORIC_RELEASE-}" ]; then
 		sleep 3
 	} >&2
 
-	sed -e 's/\(AC_INIT([^,]*\),\([^,]*\),/\1,['"`echo "${NUT_HISTORIC_RELEASE}" | sed 's,^v,,'`"'],/' \
+	sed -e 's/\(AC_INIT([^,]*\),\([^,]*\),/\1,['"`echo \"${NUT_HISTORIC_RELEASE}\" | sed 's,^v,,'`"'],/' \
 		-i nut/configure.ac
 
 	cat > historic-release.txt << EOF
@@ -257,7 +257,7 @@ NUT_VERSION="$(cd nut && ([ -x ./tools/gitlog2version.sh ] && ./tools/gitlog2ver
 case "${NUT_VERSION}" in
 	0*|1*|2*|3*|4*|5*|6*|7*|8*|9*) NUT_VERSION="v${NUT_VERSION}" ;;
 esac
-printf "%s => %s\n" "${NUT_VERSION}" "`echo "${NUT_VERSION}" | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*[+-]g.*//'`"
+printf "%s => %s\n" "${NUT_VERSION}" "`echo \"${NUT_VERSION}\" | sed -e 's/^v//' -e 's/-\(1\|2\|3\|4\|5\|6\|7\|8\|9\)\(1\|2\|3\|4\|5\|6\|7\|8\|9\|0\)*[+-]g.*//'`"
 ( cd nut && ./autogen.sh ) || quit
 echo_spacer
 
