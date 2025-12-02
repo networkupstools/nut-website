@@ -90,6 +90,13 @@ Documents officially provided by Legrand.
   for MEGALINE, WHAD, DHEA and ALLY HF series
 
 
+MeanWell
+--------
+
+- link:protocols/static/meanwell/MeanWell_NTS,NTU-E.pdf[Product and protocol info about Mean Well inverter/UPS (NTS, NTU-E series)] (PDF, 1.23 MB) --
+  downloaded from https://www.meanwell.com/Upload/PDF/NTS,NTU-E.pdf in 2025
+
+
 MicroDowell
 -----------
 

@@ -227,6 +227,7 @@ MaxACVI
 MaxACVO
 MaxDCV
 McKinnon
+MeanWell
 MicroDowell
 MinACVI
 MinACVO
@@ -252,6 +253,8 @@ NNNNNNNNNNNNNNNNNNN
 NOM
 NONBLOCK
 NOP
+NTS
+NTU
 NUT's
 NUTClient
 NVA
@@ -737,6 +740,7 @@ maxdcv
 maxva
 maxvi
 maxvo
+meanwell
 megatec
 memset
 merchantability
