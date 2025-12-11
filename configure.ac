@@ -166,6 +166,45 @@ AC_SUBST(NUT_VERSION)
 AC_SUBST(DDL_VERSION)
 AC_SUBST(WEB_VERSION)
 
+NUT_HISTORIC_RELEASE_EXPLODED=""
+AS_CASE(["${NUT_HISTORIC_RELEASE-}"],
+	[v*], [NUT_HISTORIC_RELEASE_EXPLODED_NOV="`echo \"$NUT_HISTORIC_RELEASE\" | sed 's,^v,,'`"],
+		[NUT_HISTORIC_RELEASE_EXPLODED_NOV="${NUT_HISTORIC_RELEASE-}"]
+)
+
+NUT_VERSION_EXTRA_WIDTH=6
+export NUT_VERSION_EXTRA_WIDTH
+AS_IF([test -n "${NUT_HISTORIC_RELEASE_EXPLODED_NOV}"], [
+	AS_IF([test -x "nut/tools/gitlog2version.sh" && grep -w VER5X "nut/tools/gitlog2version.sh" > /dev/null], [
+		NUT_HISTORIC_RELEASE_EXPLODED="`NUT_VERSION_QUERY=VER5X NUT_VERSION_FORCED=${NUT_HISTORIC_RELEASE_EXPLODED_NOV} ./nut/tools/gitlog2version.sh 2>/dev/null`" || NUT_HISTORIC_RELEASE_EXPLODED=""
+	])
+	AS_IF([test -z "${NUT_HISTORIC_RELEASE_EXPLODED}"], [
+		dnl No script, older script - releases before v2.8.5
+		dnl Method adapted from script contents:
+		filter_extra_width() {
+			sed -e 's,\.,|\.|,g' -e 's,\(@<:@0-9@:>@@<:@0-9@:>@*\)\(@<:@^.@:>@*\),\1|\2|,g' | tr '|' '\n' | (
+				NUMERIC=true; while read LINE ; do
+					case "$LINE" in
+						".") echo "." ;;
+						0*|1*|2*|3*|4*|5*|6*|7*|8*|9*)
+							if $NUMERIC && test x = x"`echo \"$LINE\" | sed 's,@<:@0-9@:>@,,g'`" ; then
+								printf '%0.*d' "${NUT_VERSION_EXTRA_WIDTH}" "${LINE}"
+							else
+								NUMERIC=false
+								echo "$LINE"
+							fi
+							;;
+						"") ;;
+						*) NUMERIC=false ; echo "$LINE" ;;
+					esac
+				done) | tr -d '\n'
+			echo ''
+		}
+		NUT_HISTORIC_RELEASE_EXPLODED="`echo \"$NUT_HISTORIC_RELEASE_EXPLODED_NOV\" | filter_extra_width`"
+	])
+])
+AC_SUBST(NUT_HISTORIC_RELEASE_EXPLODED)
+
 dnl ----------------------------------------------------------------------
 
 TREE_VERSION="`echo \"$PACKAGE_VERSION\" | awk '{ print substr($0,1,3) }'`"
