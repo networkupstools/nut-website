@@ -9,6 +9,11 @@ This page tries to track them. Please note there can be even more
 references contributed by the NUT user community members at the
 link:https://github.com/networkupstools/nut/wiki/[NUT GitHub wiki].
 
+As an author or user of a project not mentioned below (or information
+for which became outdated), please feel free to post a pull request to
+link:https://github.com/networkupstools/nut-website/edit/master/projects.txt[Improve
+this page on GitHub!]
+
 Graphical desktop clients
 -------------------------
 
