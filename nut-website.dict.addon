@@ -22,6 +22,7 @@ Alm
 AlmCPol
 AlmEnbl
 Ampère
+AnchorJS
 AppVeyor
 Arnaud
 AsciiDoc
@@ -809,6 +810,7 @@ pathlib
 pcs
 pdf
 pdu
+permalinks
 phasewindow
 pinout
 plugnplay
