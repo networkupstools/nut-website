@@ -682,9 +682,16 @@ $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds)
 
 # Raw asciidoc pages (.txt):
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
-# note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
-# FIXME: Use tools/semver-compare.sh to sort the filenames by NUT version
-$(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,__,$$(shell export LC_ALL=C && printf "%s\n" $$(patsubst %,"%",$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds)))) | sort -f -k 4.1,4.5r -k 5n -t @ -)))
+# Note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
+# Here we use tools/semver-compare.sh to sort the filenames by NUT version regardless of digit count
+SORT_TARGET_FILES = ( \
+    sed 's/__/@/g' | \
+    while read LINE ; do \
+        VER="`echo \"$$LINE\" | awk -F@ '{print $$4}'`"; \
+        printf '%s@%s\n' "`./tools/semver-compare.sh --expand \"$$VER\"`" "$$LINE" ; \
+    done | sort -f -t @ -k1nr -k6n - | awk -F@ '{print $$2"__"$$3"__"$$4"__"$$5"__"$$6}' \
+)
+$(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
 	$(call file,>> $@,)
 	$(call file,>> $@,link:.[Click here] to see reports of other supported models from _$(subst _,$(SP),$(patsubst $(DDL_DIR)/%/,%,$(dir $@)))_.)
@@ -698,7 +705,7 @@ $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,
 	$(call file,>> $@,The accompanying explaining comment - if provided - will be emphasized through a [nut-ddl-bad-var-text-example]#red dotted border# on the left.)
 	$(call file,>> $@,====)
 	$(call file,>> $@,)
-	$(foreach REPORT,$^,$(call file,>> $@,) $(call file,>> $@,include::$(notdir $(REPORT))[]) $(call file,>> $@,))
+	$(foreach REPORT,$(shell ls -1d $^ | $(SORT_TARGET_FILES)),$(call file,>> $@,) $(call file,>> $@,include::$(notdir $(REPORT))[]) $(call file,>> $@,))
 
 # DDL_DIR/mfr_n/<model>.html ...
 # note: '%'s are backslash-escaped ('\%')
