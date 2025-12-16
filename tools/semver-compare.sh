@@ -202,8 +202,8 @@ EOF
             # FIXME: "else" and error handling vs number too small and ignored?
             shift
             ;;
-        --expand|-x) echo "$2" | filter_add_extra_width ; shift ;;
-        --strip|+x)  echo "$2" | filter_away_leading_zeroes ; shift ;;
+        --expand|-x|expand) echo "$2" | filter_add_extra_width ; shift ;;
+        --strip|+x|strip)  echo "$2" | filter_away_leading_zeroes ; shift ;;
         --sortable-expand) printf '%s\t%s\n' "`echo \"$2\" | filter_add_extra_width`" "$2" ; shift ;;
         --sortable-strip)  printf '%s\t%s\n' "$2" "`echo \"$2\" | filter_away_leading_zeroes`" ; shift ;;
         --sort|sort)
@@ -221,7 +221,7 @@ EOF
             | awk '{print $2}'
             exit
             ;;
-        '['|test|--test)
+        '['|'[['|test|--test)
             if [ $# -lt 4 ] ; then
                 echo "ERROR: Not enough args to 'test' comparison of two semvers" >&2
                 exit 2
@@ -235,6 +235,13 @@ EOF
                         exit 0
                     else
                         exit 1
+                    fi
+                    ;;
+                '-ne'|'!='|'<>')
+                    if [ x"${SEMVER1}" = x"${SEMVER2}" ] ; then
+                        exit 1
+                    else
+                        exit 0
                     fi
                     ;;
                 '-gt'|'>')
