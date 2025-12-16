@@ -127,16 +127,16 @@ WEBSITE_DEPS =	$(WEBSITE_DEPS_274)
 # WARNING: Alphanumeric sorting by characters
 # FIXME: may want shell `sort -n` if we mix single/double digits later
 #
-# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000000",$(word 1,$(sort "v000002.000008.000000" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
+# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000000.000000.000000",$(word 1,$(sort "v000002.000008.000000.000000.000000" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_MAN_FILES +=	$(WEBSITE_MAN_FILES_280)
 # HIDE FROM AUTOMAKE # endif
-# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000001",$(word 1,$(sort "v000002.000008.000001" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
+# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000001.000000.000000",$(word 1,$(sort "v000002.000008.000001.000000.000000" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_281)
 # HIDE FROM AUTOMAKE # endif
-# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000003",$(word 1,$(sort "v000002.000008.000003" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
+# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000003.000000.000000",$(word 1,$(sort "v000002.000008.000003.000000.000000" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_DEPS +=	$(WEBSITE_DEPS_283)
 # HIDE FROM AUTOMAKE # endif
-# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000004",$(word 1,$(sort "v000002.000008.000004" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
+# HIDE FROM AUTOMAKE # ifeq ("v000002.000008.000004.000000.000000",$(word 1,$(sort "v000002.000008.000004.000000.000000" "v$(NUT_HISTORIC_RELEASE_EXPLODED)")))
 # HIDE FROM AUTOMAKE #    WEBSITE_MAN_FILES +=	$(WEBSITE_MAN_FILES_284)
 # HIDE FROM AUTOMAKE # endif
 # HIDE FROM AUTOMAKE # else
@@ -683,6 +683,7 @@ $(sort $(foreach RAWFILE,$(basename $(notdir $(wildcard $(MFR)*.dev $(MFR)*.nds)
 # Raw asciidoc pages (.txt):
 # DDL_DIR/mfr_n/<*model*>.txt: DDL_DIR/mfr_n/<manufacturer>__<*model*>__<driver-name>__<nut-version>__<report-number>.{dev,nds}.txt ...
 # note: reports are ordered by NUT's version number (reverse) and then by report number (straight)
+# FIXME: Use tools/semver-compare.sh to sort the filenames by NUT version
 $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(subst @,__,$$(shell export LC_ALL=C && printf "%s\n" $$(patsubst %,"%",$$(subst __,@,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds)))) | sort -f -k 4.1,4.5r -k 5n -t @ -)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
 	$(call file,>> $@,)
