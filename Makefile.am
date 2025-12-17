@@ -689,7 +689,7 @@ SORT_TARGET_FILES = ( \
     while read LINE ; do \
         VER="`echo \"$$LINE\" | awk -F@ '{print $$4}'`"; \
         printf '%s@%s\n' "`./tools/semver-compare.sh --expand \"$$VER\"`" "$$LINE" ; \
-    done | sort -f -t @ -k1nr -k6n - | awk -F@ '{print $$2"__"$$3"__"$$4"__"$$5"__"$$6}' \
+    done | sort -f -t @ -k1r -k6n - | awk -F@ '{print $$2"__"$$3"__"$$4"__"$$5"__"$$6}' \
 )
 $(MODELS_TARGETS_RAW): $$(patsubst %,$$(subst %,\%,$$(dir $$@))%.txt,$$(notdir $$(wildcard $$(dir $$@)*__$$(basename $$(notdir $$@))__*.dev $$(dir $$@)*__$$(basename $$(notdir $$@))__*.nds)))
 	$(call file,> $@,= $(subst _,$(SP),$(basename $(notdir $@))))
