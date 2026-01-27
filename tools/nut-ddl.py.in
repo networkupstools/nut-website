@@ -315,7 +315,7 @@ def nds_dev_comment(raw):
 
     # Not a valid device comment, don't do anything with it
     if not len(rawtext) or (rawtext[-1] != "# DEVICE:EOC" and rawtext[-1] != "# DEVICE:EOC:"):
-        msg = ("[%s:%s..%s] Invalid device comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), "seems empty" if not len(rawtext) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
+        msg = ("[%s:%s..%s] Invalid device comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), "seems empty" if not len(rawtext) else "does not end with DEVICE:EOC (blank non-comment lines mid-block? TAB indentations?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
