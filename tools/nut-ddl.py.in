@@ -139,7 +139,7 @@ def nds_version(raw):
     global ndsVersion
 
     if ndsVersion != "-1":
-        msg = "[%s:%s] Redeclaration of NDS version" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Redeclaration of NDS version" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -147,7 +147,7 @@ def nds_version(raw):
         return
 
     # Remove '# NDS:VERSION:'
-    ndsVersion = raw[0][14:]
+    ndsVersion = raw["text"][0][14:]
 
 
 def nds_sl(raw):
@@ -160,7 +160,7 @@ def nds_sl(raw):
     global ndsSL
 
     if ndsSL != -1:
-        msg = "[%s:%s] Redeclaration of NDS support-level" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Redeclaration of NDS support-level" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -168,10 +168,10 @@ def nds_sl(raw):
         return
 
     # Remove '# DEVICE:SUPPORT-LEVEL:'
-    sl = int(raw[0][23:])
+    sl = int(raw["text"][0][23:])
 
     if not 1 <= sl <= 10:
-        msg = ("[%s:%s] NDS support-level: '%d' out of range [1..10]" % (str(raw["inputFile"]), str(raw["linenum"]), sl))
+        msg = ("[%s:%s..%s] NDS support-level: '%d' out of range [1..10]" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), sl))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -191,11 +191,11 @@ def nds_dev_url_vendor(raw):
     # '# DEVICE:URL:VENDOR: *...\n'
 
     # Remove leading 'start' of the line ('# DEVICE:URL:VENDOR: *')
-    line = str(raw[0][20:]).strip()
+    line = str(raw["text"][0][20:]).strip()
 
     # Empty comment
     if not len(line):
-        msg = "[%s:%s] Empty device vendor URL" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Empty device vendor URL" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -207,7 +207,7 @@ def nds_dev_url_vendor(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
-        msg = ("[%s:%s] Device vendor URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), line)
+        msg = ("[%s:%s..%s] Device vendor URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), line))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -227,11 +227,11 @@ def nds_dev_url_report(raw):
     # '# DEVICE:URL:REPORT: *...\n'
 
     # Remove leading 'start' of the line ('# DEVICE:URL:REPORT: *')
-    line = str(raw[0][20:]).strip()
+    line = str(raw["text"][0][20:]).strip()
 
     # Empty comment
     if not len(line):
-        msg = "[%s:%s] Empty device report URL" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Empty device report URL" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -243,7 +243,7 @@ def nds_dev_url_report(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
-        msg = ("[%s:%s] Device report URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), line)
+        msg = ("[%s:%s..%s] Device report URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), line))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -263,11 +263,11 @@ def nds_dev_url(raw):
     # '# DEVICE:URL: *...\n'
 
     # Remove leading 'start' of the line ('# DEVICE:URL: *')
-    line = str(raw[0][13:]).strip()
+    line = str(raw["text"][0][13:]).strip()
 
     # Empty comment
     if not len(line):
-        msg = "[%s:%s] Empty device URL" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Empty device URL" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -279,7 +279,7 @@ def nds_dev_url(raw):
         line = line.replace("link:", "", 1)
 
     if not "://" in line:
-        msg = ("[%s:%s] Device URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), line)
+        msg = ("[%s:%s..%s] Device URL does not contain a schema, ignored: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), line))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -303,7 +303,7 @@ def nds_dev_comment(raw):
     # '# DEVICE:EOC\n'
 
     if len(devComment):
-        msg = "[%s:%s] Redeclaration of device comment (only one un-typed block is allowed)" % (str(raw["inputFile"]), str(raw["linenum"]))
+        msg = "[%s:%s..%s] Redeclaration of device comment (only one un-typed block is allowed)" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -311,11 +311,11 @@ def nds_dev_comment(raw):
         return
 
     # Remove leading 'start' line ('# DEVICE:COMMENT[:]\n')
-    raw = raw[1:]
+    rawtext = raw["text"][1:]
 
     # Not a valid device comment, don't do anything with it
-    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = ("[%s:%s] Invalid device comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), "seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
+    if not len(rawtext) or (rawtext[-1] != "# DEVICE:EOC" and rawtext[-1] != "# DEVICE:EOC:"):
+        msg = ("[%s:%s..%s] Invalid device comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), "seems empty" if not len(rawtext) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -323,11 +323,11 @@ def nds_dev_comment(raw):
         return
 
     # Remove the 'close' line
-    raw = raw[:-1]
+    rawtext = rawtext[:-1]
 
     # Empty comment
-    if not len(raw):
-        msg = "[%s:%s] Empty device comment" % (str(raw["inputFile"]), str(raw["linenum"]))
+    if not len(rawtext):
+        msg = "[%s:%s..%s] Empty device comment" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -335,7 +335,7 @@ def nds_dev_comment(raw):
         return
 
     # Remove hash and leading space
-    for line in raw:
+    for line in rawtext:
         devComment.append(line[2:])
 
 
@@ -359,7 +359,7 @@ def nds_dev_comment_block(raw):
     # or specifying the content type, or both in some cases. The cut-off
     # point is the colon char (comment_type_title starts with either type
     # or possible space and title right away):
-    comment_type_title = str(raw[0][23:])
+    comment_type_title = str(raw["text"][0][23:])
     try:
         # Variants of the remaining "type +/- title" to consider:
         # " *<empty>"
@@ -380,7 +380,7 @@ def nds_dev_comment_block(raw):
             # Report below and use it all as title if not in pedantic mode
             raise ValueError("[%s:%s] Regular expression did not match expected pattern" % (str(raw["inputFile"]), str(raw["linenum"])))
     except ValueError as exc:
-        msg = ("[%s:%s] Could not parse tag '%s' => tail '%s' further into a type and title: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw[0]), comment_type_title, str(exc)))
+        msg = ("[%s:%s..%s] Could not parse tag '%s' => tail '%s' further into a type and title: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), str(raw["text"][0]), comment_type_title, str(exc)))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -391,11 +391,11 @@ def nds_dev_comment_block(raw):
     # NOTE: Title validation continued after general content sanity check and trim
 
     # Remove leading 'start' line ('# DEVICE:COMMENT-BLOCK<:TYPE>: *<title>\n')
-    raw = raw[1:]
+    rawtext = raw["text"][1:]
 
     # Not a valid device block comment, don't do anything with it
-    if not len(raw) or (raw[-1] != "# DEVICE:EOC" and raw[-1] != "# DEVICE:EOC:"):
-        msg = ("[%s:%s] Invalid device block comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), "seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
+    if not len(rawtext) or (rawtext[-1] != "# DEVICE:EOC" and rawtext[-1] != "# DEVICE:EOC:"):
+        msg = ("[%s:%s..%s] Invalid device block comment: %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), "seems empty" if not len(rawtext) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -403,11 +403,11 @@ def nds_dev_comment_block(raw):
         return
 
     # Remove the 'close' line
-    raw = raw[:-1]
+    rawtext = rawtext[:-1]
 
     # Empty comment block
-    if not len(raw):
-        msg = "[%s:%s] Empty device block comment" % (str(raw["inputFile"]), str(raw["linenum"]))
+    if not len(rawtext):
+        msg = "[%s:%s..%s] Empty device block comment" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -433,7 +433,7 @@ def nds_dev_comment_block(raw):
                 if not len(upsname):
                     upsname = None
 
-        for line in raw:
+        for line in rawtext:
             line = line[2:].strip()
             # No dollar, trailing comment syntactically possible:
             matcher = re.match(r'^\[([^ ]+)\]', line)
@@ -445,7 +445,7 @@ def nds_dev_comment_block(raw):
 
         if not bGotSection:
             if upsname is None:
-                msg = "[%s:%s] Driver configuraton example lacks a section name for the device" % (str(raw["inputFile"]), str(raw["linenum"]))
+                msg = "[%s:%s..%s] Driver configuraton example lacks a section name for the device" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]))
                 if verbose:
                     print (msg)
                 if PEDANTIC_DECLARATIONS:
@@ -468,7 +468,7 @@ def nds_dev_comment_block(raw):
             blk.append(":; %s" % title)
             title = "`%s` listing"
         else:
-            if "lsusb" in raw[0]:
+            if "lsusb" in rawtext[0]:
                 title = "`lsusb` listing"
             else:
                 # Assume the content starts with desired command, if posted
@@ -499,11 +499,11 @@ def nds_dev_comment_block(raw):
 
         # if not len(title):
         title = "Commands per `upscmd -l %s` listing" % upsname
-        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
-                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+        if "TODO" not in rawtext[0] and "FIXME" not in rawtext[0] \
+                and (len(rawtext) < 2 or ("TODO" not in rawtext[1] and "FIXME" not in rawtext[1])):
             blk.append("# TODO: Convert to CMD:... markup")
-        if "upscmd -l" not in raw[0] \
-                and (len(raw) < 2 or "upscmd -l" not in raw[1]):
+        if "upscmd -l" not in rawtext[0] \
+                and (len(rawtext) < 2 or "upscmd -l" not in rawtext[1]):
             blk.append(":; upscmd -l %s" % upsname)
         # else: TODO: rewrite upsname in example command and/or
         # > Instant commands supported on UPS [myupsname]:
@@ -529,16 +529,16 @@ def nds_dev_comment_block(raw):
 
         # if not len(title):
         title = "Variables per `upsrw %s` listing" % upsname
-        if "TODO" not in raw[0] and "FIXME" not in raw[0] \
-                and (len(raw) < 2 or ("TODO" not in raw[1] and "FIXME" not in raw[1])):
+        if "TODO" not in rawtext[0] and "FIXME" not in rawtext[0] \
+                and (len(rawtext) < 2 or ("TODO" not in rawtext[1] and "FIXME" not in rawtext[1])):
             blk.append("# TODO: Convert to RW:... and RO:... markup")
-        if ("upsrw" not in raw[0] or "upsrw output" in raw[0]) \
-                and (len(raw) < 2 or ("upsrw" not in raw[1] or "upsrw output" in raw[1])):
+        if ("upsrw" not in rawtext[0] or "upsrw output" in rawtext[0]) \
+                and (len(rawtext) < 2 or ("upsrw" not in rawtext[1] or "upsrw output" in rawtext[1])):
             blk.append(":; upsrw %s" % upsname)
         # else: TODO: rewrite upsname in example command, if any?
         # Perhaps to address below in the loop.
     elif comment_type is not None:
-        msg = ("[%s:%s] Invalid device block comment type: '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), str(comment_type))
+        msg = ("[%s:%s..%s] Invalid device block comment type: '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), str(comment_type)))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -547,14 +547,14 @@ def nds_dev_comment_block(raw):
 
     if not len(title):
         title = "Data sample"
-        msg = ("[%s:%s] Invalid device block comment title, using default: '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), title)
+        msg = ("[%s:%s..%s] Invalid device block comment title, using default: '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), title))
         if verbose:
             print (msg)
         # if PEDANTIC_DECLARATIONS:
         #    raise RuntimeWarning (msg)
 
     # Loop to populate the rest of ultimately published contents, finally:
-    for line in raw:
+    for line in rawtext:
         # Remove hash and one leading space
         line = line[2:]
         lineStrip = line.strip()
@@ -578,10 +578,10 @@ def nds_var_cmd_comments(raw):
     # '# var.name[.suffix[. ...]]/command.name[.suffix[. ...]]:EOC\n'
 
     # Get var/command name
-    itemName = re.sub(r":COMMENT:?.*$", "", raw[0][2:])
+    itemName = re.sub(r":COMMENT:?.*$", "", raw["text"][0][2:])
 
     if varCmdComments.get(itemName):
-        msg = ("[%s:%s] Redeclaration of comment for '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), itemName)
+        msg = ("[%s:%s..%s] Redeclaration of comment for '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), itemName))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -589,11 +589,11 @@ def nds_var_cmd_comments(raw):
         return
 
     # Remove leading 'start' line
-    raw = raw[1:]
+    rawtext = raw["text"][1:]
 
     # Not a valid comment, don't do anything with it
-    if not len(raw) or (raw[-1] != "# %s:EOC" % itemName and raw[-1] != "# %s:EOC:" % itemName):
-        msg = ("[%s:%s] Invalid comment for '%s': %s" % (str(raw["inputFile"]), str(raw["linenum"]), itemName, "seems empty" if not len(raw) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
+    if not len(rawtext) or (rawtext[-1] != "# %s:EOC" % itemName and rawtext[-1] != "# %s:EOC:" % itemName):
+        msg = ("[%s:%s..%s] Invalid comment for '%s': %s" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), itemName, "seems empty" if not len(rawtext) else "does not end with DEVICE:EOC (blank non-comment lines mid-block?)"))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -601,11 +601,11 @@ def nds_var_cmd_comments(raw):
         return
 
     # Remove the 'close' line
-    raw = raw[:-1]
+    rawtext = rawtext[:-1]
 
     # Empty comment
-    if not len(raw):
-        msg = ("[%s:%s] Empty comment for '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), itemName))
+    if not len(rawtext):
+        msg = ("[%s:%s..%s] Empty comment for '%s'" % (str(raw["inputFile"]), str(raw["linenum"]), str(raw["lineend"]), itemName))
         if verbose:
             print (msg)
         if PEDANTIC_DECLARATIONS:
@@ -615,7 +615,7 @@ def nds_var_cmd_comments(raw):
     varCmdComments[itemName] = []
 
     # Remove hash and leading space
-    for line in raw:
+    for line in rawtext:
         varCmdComments[itemName].append(line[2:])
 
 
@@ -801,7 +801,7 @@ def nds_rw_vars(raw):
             if length != nutRWs[varName]["opts"]:
                 msg = ("[%s:%s] Redeclaration of variable '%s' of type 'STRING' with different length (%d != %d)" % (str(raw["inputFile"]), str(raw["linenum"]), varName, length, nutRWs[varName]["opts"]))
             else:
-                msg = ("[%s:%s] Redeclaration of variable '%s' of type 'STRING'" % (str(raw["inputFile"]), str(raw["linenum"]), varName)
+                msg = ("[%s:%s] Redeclaration of variable '%s' of type 'STRING'" % (str(raw["inputFile"]), str(raw["linenum"]), varName))
 
             if verbose:
                 print (msg)
@@ -815,7 +815,7 @@ def nds_rw_vars(raw):
     elif varType == "ENUM":
         # 'RW:var.name[.suffix[. ...]]:ENUM:"<enumerated value>"\n'
         if not re.match(r"^\".+\"$", buf[3]):
-            msg = ("[%s:%s] Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % (str(raw["inputFile"]), str(raw["linenum"]), varName) + \
+            msg = ("[%s:%s] Declaration of RW variable '%s' of type 'ENUM' with an invalid format." % (str(raw["inputFile"]), str(raw["linenum"]), varName)) + \
                   ("\texpected: 'RW:var.name[.suffix[. ...]]:ENUM:\"<enumerated value>\"'") + \
                   ("\tgot: '%s'" % raw["line"])
 
@@ -836,7 +836,7 @@ def nds_rw_vars(raw):
     elif varType == "RANGE":
         # 'RW:var.name[.suffix[. ...]]:RANGE:"<min>" "<max>"\n'
         if not re.match(r"^\"\d+\" \"\d+\"$", buf[3]):
-            msg = ("[%s:%s] Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % (str(raw["inputFile"]), str(raw["linenum"]), varName) + \
+            msg = ("[%s:%s] Declaration of RW variable '%s' of type 'RANGE' with an invalid range." % (str(raw["inputFile"]), str(raw["linenum"]), varName)) + \
                   ("\texpected: 'RW:var.name[.suffix[. ...]]:RANGE:\"<min>\" \"<max>\"'") + \
                   ("\tgot: '%s'" % raw["line"])
 
@@ -1129,14 +1129,21 @@ def parseFile(inputFile):
                     break
             if bailout:
                 i += 1
-                comments.append([])
-                comments[i].append(line[:-1])
+                comments.append({
+                    "text": [],
+                    "inputFile": inputFile,
+                    "linenum": linenum,	# start
+                    "lineend": -1
+                })
+                comments[i]["text"].append(line[:-1])
                 commentContinuation = True
                 continue
 
             # Entity continuation
             if commentContinuation:
-                comments[i].append(line[:-1])
+                comments[i]["text"].append(line[:-1])
+                # Bump the number while we see the context
+                comments[i]["lineend"] = linenum
                 # End Of Comment
                 for pattern in EOCPatterns:
                     if re.match(pattern, line):
@@ -1534,7 +1541,7 @@ comments, nonComments = parseFile(inputFile)
 # Parse comment lines
 for comment in comments:
     for pattern in commentsMap:
-        if re.match(pattern, comment[0]):
+        if re.match(pattern, comment["text"][0]):
             commentsMap[pattern](comment)
             break
 
