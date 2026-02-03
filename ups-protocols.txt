@@ -199,6 +199,16 @@ SEC
 SNMP
 ~~~~
 
+//////////////////
+
+To maintain:
+
+:; cd protocols/static/snmp && for F in LIEBERT_GP_* ; do printf " * link:protocols/snmp/%s[%s] (TXT, %s KB)\n" "$F" "$F" "`du -k $F | awk '{print \$1}'`" ; done
+
+and revise comments in docs to populate the human-readable description
+
+//////////////////
+
 Documents in this section are provided courtesy of various manufacturers.
 
 - IETF Management Information Base:
@@ -226,6 +236,20 @@ Documents in this section are provided courtesy of various manufacturers.
 - HP/Compaq Management Information Base:
  * link:protocols/snmp/CPQPOWER-MIB.mib[HP/Compaq Power MIB] (TXT, 68 KB)
  * link:protocols/snmp/CPQUPS-MIB.mib[HP/Compaq UPS MIB] (TXT, 24 KB)
+
+- Vertiv/Liebert Management Information Base:
+ * link:protocols/snmp/LIEBERT_GP_SRC.MIB[The MIB module used to register Liebert POWER related SNMP OIDs] (TXT, 16 KB)
+ * link:protocols/snmp/LIEBERT_GP_AGENT.MIB[lgpIdent - Liebert SNMP Agent Identification Group] (TXT, 20 KB)
+ * link:protocols/snmp/LIEBERT_GP_COND.MIB[lgpConditions - Liebert Conditions Registrations] (TXT, 176 KB)
+ * link:protocols/snmp/LIEBERT_GP_CONTROLLER.MIB[lgpController - Liebert Controller Group] (TXT, 4 KB)
+ * link:protocols/snmp/LIEBERT_GP_ENV.MIB[lgpEnvironmental - Liebert Environmental Registrations] (TXT, 108 KB)
+ * link:protocols/snmp/LIEBERT_GP_FLEXIBLE.MIB[lgpFlexible - Liebert Flexible Registrations] (TXT, 16 KB)
+ * link:protocols/snmp/LIEBERT_GP_FLEXIBLE_COND.MIB[lgpFlexConditions - Liebert Conditions Registrations] (TXT, 304 KB)
+ * link:protocols/snmp/LIEBERT_GP_NOTIFY.MIB[lgpNotifications - Liebert Notifications Registrations] (TXT, 16 KB)
+ * link:protocols/snmp/LIEBERT_GP_PDU.MIB[lgpPdu - Liebert Power Distribution Registrations] (TXT, 144 KB)
+ * link:protocols/snmp/LIEBERT_GP_POWER.MIB[lgpPower - Liebert Power Registrations] (TXT, 112 KB)
+ * link:protocols/snmp/LIEBERT_GP_REG.MIB[lgpModuleReg - Liebert Module Identities] (TXT, 68 KB)
+ * link:protocols/snmp/LIEBERT_GP_SYSTEM.MIB[lgpSystem - Liebert System Groups] (TXT, 20 KB)
 
 - Offsite links
  * http://www.liebert.com/downloads/[Liebert MIBs]

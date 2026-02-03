@@ -64,6 +64,7 @@ ByPass
 CBLimit
 CCC
 CLOCAL
+COND
 CPUs
 CREAD
 CROSSTALK
@@ -486,6 +487,7 @@ VTIME
 VV
 VVV
 Vdc
+Vertiv
 Voltronic
 Vout
 WH
@@ -713,6 +715,17 @@ killpower
 kirbah
 len
 lf
+lgpConditions
+lgpController
+lgpEnvironmental
+lgpFlexConditions
+lgpFlexible
+lgpIdent
+lgpModuleReg
+lgpNotifications
+lgpPdu
+lgpPower
+lgpSystem
 libmodbus
 libnutclient
 libtool
