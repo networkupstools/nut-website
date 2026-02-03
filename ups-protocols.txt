@@ -202,8 +202,9 @@ SNMP
 Documents in this section are provided courtesy of various manufacturers.
 
 - IETF Management Information Base:
- * link:protocols/snmp/rfc1628.mib[UPS MIB (RFC 1628)] (TXT, 64 KB)
- * link:protocols/snmp/stdupsv1.mib[fixed UPS MIB (RFC 1628)] (TXT, 45 KB)
+ * link:protocols/snmp/rfc1628-199402230000Z.mib[UPS MIB (RFC 1628 version (19)9402230000Z)] (TXT, 64 KB)
+ * link:protocols/snmp/stdupsv1.mib[fixed UPS MIB (RFC 1628 version (19)9402230000Z))] (TXT, 45 KB)
+ * link:protocols/snmp/rfc1628-200510140000Z.mib[UPS MIB (RFC 1628 version   200510140000Z] (TXT, 70 KB)
 
 - APC Management Information Base:
  * link:protocols/snmp/powernet344.mib[UPS MIB (PowerNet)] (TXT, 484 KB)
