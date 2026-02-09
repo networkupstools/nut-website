@@ -1,3 +1,4 @@
+- Feb 08, 2026: A link:https://github.com/networkupstools/nut/wiki/Finding-recent-development-iteration-artifacts[Finding recent development iteration artifacts] was added to the NUT GitHub Wiki, with screenshots from a browser, to help community members find the builds that the NUT CI farm works so hard to produce
 - Nov 24, 2025: NUT HTML documentation (local and website) enhanced with AnchorJS permalinks for sections (seen on hover, usable by blind click to the right of a title) -- this should simplify referring people to relevant part of a page when answering questions
 - Sep 04, 2025: link:http://wmnut.networkupstools.org[WMNut] 0.72 released, with revised CI recipes and hardened code base
 - Aug 08, 2025: NUT v2.8.4 released, for more details please see
