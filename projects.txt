@@ -103,6 +103,19 @@ NOTE: WinNUT is currently being replaced by a full port to Windows, part of the
 official NUT distribution. link:download.html#_binary_packages[MSI packages]
 are available too.
 
+link:https://github.com/MysteryDove/Electron_Easy_UPS_Client[Easy UPS Client]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Easy UPS Client is an Electron-based desktop app with a modern, responsive UI
+for monitoring UPS devices through NUT. It provides real-time telemetry for
+battery, voltage, load, and frequency.
+
+It stores historical data and displays trend charts for quick analysis. A
+built-in Windows wizard helps users configure local SNMP-based NUT components.
+
+The app also includes practical protection features such as alerts, auto
+shutdown options, auto reconnect, and system tray status.
+
 link:https://github.com/networkupstools/wmnut/[WMNut]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
