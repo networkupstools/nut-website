@@ -377,8 +377,8 @@ Values:
 |====
 
 
-The two-byte command examples (APC SPM Series)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The two-byte command examples (APC SPM series)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The table below shows the two-byte commands that have been observed on newer APC models such as the SPM series.
 These commands appear to be in addition to the single-character commands listed above, and they follow a similar format to the capability string responses, with a command character followed by a locale, number of choices, and choice length, followed by the choices themselves.
@@ -393,39 +393,118 @@ To change a setting over UART (turn ON or turn OFF), send commands in this seque
 - +9F FF+ -> confirm/save the change; should return +OK+
 
 [cols="^.^1m,.^3,.^2m,.^4",options="header,autowidth",frame="topbot",grid="rows",align="center"]
-|===
-|Character	|Meaning			|Typical results	|Other info
-|*+9F D1+*	|UPS rated info			|02000,220,220,50.0,009,048.0,11	|Appears to return VA, input/output voltage, output frequency, battery Ah, battery voltage, and one unknown extra field
-|*+9F D2+*	|Running mode			|E			|Observed mode values:
--  +E+ (eco)
--  +L+ (line)
--  +Y+ (bypass)
--  +T+ (battery test)
--  +B+ (battery)
-|*+9F D3+*	|Input line frequency		|50.0			| 
-|*+9F D4+*	|Battery current			|01.0			|Numeric value in amps
-|*+9F D5+*	|Phase lock flag			|1			|Spreadsheet note: +1+ = locked, +0+ = not locked
-|*+9F D6+*	|Transfer frequency range	|47.0,53.0		|Frequency values to force transfer to battery when frequency is selected as a transfer cause
-|*+9F D7+*	|ECO mode voltage range		|209,231		|Voltage values to allow ECO mode running when ECO mode is selected as a transfer cause
-|*+9F D9+*	|Status bitmap (undecoded)	|0100000000000000	|Bit-level meaning not yet decoded
-// |*+9F E2+*	|Unknown setting			|OFF			|Present in sample capture, not yet confirmed
-|*+9F E3+*	|UPS alarm			|ON			| Writable variable 
+|====
+|Character |Meaning |Typical results |Other info
+
+|*+9F D1+*
+|UPS rated info
+|02000,220,220,50.0,009,048.0,11
+|Appears to return VA, input/output voltage, output frequency, 
+
+battery Ah, battery voltage, and one unknown extra field
+
+|*+9F D2+*
+|Running mode
+|E
+a|Observed mode values:
+
+* +E+ (eco)
+* +L+ (line)
+* +Y+ (bypass)
+* +T+ (battery test)
+* +B+ (battery)
+
+|*+9F D3+*
+|Input line frequency
+|50.0
+|
+
+|*+9F D4+*
+|Battery current
+|01.0
+|Numeric value in amps
+
+|*+9F D5+*
+|Phase lock flag
+|1
+|Spreadsheet note: +1+ = locked, +0+ = not locked
+
+|*+9F D6+*
+|Transfer frequency range
+|47.0,53.0
+|Frequency range to force transfer to battery when frequency is selected as a transfer cause
+
+|*+9F D7+*
+|ECO mode voltage range
+|209,231
+|Voltage range to allow ECO mode running when ECO mode is selected as a transfer cause
+
+|*+9F D9+*
+|Status bitmap (undecoded)
+|0100000000000000
+|Bit-level meaning not yet decoded
+
+|*+9F E3+*
+|UPS alarm
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E4+*	|Alarm in bypass mode		|ON			| Writable variable
+
+|*+9F E4+*
+|Alarm in bypass mode
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E5+*	|Auto reboot			|ON			| Writable variable
+
+|*+9F E5+*
+|Auto reboot
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E6+*	|Bypass when UPS is off		|ON			|Writable variable
+
+|*+9F E6+*
+|Bypass when UPS is off
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E7+*	|Converter mode			|OFF			|Writable variable
+
+|*+9F E7+*
+|Converter mode
+|OFF
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E8+*	|ECO mode			|ON			|Writable variable
+
+|*+9F E8+*
+|ECO mode
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F E9+*	|Green power function		|ON			|Writable variable
+
+|*+9F E9+*
+|Green power function
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F EA+*	|Cold start			|ON			|Writable variable
+
+|*+9F EA+*
+|Cold start
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
-|*+9F EB+*	|Bypass not allowed		|ON			|Writable variable
+
+|*+9F EB+*
+|Bypass not allowed
+|ON
+|Writable variable.
+
 Boolean-style response (+ON+ / +OFF+)
 |====
 
