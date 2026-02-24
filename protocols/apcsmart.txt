@@ -57,6 +57,7 @@ It's standard RS-232 serial communications at 2400 bps/8N1.
 Don't rush the UPS while transmitting or it may stop talking to you.
 This isn't a problem with the normal single character queries, but it really does matter for multi-char things like "*+@000+*".
 Some newer units also appear to support two-byte command sequences (for example, +9F D2+) in addition to the single-character commands listed here.
+These two-byte commands may also work on SPRM and SRVS series units, since they appear to share the same bundled CD management software.
 Sprinkle a few calls to usleep() in your code and everything will work a lot better.
 
 [cols="^.^1m,.^3,.^2m,.^4",options="header,autowidth",frame="topbot",grid="rows",align="center"]
