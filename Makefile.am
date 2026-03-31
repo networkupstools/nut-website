@@ -50,8 +50,8 @@ CABLE_IMAGE_FILES =	\
 	images/cables/SOLA-330.png
 
 FAVICON_FILES =	\
-	faviconut.ico	\
-	faviconut.png
+	faviconut-squared.ico	\
+	faviconut-squared.png
 
 LAYOUT_FILES =	\
 	css/ie-overrides.css	\
