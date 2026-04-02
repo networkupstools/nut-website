@@ -30,7 +30,9 @@ IMAGE_FILES =	\
 	images/blue-arrow.png	\
 	images/hostedby.png	\
 	images/note.png	\
-	images/nut-logo.png	\
+	images/nut-logo.svg	\
+	images/nut-logo-60x60.png	\
+	images/nut-logo-256x256.png	\
 	images/simple.png	\
 	images/warning.png
 
