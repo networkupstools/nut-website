@@ -21,6 +21,7 @@ NUT_HISTORIC_RELEASE_EXPLODED = @NUT_HISTORIC_RELEASE_EXPLODED@
 
 SUBDIRS = protocols
 
+# Groupings below are stored in nut repository
 IMAGE_FILES =	\
 	images/advanced.png	\
 	images/asciidoc.png	\
@@ -49,9 +50,21 @@ CABLE_IMAGE_FILES =	\
 	images/cables/mge-usb-rj45.jpg	\
 	images/cables/SOLA-330.png
 
+# Stored in nut-website repo root dir
+# NOTE: faviconut-constructive-gradient.* variants are an April-1st/Easter-Egg
+#  take on the standard NUT project logo. Sources are here under images/ dir.
+# The web-layout.conf sources refer to `faviconut.*` file names so symlinks can
+# be easily juggled in the rendered site repository. Likewise with `nut-logo.svg`.
 FAVICON_FILES =	\
+	faviconut-constructive-gradient.ico \
+	faviconut-constructive-gradient.png \
 	faviconut-squared.ico	\
 	faviconut-squared.png
+
+IMAGE_WEB_FILES = \
+	images/nut-logo-constructive-gradient-256x256.png \
+	images/nut-logo-constructive-gradient.svg \
+	images/nut-logo-constructive.svg
 
 LAYOUT_FILES =	\
 	css/ie-overrides.css	\
@@ -201,6 +214,7 @@ all-files-deps:	\
 	$(WEBSITE_FILES)	\
 	$(WEBSITE_MAN_FILES)	\
 	$(FAVICON_FILES)	\
+	$(IMAGE_WEB_FILES)	\
 	$(IMAGE_FILES)	\
 	$(IMAGE_FILES_ASCIIDOC_ICONS)	\
 	$(CABLE_IMAGE_FILES)	\
@@ -413,6 +427,7 @@ $(CABLE_IMAGE_FILES): images/cables/
 
 # NOTE: WEBSITE_MAN_DEPS are assumed covered by nut/docs/man/*.html below;
 # the definition was to trick "make" into a special build of those files.
+# Current IMAGE_WEB_FILES are de-facto covered by `cp ... images` below.
 $(OUTDIR): .all-files
 	$(RM) -r $(OUTDIR)
 	$(MKDIR_P) $(OUTDIR)
