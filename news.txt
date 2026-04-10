@@ -1,4 +1,5 @@
 - Apr 09, 2026: After a long lapse, attention was paid to the link:https://github.com/networkupstools/jNut[jNut] Java Client (library, example CLI program, REST API bundle), culminating in link:https://github.com/networkupstools/jNut/releases/tag/jNut-parent-1.0[jNut 1.0 release] with full support of NUT networked protocol as of NUT v2.8.5 release (including `STARTTLS` and `TRACKING` features)
+  * ERRATA: one of API changes was overkill, so link:https://github.com/networkupstools/jNut/releases/tag/jNut-parent-1.1[jNut 1.1 release] was issued Apr 10, 2026
 - Apr 07, 2026: NUT v2.8.5 released, for more details please see
   link:https://github.com/networkupstools/nut/releases/tag/v2.8.5[GitHub release page for NUT v2.8.5]
   and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4[Release notes for NUT 2.8.5 - what's new since 2.8.4].
