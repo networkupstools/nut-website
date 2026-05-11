@@ -4,6 +4,7 @@
   link:https://github.com/networkupstools/nut/releases/tag/v2.8.5[GitHub release page for NUT v2.8.5]
   and link:https://networkupstools.org/docs/release-notes.chunked/NUT_Release_Notes.html#_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4[Release notes for NUT 2.8.5 - what's new since 2.8.4].
   * ERRATA: Version order and timestamp for `v2.8.5` may be messed up in PDF documentation files built from release tag or corresponding tarball
+  * ERRATA: The original NUT for Windows pre-built 7-zip archive did not include third-party libraries needed by Mozilla NSS, which precluded `upsmon` from starting. A new archive with these DLL files added was published.
 - Feb 08, 2026: A link:https://github.com/networkupstools/nut/wiki/Finding-recent-development-iteration-artifacts[Finding recent development iteration artifacts] was added to the NUT GitHub Wiki, with screenshots from a browser, to help community members find the builds that the NUT CI farm works so hard to produce
 - Nov 24, 2025: NUT HTML documentation (local and website) enhanced with AnchorJS permalinks for sections (seen on hover, usable by blind click to the right of a title) -- this should simplify referring people to relevant part of a page when answering questions
 - Sep 04, 2025: link:http://wmnut.networkupstools.org[WMNut] 0.72 released, with revised CI recipes and hardened code base
