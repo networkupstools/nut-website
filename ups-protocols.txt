@@ -172,7 +172,7 @@ All these document are officially provided by Riello
 Salicru
 -------
 
-- link:protocols/salicru/IQ01301.pdf[Serial comm protocol used with Twin Pro2 700VA – 3KVA series UPS]
+- link:protocols/salicru/IQ01301.pdf[Serial comm protocol used with Twin Pro2 700VA - 3KVA series UPS]
   (a Megatec Qx dialect)
 
 
