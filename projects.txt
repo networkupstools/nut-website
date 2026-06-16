@@ -399,6 +399,22 @@ A tiny dashboard for Network UPS Tools.
 Written in NodeJS, can serve as a Docker container or as a Homepage widget,
 includes Web-UI and a REST API for queries.
 
+link:https://github.com/JuanCF/nutwatch[NutWatch]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A standalone web administration panel for NUT (Network UPS Tools),
+installable on a Raspberry Pi or any Linux system.
+
+Features UPS device CRUD management with real-time telemetry, historical
+data charts (SQLite-backed with D3 visualizations), user management,
+upsmon notifications editor, per-UPS per-event script hooks, live log
+streaming (SSE), Wake on LAN support, service control, and Bearer token
+auth. Backend written in Python (Flask), frontend in TypeScript (React).
+
+Also includes a Proxmox VE VM automation script (`nut-vm.sh`) for
+one-command creation of a NUT VM with USB UPS passthrough, driver
+auto-detection, and NutWatch pre-installed.
+
 link:https://github.com/nslythe/NUTService[NUTService and C# NUTClient]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
