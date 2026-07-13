@@ -409,7 +409,7 @@ Features UPS device CRUD management with real-time telemetry, historical
 data charts (SQLite-backed with D3 visualizations), user management,
 upsmon notifications editor, per-UPS per-event script hooks, live log
 streaming (SSE), Wake on LAN support, service control, and Bearer token
-auth. Backend written in Python (Flask), frontend in TypeScript (React).
+auth. Backend written in Python (Flask), front-end in TypeScript (React).
 
 Also includes a Proxmox VE VM automation script (`nut-vm.sh`) for
 one-command creation of a NUT VM with USB UPS passthrough, driver

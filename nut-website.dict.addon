@@ -270,6 +270,7 @@ NomVIn
 NomVOut
 NrLoBatt
 Num
+NutWatch
 Nutify
 OAH
 OC
@@ -462,6 +463,7 @@ Traceback
 Tx
 TxD
 TxHS
+TypeScript
 UBD
 UBR
 UC
@@ -957,6 +959,7 @@ vbatt
 vectronic
 vid
 vin
+vm
 vnata
 vo
 vod
