@@ -428,6 +428,22 @@ Please note that this is different from the NUT for Windows effort maintained
 in the NUT code base itself to provide native builds of NUT programs and
 services for that platform.
 
+[[esp32-nut]]
+link:https://github.com/maverick1982/esp32-nut[ESP32 NUT Server Bridge (esp32-nut)]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open-source firmware for ESP32-S3 development boards that turns a USB HID
+UPS into a network UPS: the board reads the UPS through its USB Host port
+and serves it over Wi-Fi with an `upsd`-compatible server, so standard NUT
+clients (`upsc`, `upsmon`, `upscmd`, `upsrw`, Home Assistant, PeaNUT...)
+can use it without a computer running next to the UPS.
+
+The HID to NUT mappings, instant commands and writable variables follow the
+NUT `usbhid-ups` subdrivers, and parts of the code are derived from them.
+It is a standalone reimplementation for the microcontroller and does not run
+NUT itself. Tested with several Eaton, APC, CyberPower and Powercom models;
+it includes a web UI with login, OTA firmware updates and a 3D-printable case.
+
 
 Hardware projects involving NUT
 -------------------------------
