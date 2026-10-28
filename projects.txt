@@ -136,6 +136,21 @@ and commands over SSH.
 Pre-built application package is available on Google Play at
 https://play.google.com/store/apps/details?id=com.nitramite.apcupsdmonitor
 
+link:https://play.google.com/store/apps/details?id=com.reelmemories.upslink[UPSLink - NUT UPS Monitor]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UPSLink is an Android application for monitoring uninterruptible power
+supplies through Network UPS Tools (NUT) servers. It provides real-time
+UPS telemetry, battery and runtime monitoring, configurable power-event
+alerts, historical metrics, background monitoring, home-screen widgets,
+and support for multiple UPS devices.
+
+The application also includes a Wear OS companion for monitoring UPS
+status, battery levels, and runtime directly from a smartwatch, with
+support for watch-face complications.
+
+UPSLink is available on Google Play, with optional paid Pro features.
+
 
 Network Management Systems (NMS) integration
 --------------------------------------------
