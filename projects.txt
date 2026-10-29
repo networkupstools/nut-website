@@ -122,22 +122,23 @@ link:https://github.com/networkupstools/wmnut/[WMNut]
 WMNut is a dockapp program to monitor multiple UPSs statistics through the NUT
 (Network UPS Tools) framework on Linux and other systems.
 
-[[mustek-menu-monitor]]
-link:https://github.com/Kokarev/mustek-menu-monitor[MUSTEK Menu Monitor]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[[ups-menu-bar]]
+link:https://github.com/Kokarev/ups-menu-bar[UPS Menu Bar]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A native macOS menu bar client (Swift, MIT license) that reads an existing
-NUT data server through the `upsc` client. It shows UPS status (OL/OB/LB),
-input and output voltage, load, frequency, temperature and, when the driver
-reports them, battery charge and runtime; it also keeps local CSV logs of
-measurements and power events. It does not configure NUT, send instant
-commands or shut down the computer (leave that to `upsmon`).
+NUT data server through the `upsc` client, using its JSON output (`upsc -j`)
+when available and plain output with older NUT versions. It shows UPS status
+(OL/OB/LB), input and output voltage, load, frequency, temperature and, when
+the driver reports them, battery charge and runtime; it also keeps local
+logs of measurements and power events. It does not configure NUT, send
+instant commands or shut down the computer (leave that to `upsmon`).
 
-Despite the name, it is not tied to one vendor: it needs a NUT driver that
-reports `ups.status`, `input.voltage` and `ups.load`. So far it was tested
-with one Mustek UPS (USB 06da:0003) using `nutdrv_qx` (Megatec Q1) and NUT
-2.8.5 on Apple Silicon; reports for other devices are welcome. Prebuilt
-binaries are for Apple Silicon (arm64) only.
+It is not tied to one vendor: it needs a NUT driver that reports
+`ups.status`, `input.voltage` and `ups.load`. So far it was tested with one
+Mustek UPS (USB 06da:0003) using `nutdrv_qx` (Megatec Q1) and NUT 2.8.5 on
+Apple Silicon; reports for other devices are welcome. Pre-built binaries are
+for Apple Silicon (arm64) only and need macOS 13 or later.
 
 
 Mobile desktop clients
