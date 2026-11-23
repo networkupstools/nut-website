@@ -477,6 +477,28 @@ It is a standalone reimplementation for the microcontroller and does not run
 NUT itself. Tested with several Eaton, APC, CyberPower and Powercom models;
 it includes a web UI with login, OTA firmware updates and a 3D-printable case.
 
+[[my-ups-pal]]
+link:https://github.com/aronreid/ups-to-esp32[My UPS Pal (ups-to-esp32)]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open-source firmware (GPL-3.0-or-later) and hardware for an ESP32-S3 board
+that plugs into a USB HID UPS and serves it on TCP 3493 with an
+`upsd`-compatible server, so `upsmon`, Home Assistant, Synology, TrueNAS,
+unraid and Proxmox can use it without a computer next to the UPS.
+
+It is a standalone reimplementation and does not run NUT itself; logic is
+reused from the NUT `usbhid-ups` subdrivers. Besides NUT it offers a web UI,
+Prometheus metrics (named after `nut_exporter`), SNMP v2c (UPS-MIB, with
+traps), MQTT with Home Assistant discovery, IPv6, and signed over-the-air
+updates. On boards with 16 MB flash and 8 MB PSRAM it adds built-in
+Tailscale and HTTPS.
+
+Verified on hardware with APC and CyberPower models, with more expected
+to work from their USB descriptors; see the
+link:https://github.com/aronreid/ups-to-esp32/blob/main/docs/tested-ups.md[tested UPS list].
+The Rev A board design is published under CERN-OHL-S v2. The firmware also
+builds for generic ESP32-S3 dev boards, and assembled boards are sold at
+link:https://myupspal.com[myupspal.com].
 
 Hardware projects involving NUT
 -------------------------------
